@@ -41,9 +41,9 @@ class Store {
   }
 
 
-  async fetchPosts() {
+  async fetchContacts() {
     // get is generic so can specify type
-    const response = await axios.get<Contact[]>('/contact/contacts')
+    const response = await axios.get<Contact[]>('http://localhost:3000/contact/contacts')
     // to avoid mutating at all costs can do 
     // response.data.reduce(...)
 
@@ -51,7 +51,11 @@ class Store {
     // const ids: string[] = []
     // const all: Record<string, Post> = {}
 
+    console.log(response.data)
+
     for (const contact of response.data) {
+
+
 
       // do a check to account for duplicates
       if (!this.state.contacts.ids.includes(contact._id.toString())) {
