@@ -6,5 +6,5 @@ export interface Contact extends Document {
     readonly name: string;
     readonly company: string;
     readonly email: string;
-    readonly created_at: Date;
+    readonly created: Date;
 }

@@ -6,5 +6,5 @@ export class CreateContactDTO {
   readonly name: string;
   readonly company: string;
   readonly email: string;
-  readonly created_at: Date;
+  readonly created: Date;
 }
