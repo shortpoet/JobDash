@@ -1,7 +1,7 @@
 <template>
   <Suspense>
     <template #default>
-      <TestTest />
+      <ContactEntry />
     </template>
     <template #fallback>
       <div class="columns">
@@ -18,12 +18,12 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
 import Progress from './../components/common/Progress.vue'
-import TestTest from './../components/contacts/TestTest.vue'
+import ContactEntry from './../components/contacts/ContactEntry.vue'
 export default defineComponent({
   name: 'Home',
 
   components: {
-    TestTest,
+    ContactEntry,
     Progress
   }
 })
