@@ -33,13 +33,6 @@ export default defineComponent({
 
     const store = useStore()
 
-    console.log(store)
-
-    if (!store.getState().contacts.loaded) {
-      const contacts = await store.fetchContacts()
-      console.log(contacts)
-    }
-
     const submit = (e: any) => {
       const contact: Contact = {
         _id: '-1',

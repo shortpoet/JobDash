@@ -51,15 +51,16 @@ class Store {
     // const ids: string[] = []
     // const all: Record<string, Post> = {}
 
-    console.log(response.data)
+    // console.log(response.data)
 
     for (const contact of response.data) {
+      console.log(contact)
 
 
 
       // do a check to account for duplicates
-      if (!this.state.contacts.ids.includes(contact._id.toString())) {
-        this.state.contacts.ids.push(contact._id.toString())
+      if (!this.state.contacts.ids.includes(contact._id)) {
+        this.state.contacts.ids.push(contact._id)
       }
       // using number as key to JS object, it implicitly assumes it is a string and calls .toString() automatically
       this.state.contacts.all[contact._id] = contact
@@ -74,6 +75,8 @@ class Store {
     //   all,
     //   loaded: true
     // }
+
+    console.log(this.state.contacts)
 
   }
 
