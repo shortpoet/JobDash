@@ -35,7 +35,7 @@ class Store {
   }
 
   async createContact(contact: Contact) {
-    const response = await axios.post<Contact>('/contact/create', contact)
+    const response = await axios.post<Contact>('http://localhost:3000/contact/create', contact)
     this.state.contacts.all[response.data._id] = response.data
     this.state.contacts.ids.push(response.data._id.toString())
   }

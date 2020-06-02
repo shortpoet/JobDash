@@ -4,7 +4,7 @@
       <form action="submit" @submit.prevent="submit">
         <BaseInput type="text" name="Name" v-model="name" />
         <BaseInput type="text" name="Company" v-model="company" />
-        <BaseInput type="email" name="Email" v-model="email" />
+        <BaseInput type="text" name="Email" v-model="email" />
         <button class="button is-success">Submit</button>
       </form>
     </div>
@@ -16,6 +16,8 @@
 import { defineComponent, computed, ref } from 'vue'
 import { useStore } from './../../store'
 import BaseInput from './../../components/common/BaseInput.vue'
+import { Contact } from '../../interfaces/contact.interface'
+import moment from 'moment'
 export default defineComponent({
   name: 'ContactEntry',
 
@@ -38,7 +40,16 @@ export default defineComponent({
       console.log(contacts)
     }
 
-    const submit = () => {}
+    const submit = (e: any) => {
+      const contact: Contact = {
+        _id: '-1',
+        name: name.value,
+        company: company.value,
+        email: email.value,
+        created: moment()
+      }
+      store.createContact(contact)
+    }
 
     return{
       name,
