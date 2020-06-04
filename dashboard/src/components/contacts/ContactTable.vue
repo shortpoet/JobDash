@@ -1,13 +1,21 @@
 <template>
-  <div class="menu">
-    <p class="menu-label"></p>
-    <ul class="menu-list">
-      <li
-        v-for="contact in allContacts"
-        :key="contact._id"
-      ><a href="">{{ contact.name }}</a></li>
-    </ul>
-  </div>
+  <table class="table is-hoverable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Company</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tr
+      v-for="contact in allContacts"
+      :key="contact._id"    
+    >
+      <td>{{ contact.name }}</td>
+      <td>{{ contact.company }}</td>
+      <td>{{ contact.email }}</td>
+    </tr>
+  </table>
 </template>
 
 <script lang="ts">
@@ -17,7 +25,7 @@ import BaseInput from './../../components/common/BaseInput.vue'
 import { Contact } from '../../interfaces/contact.interface'
 import moment from 'moment'
 export default defineComponent({
-  name: 'ContactDisplay',
+  name: 'ContactTable',
 
   components: {
     BaseInput
