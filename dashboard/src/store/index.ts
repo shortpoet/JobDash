@@ -41,28 +41,28 @@ class Store {
 
   public getLastId(): Contact['_id'] {
     const last = this.state.contacts.ids.slice(-1)[0]
-    console.log(last)
+    // console.log(last)
     // if database / store are empty return -1
     return last ? this.state.contacts.all[last]._id : '-1'
   }
 
   async createContact(contact: Contact) {
     const response = await axios.post<ContactDTO>('http://localhost:3000/contact/create', contact)
-    console.log(response.data)
+    // console.log(response.data)
     this.state.contacts.all[response.data.contact._id] = response.data.contact
     this.state.contacts.ids.push(response.data.contact._id.toString())
     this.fetchContacts()
   }
 
   async deleteContact(contact: Contact) {
-    console.log(contact._id)
-    console.log(this.state.contacts.all[contact._id])
-    const response = await axios.delete<Contact>(`http://localhost:3000/contact/delete?contact_id=${contact._id}`)
-    console.log(response)
-    // delete this.state.contacts.all[response.data._id]
-    // const index = this.state.contacts.ids.indexOf(response.data._id.toString())
-    // this.state.contacts.ids.splice(index, 1)
-    console.log(this.state.contacts.all)
+    // console.log(contact._id)
+    // console.log(this.state.contacts.all[contact._id])
+    const response = await axios.delete<ContactDTO>(`http://localhost:3000/contact/delete?contact_id=${contact._id}`)
+    // console.log(response)
+    delete this.state.contacts.all[response.data.contact._id]
+    const index = this.state.contacts.ids.indexOf(response.data.contact._id.toString())
+    this.state.contacts.ids.splice(index, 1)
+    // console.log(this.state.contacts.all)
   }
 
   async fetchContacts() {
@@ -78,7 +78,7 @@ class Store {
     // console.log(response.data)
 
     for (const contact of response.data) {
-      console.log(contact)
+      // console.log(contact)
 
 
 
@@ -100,7 +100,7 @@ class Store {
     //   loaded: true
     // }
 
-    console.log(this.state.contacts)
+    // console.log(this.state.contacts)
 
   }
 

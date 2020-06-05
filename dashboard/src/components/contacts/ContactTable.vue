@@ -42,9 +42,11 @@ export default defineComponent({
 
 
   async setup(props, ctx){
-
-    const deleteContact = (contact: Contact) => {
-      ctx.emit('delete-contact', contact)
+    const store = useStore()
+    const deleteContact = async (contact: Contact) => {
+      await store.deleteContact(contact)
+      console.log('delete contact')
+      ctx.emit('update-contacts')
     }
 
     return {

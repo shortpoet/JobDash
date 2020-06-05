@@ -34,10 +34,10 @@ export default defineComponent({
     const store = useStore()
 
 
-    const submit = function(e: any): any {
-      console.log(store.getLastId())
+    const submit = async function(e: any) {
+      // console.log(store.getLastId())
       const nextId = (parseInt(store.getLastId()) + 1).toString()
-      console.log(nextId)
+      // console.log(nextId)
       const contact: Contact = {
         _id: nextId,
         name: name.value,
@@ -45,7 +45,8 @@ export default defineComponent({
         email: email.value,
         created: moment()
       }
-      store.createContact(contact)
+      await store.createContact(contact)
+      console.log('create contact')
       ctx.emit('update-contacts')
     }
 

@@ -13,7 +13,7 @@
         <ContactEdit v-if="activeTab.name === 'edit'" />
       </div>
       <div class="column is-one-half">
-        <ContactTable :contacts="allContacts" @delete-contact="deleteContact"/>
+        <ContactTable :contacts="allContacts" @update-contacts="onUpdateContacts"/>
       </div>
     </div>
   </section>
@@ -31,7 +31,6 @@ import { Contact } from '../interfaces/contact.interface'
 
 const updateContacts = async (iStore: IStore): Promise<Contact[]> => {
   console.log('update contacts')
-  console.log(iStore.store)
 
   return iStore.store.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
     const post = iStore.store.getState().contacts.all[id]
@@ -42,7 +41,6 @@ const updateContacts = async (iStore: IStore): Promise<Contact[]> => {
 const loadContacts = async (): Promise<Contact[]> => {
   console.log('load contacts')
   const store = useStore()
-  console.log(store)
   if (!store.getState().contacts.loaded) {
     await store.fetchContacts()
   }
@@ -72,7 +70,6 @@ export default defineComponent({
     const store = useStore()
 
     console.log('setup')
-    console.log(store)
 
     tabs.value = [
       {id: 1, name: 'create', component: 'ContactCreate'},
@@ -104,15 +101,10 @@ export default defineComponent({
       store: store
     }
 
-    const deleteContact = async (contact: Contact) => {
-      store.deleteContact(contact)
-      allContacts.value = await updateContacts(iStore)
-    }
-
     const onUpdateContacts = async () => {
-      console.log('on update contacts')
       allContacts.value = await updateContacts(iStore)
     }
+    
     onMounted(async () => {
       allContacts.value = await loadContacts()
     })
@@ -123,7 +115,6 @@ export default defineComponent({
       activeTab,
       selectedComponent,
       tabActivated,
-      deleteContact,
       allContacts,
       updateContacts,
       onUpdateContacts
