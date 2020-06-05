@@ -3,6 +3,7 @@
 import { Controller, Get, Res, HttpStatus, Post, Body, Put, Query, NotFoundException, Delete, Param } from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { CreateContactDTO } from './dto/create-contact.dto';
+import { query } from 'express';
 
 @Controller('contact')
 export class ContactController {
@@ -46,8 +47,10 @@ export class ContactController {
 
     // Delete a contact
     @Delete('/delete')
-    async deleteContact(@Res() res, @Query('contactID') contactID) {
-        const contact = await this.contactService.deleteContact(contactID);
+    async deleteContact(@Res() res, @Query('contact_id') query) {
+        // console.log(res)
+        console.log(query)
+        const contact = await this.contactService.deleteContact(query);
         if (!contact) throw new NotFoundException('Contact does not exist');
         return res.status(HttpStatus.OK).json({
             message: 'Contact has been deleted',

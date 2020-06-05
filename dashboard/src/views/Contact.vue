@@ -13,7 +13,7 @@
         <ContactEdit v-if="activeTab.name === 'edit'" />
       </div>
       <div class="column is-one-half">
-        <ContactTable/>
+        <ContactTable @delete-contact="deleteContact"/>
       </div>
     </div>
   </section>

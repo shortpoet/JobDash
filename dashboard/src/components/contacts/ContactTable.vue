@@ -5,6 +5,7 @@
         <th>Name</th>
         <th>Company</th>
         <th>Email</th>
+        <th>Delete</th>
       </tr>
     </thead>
     <tr
@@ -14,6 +15,7 @@
       <td>{{ contact.name }}</td>
       <td>{{ contact.company }}</td>
       <td>{{ contact.email }}</td>
+      <td style="color: red; text-align: center; cursor: pointer" @click="deleteContact(contact)">🗑</td>
     </tr>
   </table>
 </template>
@@ -32,7 +34,7 @@ export default defineComponent({
   },
 
 
-  async setup(){
+  async setup(props, ctx){
 
     const store = useStore()
 
@@ -49,7 +51,12 @@ export default defineComponent({
 
     console.log(allContacts)
 
+    const deleteContact = (contact: Contact) => {
+      store.deleteContact(contact)
+    }
+
     return{
+      deleteContact,
       allContacts
     }
 

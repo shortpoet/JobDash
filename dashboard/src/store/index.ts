@@ -1,6 +1,6 @@
 import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
-import { Contact } from "./../interfaces/contact.interface"
+import { Contact } from "../interfaces/contact.interface"
 
 interface ContactsState {
   ids: string[]
@@ -40,6 +40,16 @@ class Store {
     this.state.contacts.ids.push(response.data._id.toString())
   }
 
+  async deleteContact(contact: Contact) {
+    console.log(contact._id)
+    console.log(this.state.contacts.all[contact._id])
+    const response = await axios.delete<Contact>(`http://localhost:3000/contact/delete?contact_id=${contact._id}`)
+    console.log(response)
+    // delete this.state.contacts.all[response.data._id]
+    // const index = this.state.contacts.ids.indexOf(response.data._id.toString())
+    // this.state.contacts.ids.splice(index, 1)
+    console.log(this.state.contacts.all)
+  }
 
   async fetchContacts() {
     // get is generic so can specify type
