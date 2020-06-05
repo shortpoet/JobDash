@@ -25,7 +25,7 @@ export default defineComponent({
     BaseInput
   },
 
-  async setup(){
+  async setup(props, ctx){
 
     const name = ref('name')
     const company = ref('company')
@@ -33,15 +33,23 @@ export default defineComponent({
 
     const store = useStore()
 
-    const submit = (e: any) => {
+
+    const submit = function(e: any): any {
+      console.log(store.getLastId())
+      const nextId = (parseInt(store.getLastId()) + 1).toString()
+      console.log(nextId)
       const contact: Contact = {
-        _id: '-1',
+        _id: nextId,
         name: name.value,
         company: company.value,
         email: email.value,
         created: moment()
       }
       store.createContact(contact)
+      ctx.emit('update-contacts')
+    }
+
+    const updateTable = () => {
     }
 
     return{

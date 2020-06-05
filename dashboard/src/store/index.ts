@@ -1,6 +1,7 @@
 import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
 import { Contact } from "../interfaces/contact.interface"
+import { ContactDTO } from "../interfaces/contactDTO.interface"
 
 interface ContactsState {
   ids: string[]
@@ -10,6 +11,10 @@ interface ContactsState {
 
 interface State {
   contacts: ContactsState
+}
+
+export interface IStore {
+  store: Store
 }
 
 const initialContactsState = () : ContactsState => ({
@@ -34,10 +39,19 @@ class Store {
     return readonly(this.state)
   }
 
+  public getLastId(): Contact['_id'] {
+    const last = this.state.contacts.ids.slice(-1)[0]
+    console.log(last)
+    // if database / store are empty return -1
+    return last ? this.state.contacts.all[last]._id : '-1'
+  }
+
   async createContact(contact: Contact) {
-    const response = await axios.post<Contact>('http://localhost:3000/contact/create', contact)
-    this.state.contacts.all[response.data._id] = response.data
-    this.state.contacts.ids.push(response.data._id.toString())
+    const response = await axios.post<ContactDTO>('http://localhost:3000/contact/create', contact)
+    console.log(response.data)
+    this.state.contacts.all[response.data.contact._id] = response.data.contact
+    this.state.contacts.ids.push(response.data.contact._id.toString())
+    this.fetchContacts()
   }
 
   async deleteContact(contact: Contact) {

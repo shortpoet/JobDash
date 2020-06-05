@@ -9,23 +9,51 @@
         <!-- <ContactTabs :tabs="tabs" @tab-activated="tabActivated" v-model="activeTab.component" :active-tab="activeTab.name"/> -->
         <ContactTabs :tabs="tabs" @tab-activated="tabActivated" v-model="activeTab" :active-tab="activeTab.name"/>
         <!-- <component :is="selectedComponent" /> -->
-        <ContactCreate v-if="activeTab.name === 'create'" />
+        <ContactCreate v-if="activeTab.name === 'create'" @update-contacts="onUpdateContacts"/>
         <ContactEdit v-if="activeTab.name === 'edit'" />
       </div>
       <div class="column is-one-half">
-        <ContactTable @delete-contact="deleteContact"/>
+        <ContactTable :contacts="allContacts" @delete-contact="deleteContact"/>
       </div>
     </div>
   </section>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent, computed, ref, onMounted } from 'vue'
 import ContactTabs from './../components/contacts/ContactTabs.vue'
 import ContactCreate from './../components/contacts/ContactCreate.vue'
 import ContactEdit from './../components/contacts/ContactEdit.vue'
 import ContactTable from './../components/contacts/ContactTable.vue'
 import { Tab } from './../interfaces/tab.interface'
+import { useStore, IStore } from '../store'
+import { Contact } from '../interfaces/contact.interface'
+
+const updateContacts = async (iStore: IStore): Promise<Contact[]> => {
+  console.log('update contacts')
+  console.log(iStore.store)
+
+  return iStore.store.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
+    const post = iStore.store.getState().contacts.all[id]
+    return accumulator.concat(post)
+  }, [])
+
+}
+const loadContacts = async (): Promise<Contact[]> => {
+  console.log('load contacts')
+  const store = useStore()
+  console.log(store)
+  if (!store.getState().contacts.loaded) {
+    await store.fetchContacts()
+  }
+
+  return store.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
+    const post = store.getState().contacts.all[id]
+    return accumulator.concat(post)
+  }, [])
+
+}
+
 export default defineComponent({
   name: 'Home',
 
@@ -36,9 +64,15 @@ export default defineComponent({
     ContactTable
   },
 
-  setup() {
+  async setup() {
     const tabs = ref<Tab[]>()
     const activeTab = ref<Tab>()
+    const allContacts = ref<Contact[]>([])
+
+    const store = useStore()
+
+    console.log('setup')
+    console.log(store)
 
     tabs.value = [
       {id: 1, name: 'create', component: 'ContactCreate'},
@@ -66,13 +100,36 @@ export default defineComponent({
 
     }
 
+    const iStore: IStore = {
+      store: store
+    }
+
+    const deleteContact = async (contact: Contact) => {
+      store.deleteContact(contact)
+      allContacts.value = await updateContacts(iStore)
+    }
+
+    const onUpdateContacts = async () => {
+      console.log('on update contacts')
+      allContacts.value = await updateContacts(iStore)
+    }
+    onMounted(async () => {
+      allContacts.value = await loadContacts()
+    })
+
+
     return {
       tabs,
       activeTab,
       selectedComponent,
-      tabActivated
+      tabActivated,
+      deleteContact,
+      allContacts,
+      updateContacts,
+      onUpdateContacts
     }
   }
+
 
 })
 </script>

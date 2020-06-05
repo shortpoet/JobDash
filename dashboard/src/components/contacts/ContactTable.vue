@@ -9,7 +9,7 @@
       </tr>
     </thead>
     <tr
-      v-for="contact in allContacts"
+      v-for="contact in contacts"
       :key="contact._id"    
     >
       <td>{{ contact.name }}</td>
@@ -29,6 +29,13 @@ import moment from 'moment'
 export default defineComponent({
   name: 'ContactTable',
 
+  props: {
+    contacts: {
+      type: Array,
+      required: true
+    }
+  },
+
   components: {
     BaseInput
   },
@@ -36,28 +43,12 @@ export default defineComponent({
 
   async setup(props, ctx){
 
-    const store = useStore()
-
-    // console.log(store)
-
-    if (!store.getState().contacts.loaded) {
-      await store.fetchContacts()
-    }
-
-    const allContacts = store.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
-      const post = store.getState().contacts.all[id]
-      return accumulator.concat(post)
-    }, [])
-
-    console.log(allContacts)
-
     const deleteContact = (contact: Contact) => {
-      store.deleteContact(contact)
+      ctx.emit('delete-contact', contact)
     }
 
-    return{
-      deleteContact,
-      allContacts
+    return {
+      deleteContact
     }
 
   }
