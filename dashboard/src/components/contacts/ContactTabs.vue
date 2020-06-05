@@ -9,7 +9,7 @@
         <li
           v-for="(tab, i) in tabs"
           :key="i"
-          @click="activateTab"
+          @click="activateTab(tab)"
         ><a>
           {{ tab.name }}
         </a></li>
@@ -20,6 +20,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
+import { Tab } from '../../interfaces/tab.interface'
 
 export default defineComponent({
   name: 'ContactTabs',
@@ -35,9 +36,10 @@ export default defineComponent({
   },
 
   setup(props, ctx) {
-    const activateTab = (event: any) => {
-      console.log(event.target.value)
-      ctx.emit('update:modelValue', event.target.value)
+    const activateTab = (tab: Tab) => {
+      console.log(tab)
+      ctx.emit('update:modelValue', tab.component)
+      ctx.emit('tab-activated', tab)
     }
     return {
       activateTab

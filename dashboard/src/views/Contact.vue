@@ -56,9 +56,9 @@ export default defineComponent({
       // return () => import(`./../components/contacts/${selectedTab.value}.vue`)
     })
 
-    const tabActivated = (e: any) => {
+    const tabActivated = (tab: Tab) => {
       console.log('tab activated')
-      console.log(e)
+      console.log(tab.id)
 
     }
 
