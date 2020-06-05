@@ -6,9 +6,11 @@
   <section class="section contact-section">
     <div class="columns">
       <div class="column is-one-half">
-        <ContactTabs :tabs="tabs" @tab-activated="tabActivated" v-model="selectedTab"/>
-        <component :is="selectedComponent" />
-
+        <!-- <ContactTabs :tabs="tabs" @tab-activated="tabActivated" v-model="activeTab.component" :active-tab="activeTab.name"/> -->
+        <ContactTabs :tabs="tabs" @tab-activated="tabActivated" v-model="activeTab" :active-tab="activeTab.name"/>
+        <!-- <component :is="selectedComponent" /> -->
+        <ContactCreate v-if="activeTab.name === 'create'" />
+        <ContactEdit v-if="activeTab.name === 'edit'" />
       </div>
       <div class="column is-one-half">
         <ContactTable/>
@@ -36,17 +38,17 @@ export default defineComponent({
 
   setup() {
     const tabs = ref<Tab[]>()
+    const activeTab = ref<Tab>()
 
     tabs.value = [
-      {id: 1, name: 'Create', component: 'ContactCreate'},
-      {id: 2, name: 'Edit', component: 'ContactEdit'}
+      {id: 1, name: 'create', component: 'ContactCreate'},
+      {id: 2, name: 'edit', component: 'ContactEdit'}
     ]
 
-    const selectedTab = ref('selectedTab')
-    selectedTab.value = 'ContactCreate'
+    activeTab.value = tabs.value[0];
 
     const selectedComponent = computed(() => {
-      switch(selectedTab.value) {
+      switch(activeTab.value.component) {
         case 'ContactEdit':
           return ContactEdit
           break
@@ -59,12 +61,14 @@ export default defineComponent({
     const tabActivated = (tab: Tab) => {
       console.log('tab activated')
       console.log(tab.id)
+      // this does the same as using the update:modelValue event
+      // selectedTab.value = tab.component
 
     }
 
     return {
       tabs,
-      selectedTab,
+      activeTab,
       selectedComponent,
       tabActivated
     }

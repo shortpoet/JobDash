@@ -10,6 +10,7 @@
           v-for="(tab, i) in tabs"
           :key="i"
           @click="activateTab(tab)"
+          :class="{'is-active': activeTab === tab.name}"
         ><a>
           {{ tab.name }}
         </a></li>
@@ -32,14 +33,19 @@ export default defineComponent({
     tabs: {
       type: Array,
       required: true
+    },
+    activeTab: {
+      type: String,
+      required: true
     }
   },
 
   setup(props, ctx) {
     const activateTab = (tab: Tab) => {
       console.log(tab)
-      ctx.emit('update:modelValue', tab.component)
-      ctx.emit('tab-activated', tab)
+      ctx.emit('update:modelValue', tab)
+      // ctx.emit('update:modelValue', tab.component)
+      // ctx.emit('tab-activated', tab)
     }
     return {
       activateTab
