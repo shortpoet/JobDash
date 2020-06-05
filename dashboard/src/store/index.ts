@@ -65,6 +65,14 @@ class Store {
     // console.log(this.state.contacts.all)
   }
 
+  toggleEditable(contact: Contact, editable: boolean) {
+    console.log('toggle editable')
+    // this works 
+    this.state.contacts.all[contact._id].editable = editable
+    // this doesn't work because can't set value on readonly property (contact is part of contact Contact[] which is a ref)
+    // contact.editable = editable
+  }
+
   async fetchContacts() {
     // get is generic so can specify type
     const response = await axios.get<Contact[]>('http://localhost:3000/contact/contacts')

@@ -63,13 +63,21 @@ export default defineComponent({
   },
 
   async setup() {
+    console.log('setup')
+
     const tabs = ref<Tab[]>()
     const activeTab = ref<Tab>()
     const allContacts = ref<Contact[]>([])
 
     const store = useStore()
 
-    console.log('setup')
+    onMounted(async () => {
+      // allContacts.value = await loadContacts()
+    })
+    // the above is not needed because the below is called 
+    // when setup is called between beforeCreate and created hooks
+    allContacts.value = await loadContacts()
+
 
     tabs.value = [
       {id: 1, name: 'create', component: 'ContactCreate'},
@@ -105,11 +113,6 @@ export default defineComponent({
       allContacts.value = await updateContacts(iStore)
     }
     
-    onMounted(async () => {
-      allContacts.value = await loadContacts()
-    })
-
-
     return {
       tabs,
       activeTab,

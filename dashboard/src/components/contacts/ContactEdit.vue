@@ -39,7 +39,8 @@ export default defineComponent({
         name: name.value,
         company: company.value,
         email: email.value,
-        created: moment()
+        created: moment(),
+        editable: false
       }
       store.createContact(contact)
     }
