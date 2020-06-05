@@ -12,18 +12,34 @@
       v-for="contact in contacts"
       :key="contact._id"    
     >
-      <td>{{ contact.name }}</td>
+    
+      <!--
+        Using a component here creates a bug
+      -->
+
+      <ContactRow :contact="contact" @update-contacts="updateContacts" />
+
+      <!-- <td>{{ contact.name }}</td>
       <td>{{ contact.company }}</td>
       <td>{{ contact.email }}</td>
-      <td style="color: red; text-align: center; cursor: pointer" @click="deleteContact(contact)">🗑</td>
+      <td style="color: red; text-align: center; cursor: pointer" @click="deleteContact(contact)">🗑</td> -->
+
     </tr>
   </table>
+    <!-- <Suspense>
+      <template #default>
+
+      </template>
+      <template #fallback>
+
+      </template>
+    </Suspense> -->
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
 import { useStore } from './../../store'
-import BaseInput from './../../components/common/BaseInput.vue'
+import ContactRow from './../../components/contacts/ContactRow.vue'
 import { Contact } from '../../interfaces/contact.interface'
 import moment from 'moment'
 export default defineComponent({
@@ -37,12 +53,18 @@ export default defineComponent({
   },
 
   components: {
-    BaseInput
+    ContactRow,
   },
 
+  emits: ['update-contacts'],
 
   async setup(props, ctx){
     const store = useStore()
+
+    const updateContacts = () => {
+      ctx.emit('update-contacts')
+    }
+
     const deleteContact = async (contact: Contact) => {
       await store.deleteContact(contact)
       console.log('delete contact')
@@ -50,6 +72,7 @@ export default defineComponent({
     }
 
     return {
+      updateContacts,
       deleteContact
     }
 
