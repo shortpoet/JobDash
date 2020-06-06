@@ -116,7 +116,7 @@ class Store {
     //   loaded: true
     // }
 
-    // console.log(this.state.contacts)
+    console.log(this.state.contacts)
 
   }
 

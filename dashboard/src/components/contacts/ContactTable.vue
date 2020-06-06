@@ -44,6 +44,9 @@
 
     </tr>
   </table>
+  <teleport to="#modal-warning" v-if="modal.visible">
+    <ModalWarning />
+  </teleport>
     <!-- <Suspense>
       <template #default>
 
@@ -59,8 +62,10 @@ import { defineComponent, computed, ref } from 'vue'
 import { useStore } from './../../store'
 import ContactRow from './../../components/contacts/ContactRow.vue'
 import BaseInput from './../../components/common/BaseInput.vue'
+import ModalWarning from './../../components/common/ModalWarning.vue'
 import { Contact } from '../../interfaces/contact.interface'
 import moment from 'moment'
+import { useModal } from '../../composables/useModal'
 
 export default defineComponent({
   name: 'ContactTable',
@@ -74,7 +79,8 @@ export default defineComponent({
 
   components: {
     ContactRow,
-    BaseInput
+    BaseInput,
+    ModalWarning
   },
 
   emits: ['update-contacts'],
@@ -85,14 +91,18 @@ export default defineComponent({
     const emailEdit = ref()
     const store = useStore()
 
+    const modal = useModal()
+
     const updateContacts = () => {
       ctx.emit('update-contacts')
     }
 
     const deleteContact = async (contact: Contact) => {
-      await store.deleteContact(contact)
+      console.log(modal)
+      modal.showModal()
+      // await store.deleteContact(contact)
       console.log('delete contact')
-      ctx.emit('update-contacts')
+      // ctx.emit('update-contacts')
     }
     
     const toggleEditable = async (oldContact: Contact) => {
@@ -128,7 +138,8 @@ export default defineComponent({
       emailEdit,
       updateContacts,
       deleteContact,
-      toggleEditable
+      toggleEditable,
+      modal
     }
 
   }

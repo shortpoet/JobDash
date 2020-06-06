@@ -1,7 +1,7 @@
 <template>
   <Suspense>
     <template #default>
-      <Contact />
+      <MainLayout />
     </template>
     <template #fallback>
       <Progress />
@@ -12,12 +12,12 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
 import Progress from './../components/common/Progress.vue'
-import Contact from './Contact.vue'
+import MainLayout from './MainLayout.vue'
 export default defineComponent({
   name: 'Home',
 
   components: {
-    Contact,
+    MainLayout,
     Progress
   }
 
