@@ -7,6 +7,7 @@
         <th>Email</th>
         <th>Delete</th>
         <th>Edit</th>
+        <th>Locked</th>
       </tr>
     </thead>
     <tr
@@ -38,14 +39,17 @@
       </td>
       <td v-else>{{ contact.email }}</td>
 
-      <td style="color: red; text-align: center; cursor: pointer" @click="deleteContact(contact)">🗑</td>
+      <td style="color: red; text-align: center; cursor: pointer" @click="handleConfirmDelete(contact)">🗑</td>
 
       <td style="text-align: center; cursor: pointer" @click="toggleEditable(contact)">📝</td>
+
+      <td v-if="contact.locked" style="text-align: center; cursor: pointer" @click="toggleDeletable(contact)">🔒</td>
+      <td v-else style="text-align: center; cursor: pointer" @click="toggleDeletable(contact)">🔓</td>
 
     </tr>
   </table>
   <teleport to="#modal-warning" v-if="modal.visible">
-    <ModalWarning />
+    <ModalWarning @delete-contact="deleteContact"/>
   </teleport>
     <!-- <Suspense>
       <template #default>
@@ -86,9 +90,13 @@ export default defineComponent({
   emits: ['update-contacts'],
 
   async setup(props, ctx){
+
     const nameEdit = ref()
     const companyEdit = ref()
     const emailEdit = ref()
+    const confirmDelete = ref(false)
+    const deleteCandidate = ref<Contact>(null)
+
     const store = useStore()
 
     const modal = useModal()
@@ -97,12 +105,26 @@ export default defineComponent({
       ctx.emit('update-contacts')
     }
 
-    const deleteContact = async (contact: Contact) => {
-      console.log(modal)
-      modal.showModal()
-      // await store.deleteContact(contact)
+    const handleConfirmDelete = (contact: Contact) => {
+      if (contact.locked) {
+        deleteCandidate.value = contact
+        modal.showModal()
+      } else {
+        deleteCandidate.value = contact
+        deleteContact()
+      }
+    }
+    
+    // confirmDelete.value === true ? false : true
+
+    const deleteContact = async () => {
+      modal.hideModal()
+      const deletedId = await store.deleteContact(deleteCandidate.value)
       console.log('delete contact')
-      // ctx.emit('update-contacts')
+      console.log(deletedId)
+      deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
+      console.log(deleteCandidate.value)
+      ctx.emit('update-contacts')
     }
     
     const toggleEditable = async (oldContact: Contact) => {
@@ -120,7 +142,8 @@ export default defineComponent({
           email: emailEdit.value,
           created: oldContact.created,
           edited: moment(),
-          editable: false
+          editable: false,
+          locked: true
         }
 
         await store.editContact(
@@ -132,6 +155,18 @@ export default defineComponent({
       }
     }
 
+    const toggleDeletable = async (contact: Contact) => {
+      console.log(contact.locked)
+      if (contact.locked == false) {
+        store.toggleDeletable(contact, true)
+      } else {
+        store.toggleDeletable(contact, false)
+        // this closes the edit window by updating the refs after newContact editable set to false
+        ctx.emit('update-contacts')
+      }
+      console.log(contact.locked)
+    }
+
     return {
       nameEdit,
       companyEdit,
@@ -139,7 +174,9 @@ export default defineComponent({
       updateContacts,
       deleteContact,
       toggleEditable,
-      modal
+      toggleDeletable,
+      modal,
+      handleConfirmDelete
     }
 
   }

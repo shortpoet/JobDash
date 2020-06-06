@@ -8,4 +8,5 @@ export interface Contact {
   created: Moment
   edited: Moment
   editable: boolean
+  locked: boolean
 }

@@ -9,4 +9,5 @@ export class CreateContactDTO {
   readonly created: Date;
   readonly edited: Date;
   readonly editable: Boolean;
+  readonly locked: Boolean;
 }

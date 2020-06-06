@@ -41,7 +41,8 @@ export default defineComponent({
         email: email.value,
         created: moment(),
         edited: moment(),
-        editable: false
+        editable: false,
+        locked: true
       }
       store.createContact(contact)
     }

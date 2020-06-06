@@ -15,7 +15,8 @@ export const ContactSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  editable: Boolean
+  editable: Boolean,
+  locked: Boolean
     
     // // https://github.com/Automattic/mongoose/issues/5110#issuecomment-289637431
     // created_at: moment().valueOf()

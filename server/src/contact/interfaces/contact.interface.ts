@@ -9,4 +9,5 @@ export interface Contact extends Document {
     readonly created: Date;
     readonly edited: Date;
     readonly editable: Boolean;
+    readonly locked: Boolean;
 }

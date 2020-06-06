@@ -62,6 +62,7 @@ class Store {
     delete this.state.contacts.all[response.data.contact._id]
     const index = this.state.contacts.ids.indexOf(response.data.contact._id.toString())
     this.state.contacts.ids.splice(index, 1)
+    return response.data.contact._id
     // console.log(this.state.contacts.all)
   }
 
@@ -71,6 +72,12 @@ class Store {
     this.state.contacts.all[contact._id].editable = editable
     // this doesn't work because can't set value on readonly property (contact is part of contact Contact[] which is a ref)
     // contact.editable = editable
+  }
+
+  toggleDeletable(contact: Contact, deletable: boolean) {
+    console.log('toggle deletable')
+    // this works 
+    this.state.contacts.all[contact._id].locked = deletable
   }
 
   async editContact(oldContact: Contact, newContact: Contact) {
