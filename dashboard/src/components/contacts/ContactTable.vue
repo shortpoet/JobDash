@@ -20,18 +20,27 @@
 
       <!-- <ContactRow :contact="contact" @update-contacts="updateContacts" /> -->
 
-      <td v-if="contact.editable" contenteditable>{{ contact.name }}</td>
+      <td v-if="contact.editable" contenteditable>
+        <BaseInput type="text" name="Name" v-model="nameEdit" />
+          {{ nameEdit }}
+      </td>
       <td v-else>{{ contact.name }}</td>
 
-      <td v-if="contact.editable" contenteditable>{{ contact.company }}</td>
+      <td v-if="contact.editable" contenteditable>
+        <BaseInput type="text" name="Company" v-model="companyEdit" />
+          {{ companyEdit }}
+      </td>
       <td v-else>{{ contact.company }}</td>
 
-      <td v-if="contact.editable" contenteditable>{{ contact.email }}</td>
+      <td v-if="contact.editable" contenteditable>
+        <BaseInput type="text" name="Email" v-model="emailEdit" />
+          {{ emailEdit }}
+      </td>
       <td v-else>{{ contact.email }}</td>
 
       <td style="color: red; text-align: center; cursor: pointer" @click="deleteContact(contact)">🗑</td>
 
-      <td style="text-align: center; cursor: pointer" @click="makeEditable(contact)">📝</td>
+      <td style="text-align: center; cursor: pointer" @click="toggleEditable(contact)">📝</td>
 
     </tr>
   </table>
@@ -49,8 +58,10 @@
 import { defineComponent, computed, ref } from 'vue'
 import { useStore } from './../../store'
 import ContactRow from './../../components/contacts/ContactRow.vue'
+import BaseInput from './../../components/common/BaseInput.vue'
 import { Contact } from '../../interfaces/contact.interface'
 import moment from 'moment'
+
 export default defineComponent({
   name: 'ContactTable',
 
@@ -63,11 +74,15 @@ export default defineComponent({
 
   components: {
     ContactRow,
+    BaseInput
   },
 
   emits: ['update-contacts'],
 
   async setup(props, ctx){
+    const nameEdit = ref()
+    const companyEdit = ref()
+    const emailEdit = ref()
     const store = useStore()
 
     const updateContacts = () => {
@@ -80,14 +95,40 @@ export default defineComponent({
       ctx.emit('update-contacts')
     }
     
-    const makeEditable = (contact: Contact) => {
-      store.toggleEditable(contact, true)
+    const toggleEditable = async (oldContact: Contact) => {
+      if (oldContact.editable == false) {
+        store.toggleEditable(oldContact, true)
+        nameEdit.value = oldContact.name
+        companyEdit.value = oldContact.company
+        emailEdit.value = oldContact.email
+      } else {
+
+        const newContact: Contact = {
+          _id: oldContact._id,
+          name: nameEdit.value,
+          company: companyEdit.value,
+          email: emailEdit.value,
+          created: oldContact.created,
+          edited: moment(),
+          editable: false
+        }
+
+        await store.editContact(
+          oldContact, 
+          newContact
+        )
+        // this closes the edit window by updating the refs after newContact editable set to false
+        ctx.emit('update-contacts')
+      }
     }
 
     return {
+      nameEdit,
+      companyEdit,
+      emailEdit,
       updateContacts,
       deleteContact,
-      makeEditable
+      toggleEditable
     }
 
   }

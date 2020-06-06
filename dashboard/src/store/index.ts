@@ -73,6 +73,14 @@ class Store {
     // contact.editable = editable
   }
 
+  async editContact(oldContact: Contact, newContact: Contact) {
+    const response = await axios.put<ContactDTO>(
+      `http://localhost:3000/contact/update?contact_id=${oldContact._id}`,
+      newContact
+    )
+    this.state.contacts.all[response.data.contact._id] = response.data.contact
+  }
+
   async fetchContacts() {
     // get is generic so can specify type
     const response = await axios.get<Contact[]>('http://localhost:3000/contact/contacts')

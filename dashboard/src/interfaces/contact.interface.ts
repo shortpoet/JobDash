@@ -6,5 +6,6 @@ export interface Contact {
   company: string
   email: string
   created: Moment
+  edited: Moment
   editable: boolean
 }

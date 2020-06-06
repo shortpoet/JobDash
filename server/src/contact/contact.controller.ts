@@ -28,7 +28,7 @@ export class ContactController {
 
     // Fetch a particular contact using ID
     @Get('contact/:contactID')
-    async getContact(@Res() res, @Param('contactID') contactID) {
+    async getContact(@Res() res, @Param('contact_id') contactID) {
         const contact = await this.contactService.getContact(contactID);
         if (!contact) throw new NotFoundException('Contact does not exist!');
         return res.status(HttpStatus.OK).json(contact);
@@ -36,8 +36,8 @@ export class ContactController {
 
     // Update a contact's details
     @Put('/update')
-    async updateContact(@Res() res, @Query('contactID') contactID, @Body() createContactDTO: CreateContactDTO) {
-        const contact = await this.contactService.updateContact(contactID, createContactDTO);
+    async updateContact(@Res() res, @Query('contact_id') contact_id, @Body() createContactDTO: CreateContactDTO) {
+        const contact = await this.contactService.updateContact(contact_id, createContactDTO);
         if (!contact) throw new NotFoundException('Contact does not exist!');
         return res.status(HttpStatus.OK).json({
             message: 'Contact has been successfully updated',
@@ -47,10 +47,8 @@ export class ContactController {
 
     // Delete a contact
     @Delete('/delete')
-    async deleteContact(@Res() res, @Query('contact_id') query) {
-        // console.log(res)
-        console.log(query)
-        const contact = await this.contactService.deleteContact(query);
+    async deleteContact(@Res() res, @Query('contact_id') contact_id) {
+        const contact = await this.contactService.deleteContact(contact_id);
         if (!contact) throw new NotFoundException('Contact does not exist');
         return res.status(HttpStatus.OK).json({
             message: 'Contact has been deleted',

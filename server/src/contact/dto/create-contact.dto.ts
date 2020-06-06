@@ -7,4 +7,6 @@ export class CreateContactDTO {
   readonly company: string;
   readonly email: string;
   readonly created: Date;
+  readonly edited: Date;
+  readonly editable: Boolean;
 }

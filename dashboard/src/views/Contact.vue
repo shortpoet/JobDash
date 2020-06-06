@@ -28,16 +28,8 @@ import ContactTable from './../components/contacts/ContactTable.vue'
 import { Tab } from './../interfaces/tab.interface'
 import { useStore, IStore } from '../store'
 import { Contact } from '../interfaces/contact.interface'
+import { updateContacts } from '../utils'
 
-const updateContacts = async (iStore: IStore): Promise<Contact[]> => {
-  console.log('update contacts')
-
-  return iStore.store.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
-    const post = iStore.store.getState().contacts.all[id]
-    return accumulator.concat(post)
-  }, [])
-
-}
 const loadContacts = async (): Promise<Contact[]> => {
   console.log('load contacts')
   const store = useStore()

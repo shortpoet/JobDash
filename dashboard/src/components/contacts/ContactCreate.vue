@@ -44,6 +44,7 @@ export default defineComponent({
         company: company.value,
         email: email.value,
         created: moment(),
+        edited: moment(),
         editable: false
       }
       await store.createContact(contact)
