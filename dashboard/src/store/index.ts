@@ -48,7 +48,6 @@ class Store {
 
   async createContact(contact: Contact) {
     const response = await axios.post<ContactDTO>('http://localhost:3000/contact/create', contact)
-    // console.log(response.data)
     this.state.contacts.all[response.data.contact._id] = response.data.contact
     this.state.contacts.ids.push(response.data.contact._id.toString())
     this.fetchContacts()
@@ -68,23 +67,56 @@ class Store {
 
   toggleEditable(contact: Contact, editable: boolean) {
     console.log('toggle editable')
+    // this only affects local state
+    // doesn't actually have to be updated in db unless we want the edit state to persist through reload
+    // even then could make use of browser storage api
+    // should actually persist store there
+    // TODO
+    // create api service that pushes to browser storage
+    // only updates db after timeout or event
+    // practice optimization
+    // #TODO
     // this works 
     this.state.contacts.all[contact._id].editable = editable
     // this doesn't work because can't set value on readonly property (contact is part of contact Contact[] which is a ref)
     // contact.editable = editable
   }
+  
+  toggleDeletable(oldContact: Contact, deletable: boolean) {
+    // console.log('toggle deletable')
+    // console.log(deletable)
+    // console.log('old locked', oldContact.locked)
+    // console.log('old state locked', this.state.contacts.all[oldContact._id].locked)
+    //
+    // without this line I was getting the bug where I had to click twice
+    //
+    this.state.contacts.all[oldContact._id].locked = deletable
+    //
+    // console.log('new state locked', this.state.contacts.all[oldContact._id].locked)
 
-  toggleDeletable(contact: Contact, deletable: boolean) {
-    console.log('toggle deletable')
-    // this works 
-    this.state.contacts.all[contact._id].locked = deletable
+    const newContact: Contact = {
+      _id: oldContact._id,
+      name: oldContact.name,
+      company: oldContact.name,
+      email: oldContact.name,
+      created: oldContact.created,
+      edited: oldContact.edited,
+      editable: oldContact.editable,
+      locked: deletable
+    }
+    // console.log('new locked', newContact.locked)
+    this.editContact(oldContact, newContact)
   }
-
+  
   async editContact(oldContact: Contact, newContact: Contact) {
+    // console.log('old locked', oldContact.locked)
+    // console.log('new locked', newContact.locked)
+
     const response = await axios.put<ContactDTO>(
       `http://localhost:3000/contact/update?contact_id=${oldContact._id}`,
       newContact
     )
+    // console.log('response locked', response.data.contact.locked)
     this.state.contacts.all[response.data.contact._id] = response.data.contact
   }
 
@@ -123,7 +155,7 @@ class Store {
     //   loaded: true
     // }
 
-    console.log(this.state.contacts)
+    // console.log(this.state.contacts)
 
   }
 

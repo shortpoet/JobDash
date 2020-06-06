@@ -44,7 +44,7 @@
       <td style="text-align: center; cursor: pointer" @click="toggleEditable(contact)">📝</td>
 
       <td v-if="contact.locked" style="text-align: center; cursor: pointer" @click="toggleDeletable(contact)">🔒</td>
-      <td v-else style="text-align: center; cursor: pointer" @click="toggleDeletable(contact)">🔓</td>
+      <td v-else style="text-align: center; cursor: pointer" @click="toggleDeletable(contact)">No</td>
 
     </tr>
   </table>
@@ -121,9 +121,10 @@ export default defineComponent({
       modal.hideModal()
       const deletedId = await store.deleteContact(deleteCandidate.value)
       console.log('delete contact')
-      console.log(deletedId)
+      // console.log(deletedId)
       deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
-      console.log(deleteCandidate.value)
+      // null check
+      // console.log(deleteCandidate.value)
       ctx.emit('update-contacts')
     }
     
@@ -156,15 +157,17 @@ export default defineComponent({
     }
 
     const toggleDeletable = async (contact: Contact) => {
-      console.log(contact.locked)
+      // console.log('contact table')
+      // console.log(contact.locked)
       if (contact.locked == false) {
-        store.toggleDeletable(contact, true)
-      } else {
-        store.toggleDeletable(contact, false)
-        // this closes the edit window by updating the refs after newContact editable set to false
+        await store.toggleDeletable(contact, true)
         ctx.emit('update-contacts')
+        // console.log(contact.locked)
+      } else {
+        await store.toggleDeletable(contact, false)
+        ctx.emit('update-contacts')
+        // console.log(contact.locked)
       }
-      console.log(contact.locked)
     }
 
     return {

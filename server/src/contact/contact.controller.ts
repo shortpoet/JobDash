@@ -12,7 +12,9 @@ export class ContactController {
     // add a contact
     @Post('/create')
     async addContact(@Res() res, @Body() createContactDTO: CreateContactDTO) {
+        // console.log(createContactDTO.locked)
         const contact = await this.contactService.addContact(createContactDTO);
+        // console.log(contact.locked)
         return res.status(HttpStatus.OK).json({
             message: "Contact has been created successfully",
             contact
@@ -37,7 +39,9 @@ export class ContactController {
     // Update a contact's details
     @Put('/update')
     async updateContact(@Res() res, @Query('contact_id') contact_id, @Body() createContactDTO: CreateContactDTO) {
+        // console.log(createContactDTO.locked)
         const contact = await this.contactService.updateContact(contact_id, createContactDTO);
+        // console.log(contact.locked)
         if (!contact) throw new NotFoundException('Contact does not exist!');
         return res.status(HttpStatus.OK).json({
             message: 'Contact has been successfully updated',
