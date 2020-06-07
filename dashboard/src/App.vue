@@ -8,12 +8,12 @@
     * * $section-padding-large
   -->
 
-  <BaseModal :style="modalDisplay" :isActive="modal.visible">
+  <!-- <BaseModal :style="modalDisplay" :isActive="modal.visible">
     <template #destination>
       <div class="" id="modal-warning">
       </div>
     </template>
-  </BaseModal>
+  </BaseModal> -->
 
   <section class="section section-container">
     <div class="container">

@@ -1,10 +1,10 @@
 <template>
-  <!-- <BaseModal :style="modalDisplay">
+  <BaseModal :style="modalDisplay" :isActive="modal.visible">
     <template #destination>
       <div class="" id="modal-warning">
       </div>
     </template>
-  </BaseModal> -->
+  </BaseModal>
   <Contact />
 </template>
 
@@ -24,7 +24,7 @@ export default defineComponent({
     const modal = useModal()
 
     const modalDisplay = computed(() => ({
-      display: modal.visible.value ? 'block' : 'none'
+      // display: modal.visible.value ? 'block' : 'none'
     }))
 
     return {

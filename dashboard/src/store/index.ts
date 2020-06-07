@@ -111,6 +111,7 @@ class Store {
   async editContact(oldContact: Contact, newContact: Contact) {
     // console.log('old locked', oldContact.locked)
     // console.log('new locked', newContact.locked)
+    console.log('writing to db')
 
     const response = await axios.put<ContactDTO>(
       `http://localhost:3000/contact/update?contact_id=${oldContact._id}`,

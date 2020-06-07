@@ -12,7 +12,8 @@
     </thead>
     <tr
       v-for="contact in contacts"
-      :key="contact._id"    
+      :key="contact._id" 
+      class="contact-row"   
     >
     
       <!--
@@ -39,12 +40,20 @@
       </td>
       <td v-else>{{ contact.email }}</td>
 
-      <td style="color: red; text-align: center; cursor: pointer" @click="handleConfirmDelete(contact)">🗑</td>
+      <td class="icon-cell" @click="handleConfirmDelete(contact)">
+        <BaseIcon color="red" name="trash-2"></BaseIcon>
+      </td>
 
-      <td style="text-align: center; cursor: pointer" @click="toggleEditable(contact)">📝</td>
+      <td class="icon-cell" @click="toggleEditable(contact)">
+        <BaseIcon color="blue" name="edit"></BaseIcon>        
+      </td>
 
-      <td v-if="contact.locked" style="text-align: center; cursor: pointer" @click="toggleDeletable(contact)">🔒</td>
-      <td v-else style="text-align: center; cursor: pointer" @click="toggleDeletable(contact)">No</td>
+      <td class="icon-cell" v-if="contact.locked" @click="toggleDeletable(contact)">
+        <BaseIcon color="gold" name="lock"></BaseIcon>
+      </td>
+      <td class="icon-cell" v-else @click="toggleDeletable(contact)">
+        <BaseIcon color="silver" name="unlock"></BaseIcon>
+      </td>
 
     </tr>
   </table>
@@ -62,12 +71,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent, computed, ref, watch } from 'vue'
 import { useStore } from './../../store'
 import ContactRow from './../../components/contacts/ContactRow.vue'
 import BaseInput from './../../components/common/BaseInput.vue'
+import BaseIcon from './../../components/common/BaseIcon.vue'
 import ModalWarning from './../../components/common/ModalWarning.vue'
 import { Contact } from '../../interfaces/contact.interface'
+import { Field } from '../../interfaces/field.interface'
 import moment from 'moment'
 import { useModal } from '../../composables/useModal'
 
@@ -84,16 +95,20 @@ export default defineComponent({
   components: {
     ContactRow,
     BaseInput,
-    ModalWarning
+    ModalWarning,
+    BaseIcon
   },
 
   emits: ['update-contacts'],
 
   async setup(props, ctx){
 
-    const nameEdit = ref()
-    const companyEdit = ref()
+    const nameEdit = ref() 
+    const companyEdit = ref() 
     const emailEdit = ref()
+
+    const contactTouched = ref(false)
+
     const confirmDelete = ref(false)
     const deleteCandidate = ref<Contact>(null)
 
@@ -135,24 +150,28 @@ export default defineComponent({
         companyEdit.value = oldContact.company
         emailEdit.value = oldContact.email
       } else {
-
-        const newContact: Contact = {
-          _id: oldContact._id,
-          name: nameEdit.value,
-          company: companyEdit.value,
-          email: emailEdit.value,
-          created: oldContact.created,
-          edited: moment(),
-          editable: false,
-          locked: true
+        if (contactTouched.value == true) {
+          const newContact: Contact = {
+            _id: oldContact._id,
+            name: nameEdit.value,
+            company: companyEdit.value,
+            email: emailEdit.value,
+            created: oldContact.created,
+            edited: moment(),
+            editable: false,
+            locked: true
+          }
+  
+          await store.editContact(
+            oldContact, 
+            newContact
+          )
+          contactTouched.value = false
+          // this closes the edit window by updating the refs after newContact editable set to false
+          ctx.emit('update-contacts')
+        } else {
+          store.toggleEditable(oldContact, false)
         }
-
-        await store.editContact(
-          oldContact, 
-          newContact
-        )
-        // this closes the edit window by updating the refs after newContact editable set to false
-        ctx.emit('update-contacts')
       }
     }
 
@@ -170,7 +189,28 @@ export default defineComponent({
       }
     }
 
+    const updateField = (value: string, previous: string) => {
+        if (previous) {
+          contactTouched.value = true
+        }
+      }
+
+    // 
+    watch(
+      () => nameEdit.value,
+      (value: string, previous: string) => updateField(value, previous)
+    )
+    watch(
+      () => companyEdit.value,
+      (value: string, previous: string) => updateField(value, previous)
+    )
+    watch(
+      () => emailEdit.value,
+      (value: string, previous: string) => updateField(value, previous)
+    )
+
     return {
+      contactTouched,
       nameEdit,
       companyEdit,
       emailEdit,
@@ -183,6 +223,7 @@ export default defineComponent({
     }
 
   }
+
 
 })
 </script>

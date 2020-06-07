@@ -39,9 +39,9 @@ export class ContactController {
     // Update a contact's details
     @Put('/update')
     async updateContact(@Res() res, @Query('contact_id') contact_id, @Body() createContactDTO: CreateContactDTO) {
-        // console.log(createContactDTO.locked)
+        console.log(createContactDTO._id)
         const contact = await this.contactService.updateContact(contact_id, createContactDTO);
-        // console.log(contact.locked)
+        // console.log(contact.id)
         if (!contact) throw new NotFoundException('Contact does not exist!');
         return res.status(HttpStatus.OK).json({
             message: 'Contact has been successfully updated',
