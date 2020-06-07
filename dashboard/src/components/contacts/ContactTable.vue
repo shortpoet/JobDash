@@ -103,118 +103,114 @@ export default defineComponent({
 
   async setup(props, ctx){
 
-    const nameEdit = ref() 
-    const companyEdit = ref() 
-    const emailEdit = ref()
+    // #region global
+      const store = useStore()
+    // #endregion
 
-    const contactTouched = ref(false)
+    //#region delete
+      const confirmDelete = ref(false)
+      const deleteCandidate = ref<Contact>(null)
+      const modal = useModal()
 
-    const confirmDelete = ref(false)
-    const deleteCandidate = ref<Contact>(null)
-
-    const store = useStore()
-
-    const modal = useModal()
-
-    const updateContacts = () => {
-      ctx.emit('update-contacts')
-    }
-
-    const handleConfirmDelete = (contact: Contact) => {
-      if (contact.locked) {
-        deleteCandidate.value = contact
-        modal.showModal()
-      } else {
-        deleteCandidate.value = contact
-        deleteContact()
-      }
-    }
-    
-    // confirmDelete.value === true ? false : true
-
-    const deleteContact = async () => {
-      modal.hideModal()
-      const deletedId = await store.deleteContact(deleteCandidate.value)
-      console.log('delete contact')
-      // console.log(deletedId)
-      deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
-      // null check
-      // console.log(deleteCandidate.value)
-      ctx.emit('update-contacts')
-    }
-    
-    const toggleEditable = async (oldContact: Contact) => {
-      if (oldContact.editable == false) {
-        store.toggleEditable(oldContact, true)
-        nameEdit.value = oldContact.name
-        companyEdit.value = oldContact.company
-        emailEdit.value = oldContact.email
-      } else {
-        if (contactTouched.value == true) {
-          const newContact: Contact = {
-            _id: oldContact._id,
-            name: nameEdit.value,
-            company: companyEdit.value,
-            email: emailEdit.value,
-            created: oldContact.created,
-            edited: moment(),
-            editable: false,
-            locked: true
-          }
-  
-          await store.editContact(
-            oldContact, 
-            newContact
-          )
-          contactTouched.value = false
-          // this closes the edit window by updating the refs after newContact editable set to false
-          ctx.emit('update-contacts')
+      const handleConfirmDelete = (contact: Contact) => {
+        if (contact.locked) {
+          deleteCandidate.value = contact
+          modal.showModal()
         } else {
-          store.toggleEditable(oldContact, false)
+          deleteCandidate.value = contact
+          deleteContact()
         }
       }
-    }
-
-    const toggleDeletable = async (contact: Contact) => {
-      // console.log('contact table')
-      // console.log(contact.locked)
-      if (contact.locked == false) {
-        await store.toggleDeletable(contact, true)
+      
+      const deleteContact = async () => {
+        modal.hideModal()
+        const deletedId = await store.deleteContact(deleteCandidate.value)
+        console.log('delete contact')
+        // console.log(deletedId)
+        deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
+        // null check
+        // console.log(deleteCandidate.value)
         ctx.emit('update-contacts')
-        // console.log(contact.locked)
-      } else {
-        await store.toggleDeletable(contact, false)
-        ctx.emit('update-contacts')
-        // console.log(contact.locked)
       }
-    }
+      
+      const toggleDeletable = async (contact: Contact) => {
+        // console.log('contact table')
+        // console.log(contact.locked)
+        if (contact.locked == false) {
+          await store.toggleDeletable(contact, true)
+          ctx.emit('update-contacts')
+          // console.log(contact.locked)
+        } else {
+          await store.toggleDeletable(contact, false)
+          ctx.emit('update-contacts')
+          // console.log(contact.locked)
+        }
+      }
+    //#endregion
 
-    const updateField = (value: string, previous: string) => {
-        if (previous) {
-          contactTouched.value = true
+    //#region edit
+      const nameEdit = ref() 
+      const companyEdit = ref() 
+      const emailEdit = ref()
+      const contactTouched = ref(false)
+
+      const toggleEditable = async (oldContact: Contact) => {
+        if (oldContact.editable == false) {
+          store.toggleEditable(oldContact, true)
+          nameEdit.value = oldContact.name
+          companyEdit.value = oldContact.company
+          emailEdit.value = oldContact.email
+        } else {
+          if (contactTouched.value == true) {
+            const newContact: Contact = {
+              _id: oldContact._id,
+              name: nameEdit.value,
+              company: companyEdit.value,
+              email: emailEdit.value,
+              created: oldContact.created,
+              edited: moment(),
+              editable: false,
+              locked: true
+            }
+    
+            await store.editContact(
+              oldContact, 
+              newContact
+            )
+            contactTouched.value = false
+            // this closes the edit window by updating the refs after newContact editable set to false
+            ctx.emit('update-contacts')
+          } else {
+            store.toggleEditable(oldContact, false)
+          }
         }
       }
 
-    // 
-    watch(
-      () => nameEdit.value,
-      (value: string, previous: string) => updateField(value, previous)
-    )
-    watch(
-      () => companyEdit.value,
-      (value: string, previous: string) => updateField(value, previous)
-    )
-    watch(
-      () => emailEdit.value,
-      (value: string, previous: string) => updateField(value, previous)
-    )
+      const updateField = (value: string, previous: string) => {
+          if (previous) {
+            contactTouched.value = true
+          }
+        }
+      
+      watch(
+        () => nameEdit.value,
+        (value: string, previous: string) => updateField(value, previous)
+      )
+      watch(
+        () => companyEdit.value,
+        (value: string, previous: string) => updateField(value, previous)
+      )
+      watch(
+        () => emailEdit.value,
+        (value: string, previous: string) => updateField(value, previous)
+      )
+    //#endregion
 
     return {
       contactTouched,
       nameEdit,
       companyEdit,
       emailEdit,
-      updateContacts,
       deleteContact,
       toggleEditable,
       toggleDeletable,
@@ -223,8 +219,6 @@ export default defineComponent({
     }
 
   }
-
-
 })
 </script>
 
