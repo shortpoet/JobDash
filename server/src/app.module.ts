@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ContactModule } from './contact/contact.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { MongooseModule } from '@nestjs/mongoose';
         useNewUrlParser: true
       }
     ),
-    ContactModule
+    ContactModule,
+    TaskModule
   ],
   controllers: [AppController],
   providers: [AppService],
