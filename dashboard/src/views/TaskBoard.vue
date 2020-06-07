@@ -19,6 +19,8 @@ export default defineComponent({
         {id:'1', name: 'Column 1'},
         {id:'2', name: 'Column 2'},
         {id:'3', name: 'Column 3'},
+        {id:'4', name: 'Column 4'},
+        {id:'5', name: 'Column 5'},
       ]
     }
   }

@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
-import { provideStore } from './store'
+import { provideContactStore } from './store/contact.store'
 import BaseModal from './components/common/BaseModal.vue'
 import { useModal } from './composables/useModal'
 
@@ -37,7 +37,7 @@ export default defineComponent({
 
   setup(props, ctx) {
     const modal = useModal()
-    provideStore()
+    provideContactStore()
 
     const modalDisplay = computed(() => ({
       // display: modal.visible.value ? 'block' : 'none'

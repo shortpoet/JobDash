@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
-import { useStore } from './../../store'
+import { useContactStore } from './../../store/contact.store'
 import BaseInput from './../../components/common/BaseInput.vue'
 import { Contact } from '../../interfaces/contact.interface'
 import moment from 'moment'
@@ -31,12 +31,12 @@ export default defineComponent({
     const company = ref('company')
     const email = ref('email')
 
-    const store = useStore()
+    const contactStore = useContactStore()
 
 
     const submit = async function(e: any) {
       // console.log(store.getLastId())
-      const nextId = (parseInt(store.getLastId()) + 1).toString()
+      const nextId = (parseInt(contactStore.getLastId()) + 1).toString()
       // console.log(nextId)
       const contact: Contact = {
         _id: nextId,
@@ -48,7 +48,7 @@ export default defineComponent({
         editable: false,
         locked: true
       }
-      await store.createContact(contact)
+      await contactStore.createContact(contact)
       console.log('create contact')
       ctx.emit('update-contacts')
     }

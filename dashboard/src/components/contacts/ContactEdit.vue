@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
-import { useStore } from './../../store'
+import { useContactStore } from './../../store/contact.store'
 import BaseInput from './../../components/common/BaseInput.vue'
 import { Contact } from '../../interfaces/contact.interface'
 import moment from 'moment'
@@ -31,7 +31,7 @@ export default defineComponent({
     const company = ref('company')
     const email = ref('email')
 
-    const store = useStore()
+    const contactStore = useContactStore()
 
     const submit = (e: any) => {
       const contact: Contact = {
@@ -44,7 +44,7 @@ export default defineComponent({
         editable: false,
         locked: true
       }
-      store.createContact(contact)
+      contactStore.createContact(contact)
     }
 
     return{

@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
-import { useStore } from './../../store'
+import { useContactStore } from './../../store/contact.store'
 import BaseInput from './../../components/common/BaseInput.vue'
 import { Contact } from '../../interfaces/contact.interface'
 import moment from 'moment'
@@ -28,9 +28,9 @@ export default defineComponent({
   emits: ['update-contacts'],
 
   async setup(props, ctx){
-    const store = useStore()
+    const contactStore = useContactStore()
     const deleteContact = async (contact: Contact) => {
-      await store.deleteContact(contact)
+      await contactStore.deleteContact(contact)
       console.log('delete contact')
       ctx.emit('update-contacts')
     }

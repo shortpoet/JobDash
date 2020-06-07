@@ -26,19 +26,20 @@ import ContactCreate from './../components/contacts/ContactCreate.vue'
 import ContactEdit from './../components/contacts/ContactEdit.vue'
 import ContactTable from './../components/contacts/ContactTable.vue'
 import { Tab } from './../interfaces/tab.interface'
-import { useStore, IStore } from '../store'
+import  contact from '../store'
+import { useContactStore, IContactStore } from '../store/contact.store'
 import { Contact } from '../interfaces/contact.interface'
 import { updateContacts } from '../utils'
 
 const loadContacts = async (): Promise<Contact[]> => {
   console.log('load contacts')
-  const store = useStore()
-  if (!store.getState().contacts.loaded) {
-    await store.fetchContacts()
+  const contactStore = useContactStore()
+  if (!contactStore.getState().contacts.loaded) {
+    await contactStore.fetchContacts()
   }
 
-  return store.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
-    const post = store.getState().contacts.all[id]
+  return contactStore.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
+    const post = contactStore.getState().contacts.all[id]
     return accumulator.concat(post)
   }, [])
 
@@ -61,7 +62,7 @@ export default defineComponent({
     const activeTab = ref<Tab>()
     const allContacts = ref<Contact[]>([])
 
-    const store = useStore()
+    const contactStore = useContactStore()
 
     onMounted(async () => {
       // allContacts.value = await loadContacts()
@@ -97,12 +98,12 @@ export default defineComponent({
 
     }
 
-    const iStore: IStore = {
-      store: store
+    const iContactStore: IContactStore = {
+      contactStore: contactStore
     }
 
     const onUpdateContacts = async () => {
-      allContacts.value = await updateContacts(iStore)
+      allContacts.value = await updateContacts(iContactStore)
     }
     
     return {

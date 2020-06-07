@@ -61,6 +61,7 @@
   <teleport to="#modal-warning" v-if="modal.visible">
     <ModalWarning @delete-contact="deleteContact"/>
   </teleport>
+  <div />
     <!-- <Suspense>
       <template #default>
 
@@ -73,7 +74,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch } from 'vue'
-import { useStore } from './../../store'
+import { useContactStore } from './../../store/contact.store'
 import ContactRow from './../../components/contacts/ContactRow.vue'
 import BaseInput from './../../components/common/BaseInput.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
@@ -109,7 +110,7 @@ export default defineComponent({
     }
 
     // #region global
-      const store = useStore()
+      const contactStore = useContactStore()
     // #endregion
 
     //#region delete
@@ -129,7 +130,7 @@ export default defineComponent({
       
       const deleteContact = async () => {
         modal.hideModal()
-        const deletedId = await store.deleteContact(deleteCandidate.value)
+        const deletedId = await contactStore.deleteContact(deleteCandidate.value)
         console.log('delete contact')
         // console.log(deletedId)
         deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
@@ -142,11 +143,11 @@ export default defineComponent({
         // console.log('contact table')
         // console.log(contact.locked)
         if (contact.locked == false) {
-          await store.toggleDeletable(contact, true)
+          await contactStore.toggleDeletable(contact, true)
           ctx.emit('update-contacts')
           // console.log(contact.locked)
         } else {
-          await store.toggleDeletable(contact, false)
+          await contactStore.toggleDeletable(contact, false)
           ctx.emit('update-contacts')
           // console.log(contact.locked)
         }
@@ -161,7 +162,7 @@ export default defineComponent({
 
       const toggleEditable = async (oldContact: Contact) => {
         if (oldContact.editable == false) {
-          store.toggleEditable(oldContact, true)
+          contactStore.toggleEditable(oldContact, true)
           nameEdit.value = oldContact.name
           companyEdit.value = oldContact.company
           emailEdit.value = oldContact.email
@@ -178,7 +179,7 @@ export default defineComponent({
               locked: true
             }
     
-            await store.editContact(
+            await contactStore.editContact(
               oldContact, 
               newContact
             )
@@ -186,7 +187,7 @@ export default defineComponent({
             // this closes the edit window by updating the refs after newContact editable set to false
             ctx.emit('update-contacts')
           } else {
-            store.toggleEditable(oldContact, false)
+            contactStore.toggleEditable(oldContact, false)
           }
         }
       }

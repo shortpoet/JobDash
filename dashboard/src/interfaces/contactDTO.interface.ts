@@ -1,4 +1,3 @@
-import { Moment } from "moment";
 import { Contact } from "./contact.interface";
 
 export interface ContactDTO {

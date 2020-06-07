@@ -1,11 +1,11 @@
-import { IStore } from '../store'
+import { IContactStore } from '../store/contact.store'
 import { Contact } from '../interfaces/contact.interface'
 
-export const updateContacts = async (iStore: IStore): Promise<Contact[]> => {
+export const updateContacts = async (iContactStore: IContactStore): Promise<Contact[]> => {
   console.log('update contacts')
 
-  return iStore.store.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
-    const post = iStore.store.getState().contacts.all[id]
+  return iContactStore.contactStore.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
+    const post = iContactStore.contactStore.getState().contacts.all[id]
     return accumulator.concat(post)
   }, [])
 
