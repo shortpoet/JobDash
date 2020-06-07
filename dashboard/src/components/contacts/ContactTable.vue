@@ -17,7 +17,8 @@
     >
     
       <!--
-        Using a component here creates a bug
+        Using a component here createD a bug
+        update: no longer; wonder what the issue with my code
       -->
 
       <!-- <ContactRow :contact="contact" @update-contacts="updateContacts" /> -->
@@ -102,6 +103,10 @@ export default defineComponent({
   emits: ['update-contacts'],
 
   async setup(props, ctx){
+
+    const updateContacts = () => {
+      ctx.emit('update-contacts')
+    }
 
     // #region global
       const store = useStore()
@@ -207,6 +212,7 @@ export default defineComponent({
     //#endregion
 
     return {
+      updateContacts,
       contactTouched,
       nameEdit,
       companyEdit,

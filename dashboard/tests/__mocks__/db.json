@@ -1,0 +1,14 @@
+{
+  "contacts": [
+    {
+      "_id": "0",
+      "name": "name",
+      "company": "company",
+      "email": "email",
+      "created": "2020-06-07T15:29:14.945Z",
+      "edited": "2020-06-07T15:29:14.946Z",
+      "editable": false,
+      "locked": true
+    }
+  ]
+}
