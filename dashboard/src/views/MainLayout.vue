@@ -6,18 +6,22 @@
     </template>
   </BaseModal>
   <Contact />
+  <TaskBoard />
+  <div />
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
 import BaseModal from './../components/common/BaseModal.vue'
 import Contact from './Contact.vue'
+import TaskBoard from './TaskBoard.vue'
 import { useModal } from '../composables/useModal'
 export default defineComponent({
   name: 'Home',
 
   components: {
     Contact,
+    TaskBoard,
     BaseModal
   },
   setup(props, ctx) {

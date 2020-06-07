@@ -1,0 +1,11 @@
+.task-board{
+  background-color: $royal-purple;
+  color: $white;
+  .columns {
+    margin: 0rem .75rem 0rem .75rem;
+    .column{
+      background-color: $forest-green;
+      margin: .75rem .75rem .75rem .75rem;
+    }
+  }
+}
