@@ -41,6 +41,10 @@ class ContactStore {
     // if database / store are empty return -1
     return last ? this.state.contacts.all[last]._id : '-1'
   }
+  
+  public geContactById(_id: string): Contact {
+    return this.state.contacts.all[_id]
+  }
 
   async createContact(contact: Contact) {
     const response = await axios.post<ContactDTO>('http://localhost:3000/contact/create', contact)

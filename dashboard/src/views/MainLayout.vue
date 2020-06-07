@@ -5,7 +5,14 @@
       </div>
     </template>
   </BaseModal>
-  <Contact />
+  <div class="columns">
+    <div class="column is-one-third">
+      <TaskCreate />
+    </div>
+    <div class="column is-two-thirds">
+      <Contact />
+    </div>
+  </div>
   <TaskBoard />
   <div />
 </template>
@@ -13,6 +20,7 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
 import BaseModal from './../components/common/BaseModal.vue'
+import TaskCreate from './../components/task/TaskCreate.vue'
 import Contact from './Contact.vue'
 import TaskBoard from './TaskBoard.vue'
 import { useModal } from '../composables/useModal'
@@ -22,6 +30,7 @@ export default defineComponent({
   components: {
     Contact,
     TaskBoard,
+    TaskCreate,
     BaseModal
   },
   setup(props, ctx) {

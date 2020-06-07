@@ -7,10 +7,10 @@
     <div class="columns">
       <div class="column is-one-half">
         <!-- <ContactTabs :tabs="tabs" @tab-activated="tabActivated" v-model="activeTab.component" :active-tab="activeTab.name"/> -->
-        <ContactTabs :tabs="tabs" @tab-activated="tabActivated" v-model="activeTab" :active-tab="activeTab.name"/>
+        <!-- <ContactTabs :tabs="tabs" @tab-activated="tabActivated" v-model="activeTab" :active-tab="activeTab.name"/> -->
         <!-- <component :is="selectedComponent" /> -->
         <ContactCreate v-if="activeTab.name === 'create'" @update-contacts="onUpdateContacts"/>
-        <ContactEdit v-if="activeTab.name === 'edit'" />
+        <!-- <ContactEdit v-if="activeTab.name === 'edit'" /> -->
       </div>
       <div class="column is-one-half">
         <ContactTable :contacts="allContacts" @update-contacts="onUpdateContacts"/>

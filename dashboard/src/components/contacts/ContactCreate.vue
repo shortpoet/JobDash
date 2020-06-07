@@ -1,14 +1,13 @@
 <template>
-  <div class="columns">
-    <div class="column is-one-half">
-      <form action="submit" @submit.prevent="submit">
-        <BaseInput type="text" name="Name" v-model="name" />
-        <BaseInput type="text" name="Company" v-model="company" />
-        <BaseInput type="text" name="Email" v-model="email" />
-        <button class="button is-success">Create</button>
-      </form>
-    </div>
-    <div class="column is-one-half"></div>
+  <div class="form-container">
+    <h5 class="form-heading">Contact</h5>
+    <hr class="form-hr"/>
+    <form action="submit" @submit.prevent="submit">
+      <BaseInput type="text" name="Name" v-model="name" />
+      <BaseInput type="text" name="Company" v-model="company" />
+      <BaseInput type="text" name="Email" v-model="email" />
+      <button class="button is-success">Create</button>
+    </form>
   </div>
 </template>
 

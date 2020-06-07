@@ -9,12 +9,40 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
+import { Task } from './../interfaces/task.interface'
+import { useTaskStore, ITaskStore } from '../store/task.store'
+
+const loadTasks = async (): Promise<Task[]> => {
+  console.log('load tasks')
+  const taskStore = useTaskStore()
+  if (!taskStore.getState().tasks.loaded) {
+    await taskStore.fetchTasks()
+  }
+
+  return taskStore.getState().tasks.ids.reduce<Task[]>((accumulator, id) => {
+    const task = taskStore.getState().tasks.all[id]
+    return accumulator.concat(task)
+  }, [])
+
+}
 
 export default defineComponent({
   name: 'TaskBoard',
-  setup() {
+  async setup() {
+
+    const taskStore = useTaskStore()
+
+    const allTasks = ref<Task[]>([])
+
+
+    onMounted(async () => {
+      // allTasks.value = await loadTasks()
+      // console.log(allTasks.value)
+    })
+
     return {
+      allTasks,
       columns: [
         {id:'1', name: 'Column 1'},
         {id:'2', name: 'Column 2'},
