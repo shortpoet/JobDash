@@ -2,6 +2,7 @@
   <table class="table is-hoverable">
     <thead>
       <tr>
+        <th>Id</th>
         <th>Name</th>
         <th>Company</th>
         <th>Email</th>
@@ -22,6 +23,8 @@
       -->
 
       <!-- <ContactRow :contact="contact" @update-contacts="updateContacts" /> -->
+
+      <td>{{ contact._id }}</td>
 
       <td v-if="contact.editable" contenteditable>
         <BaseInput type="text" name="Name" v-model="nameEdit" />

@@ -1,7 +1,7 @@
 <template>
 <section class="section task-create">
   <div class="form-container">
-    <h5 class="form-heading">Contact</h5>
+    <h5 class="form-heading">Task</h5>
     <hr class="form-hr"/>
     <form action="submit" @submit.prevent="submit">
       <BaseInput type="text" name="Name" v-model="name" />
