@@ -1,5 +1,7 @@
-import * as contact from './contact.store'
+import { createContactStore } from './contact.store'
+
+const contactStore = createContactStore().getState()
 
 export default {
-  contact
+  contactStore
 }

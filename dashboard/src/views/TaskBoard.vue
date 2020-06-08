@@ -5,14 +5,6 @@
   -->
   <section class="section task-section">
 
-    <div class="columns">
-      <div class="column is-one-half">
-      </div>
-      <div class="column is-one-half">
-        <TaskTable :tasks="allTasks" @update-tasks="onUpdateTasks"/>
-      </div>
-    </div>
-
     <div class="task-board container">
       <div class="columns is-centered">
         <div class="column has-text-centered" v-for="column in columns" :key="column.id">
@@ -63,12 +55,22 @@ export default defineComponent({
     //   })
     // })
 
-    const allTasks = ref<Task[]>([])
 
     // is this correct usage of provide/inject
-    const taskUse = await useTask(allTasks)
+    //#region tasks
+      const taskStore = useTaskStore()
 
-    const onUpdateTasks = taskUse.onUpdateTasks
+      const iTaskStore: ITaskStore = {
+        taskStore: taskStore
+      }
+
+      const allTasks = ref<Task[]>([])
+
+      // is this correct usage of provide/inject
+      const taskUse = await useTask(iTaskStore, allTasks)
+
+      const onUpdateTasks = taskUse.onUpdateTasks
+    //#endregion
 
 
     return {

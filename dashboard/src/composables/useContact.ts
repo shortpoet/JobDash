@@ -4,14 +4,9 @@ import { useContactStore, IContactStore } from '../store/contact.store'
 import { Contact } from '../interfaces/contact.interface'
 import { updateContacts, loadContacts } from '../utils'
 
-export default async function useContact(allContactsRef) {
+export default async function useContact(iContactStore, allContactsRef) {
   // console.log('use contact')
 
-  const contactStore = useContactStore()
-  
-  const iContactStore: IContactStore = {
-    contactStore: contactStore
-  }
   
   allContactsRef.value = await loadContacts(iContactStore)
 

@@ -2,18 +2,19 @@ import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
 import { Contact } from "../interfaces/contact.interface"
 import { ContactDTO } from "../interfaces/contactDTO.interface"
+import { StateMap } from "./store.interface"
 
-interface ContactsState {
+interface ContactsStateMap extends StateMap {
   ids: string[]
   all: Record<string, Contact>
   loaded: boolean
 }
 
 interface ContactStoreState {
-  contacts: ContactsState
+  contacts: ContactsStateMap
 }
 
-const initialContactsState = () : ContactsState => ({
+const initialContactsStateMap = () : ContactsStateMap => ({
   ids: [
   ],
   all: {
@@ -22,8 +23,19 @@ const initialContactsState = () : ContactsState => ({
 })
 
 const initialContactStoreState = () : ContactStoreState => ({
-  contacts: initialContactsState()
+  contacts: initialContactsStateMap()
 })
+
+// declare function getContactById(_id: string): any;
+
+// let getContactById: (_id: string) => Contact = 
+// function(_id: string): Contact {
+//   return this.state.contacts.all[_id]
+// }
+// getContactById = 
+// function(_id: string): any {
+//   this.state.contacts.all[_id] ? this.state.contacts.all[_id] : null
+// }
 
 class ContactStore {
   protected state: ContactStoreState
@@ -41,10 +53,19 @@ class ContactStore {
     // if database / store are empty return -1
     return last ? this.state.contacts.all[last]._id : '-1'
   }
-  
-  public geContactById(_id: string): Contact {
+
+  public getContactById(_id: string): Contact;
+  public getContactById(_id: string): any {
+    console.log('get by id')
     console.log(_id)
-    return this.state.contacts.all[_id]
+    if (this.state.contacts.all[_id]) {
+      return this.state.contacts.all[_id]
+    } else {
+      console.log('is null')
+      return null
+    }
+    console.log(_id)
+    this.state.contacts.all[_id] ? this.state.contacts.all[_id] : null
   }
 
   async createContact(contact: Contact) {
@@ -84,7 +105,7 @@ class ContactStore {
   }
   
   toggleDeletable(oldContact: Contact, deletable: boolean) {
-    // console.log('toggle deletable')
+    console.log('toggle deletable')
     // console.log(deletable)
     // console.log('old locked', oldContact.locked)
     // console.log('old state locked', this.state.contacts.all[oldContact._id].locked)
@@ -94,12 +115,11 @@ class ContactStore {
     this.state.contacts.all[oldContact._id].locked = deletable
     //
     // console.log('new state locked', this.state.contacts.all[oldContact._id].locked)
-
     const newContact: Contact = {
       _id: oldContact._id,
       name: oldContact.name,
-      company: oldContact.name,
-      email: oldContact.name,
+      company: oldContact.company,
+      email: oldContact.email,
       created: oldContact.created,
       edited: oldContact.edited,
       editable: oldContact.editable,

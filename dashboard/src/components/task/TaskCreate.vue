@@ -43,36 +43,30 @@ export default defineComponent({
 
     const contactStore = useContactStore()
 
-
-    if (contact.value) {
-      console.log(contact.value)
-      console.log(contact.value._id)
-    }
-
-
     const submit = async function(e: any) {
-      contact.value = await contactStore.geContactById(contactId.value)
-
-      console.log(contact.value)
-      console.log(contact.value._id)
-
-      // console.log(store.getLastId())
-      const nextId = (parseInt(taskStore.getLastId()) + 1).toString()
-      // console.log(nextId)
-      const task: Task = {
-        _id: nextId,
-        name: name.value,
-        category: category.value,
-        description: description.value,
-        contact: contact.value,
-        created: moment(),
-        edited: moment(),
-        editable: false,
-        locked: true
+      contact.value = await contactStore.getContactById(contactId.value)
+      if (contact.value) {
+        // console.log(store.getLastId())
+        const nextId = (parseInt(taskStore.getLastId()) + 1).toString()
+        // console.log(nextId)
+        const task: Task = {
+          _id: nextId,
+          name: name.value,
+          category: category.value,
+          description: description.value,
+          contact: contact.value,
+          created: moment(),
+          edited: moment(),
+          editable: false,
+          locked: true
+        }
+        await taskStore.createTask(task)
+        console.log('create task')
+        ctx.emit('update-tasks')
+      } else {
+        throw new Error(`Contact with Id - ${contactId.value} - does not exist yet`)
       }
-      await taskStore.createTask(task)
-      console.log('create task')
-      ctx.emit('update-tasks')
+
     }
 
     const updateTable = () => {

@@ -12,7 +12,7 @@
       </tr>
     </thead>
     <tr
-      v-for="contact in contacts"
+      v-for="contact in allContacts"
       :key="contact._id" 
       class="contact-row"   
     >
@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch } from 'vue'
-import { useContactStore } from './../../store/contact.store'
+import { useContactStore, IContactStore } from './../../store/contact.store'
 import ContactRow from './../../components/contacts/ContactRow.vue'
 import BaseInput from './../../components/common/BaseInput.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
@@ -81,15 +81,16 @@ import { Field } from '../../interfaces/field.interface'
 import moment from 'moment'
 import { useModal } from '../../composables/useModal'
 import { Destination } from '../../interfaces/modal.interface'
+import useContact from '../../composables/useContact'
 
 export default defineComponent({
   name: 'ContactTable',
 
   props: {
-    contacts: {
-      type: Array,
-      required: true
-    }
+    // contacts: {
+    //   type: Array,
+    //   required: true
+    // }
   },
 
   components: {
@@ -99,16 +100,31 @@ export default defineComponent({
     BaseIcon
   },
 
-  emits: ['update-contacts'],
+  emits: ['update-tasks', 'update-contacts'],
 
   async setup(props, ctx){
 
     const updateContacts = () => {
       ctx.emit('update-contacts')
     }
+    
+    //#region contacts
+      const contactStore = useContactStore()
+  
+      const iContactStore: IContactStore = {
+        contactStore: contactStore
+      }
+
+      const allContacts = ref<Contact[]>([])
+
+      const contactUse = await useContact(iContactStore, allContacts)
+
+      const onUpdateContacts = contactUse.onUpdateContacts
+    //#endregion
+
 
     // #region global
-      const contactStore = useContactStore()
+      // const contactStore = useContactStore()
     // #endregion
 
     //#region delete
@@ -128,29 +144,38 @@ export default defineComponent({
       }
       
       const deleteContact = async (e?) => {
-        if (e == destination) {
-          modal.hideModal()
+        // check for event
+        if (e) {
+          // check if correct destination
+          if (e == destination) {
+            modal.hideModal()
+            const deletedId = await contactStore.deleteContact(deleteCandidate.value)
+            console.log('delete contact')
+            // null check
+            deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
+            onUpdateContacts()
+            // ctx.emit('update-contacts')
+          }
+        } else {
+          // no event no modal
           const deletedId = await contactStore.deleteContact(deleteCandidate.value)
           console.log('delete contact')
-          // console.log(deletedId)
-          deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
           // null check
-          // console.log(deleteCandidate.value)
-          ctx.emit('update-contacts')
+          deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
+          onUpdateContacts()
+          // ctx.emit('update-contacts')
         }
       }
       
       const toggleDeletable = async (contact: Contact) => {
-        // console.log('contact table')
-        // console.log(contact.locked)
         if (contact.locked == false) {
           await contactStore.toggleDeletable(contact, true)
-          ctx.emit('update-contacts')
-          // console.log(contact.locked)
+          onUpdateContacts()
+          // ctx.emit('update-contacts')
         } else {
           await contactStore.toggleDeletable(contact, false)
-          ctx.emit('update-contacts')
-          // console.log(contact.locked)
+          onUpdateContacts()
+          // ctx.emit('update-contacts')
         }
       }
     //#endregion
@@ -186,7 +211,8 @@ export default defineComponent({
             )
             contactTouched.value = false
             // this closes the edit window by updating the refs after newContact editable set to false
-            ctx.emit('update-contacts')
+            // ctx.emit('update-contacts')
+            onUpdateContacts()
           } else {
             contactStore.toggleEditable(oldContact, false)
           }
@@ -214,6 +240,7 @@ export default defineComponent({
     //#endregion
 
     return {
+      allContacts,
       updateContacts,
       contactTouched,
       nameEdit,

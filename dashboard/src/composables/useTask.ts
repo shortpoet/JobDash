@@ -5,14 +5,9 @@ import { Contact } from '../interfaces/contact.interface'
 import { updateTasks, loadTasks } from '../utils'
 import { useTaskStore, ITaskStore } from '../store/task.store'
 
-export default async function useTask(allTasksRef) {
+export default async function useTask(iTaskStore, allTasksRef) {
   console.log('use task')
 
-  const taskStore = useTaskStore()
-
-  const iTaskStore: ITaskStore = {
-    taskStore: taskStore
-  }
 
   allTasksRef.value = await loadTasks(iTaskStore)
 

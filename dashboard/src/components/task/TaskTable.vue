@@ -6,13 +6,14 @@
         <th>Name</th>
         <th>Category</th>
         <th>Description</th>
+        <th>Contact Id</th>
         <th>Delete</th>
         <th>Edit</th>
         <th>Locked</th>
       </tr>
     </thead>
     <tr
-      v-for="task in tasks"
+      v-for="task in allTasks"
       :key="task._id" 
       class="task-row"   
     >
@@ -36,6 +37,8 @@
           {{ descriptionEdit }}
       </td>
       <td v-else>{{ task.description }}</td>
+
+      <td>{{ task.contact[0]._id }}</td>
 
       <td class="icon-cell" @click="handleConfirmDelete(task)">
         <BaseIcon color="red" name="trash-2"></BaseIcon>
@@ -64,7 +67,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch } from 'vue'
-import { useTaskStore } from './../../store/task.store'
+import { useTaskStore, ITaskStore } from './../../store/task.store'
 import BaseInput from './../../components/common/BaseInput.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
 import ModalWarning from './../../components/common/ModalWarning.vue'
@@ -74,15 +77,16 @@ import moment from 'moment'
 import { useModal } from '../../composables/useModal'
 import { useModalMap } from '../../composables/useModalMap'
 import { Destination } from '../../interfaces/modal.interface'
+import useTask from '../../composables/useTask'
 
 export default defineComponent({
   name: 'TaskTable',
 
   props: {
-    tasks: {
-      type: Array,
-      required: true
-    }
+    // tasks: {
+    //   type: Array,
+    //   required: true
+    // }
   },
 
   components: {
@@ -91,7 +95,7 @@ export default defineComponent({
     BaseIcon
   },
 
-  emits: ['update-tasks'],
+  emits: ['update-tasks', 'update-contacts'],
 
   async setup(props, ctx){
 
@@ -99,8 +103,24 @@ export default defineComponent({
       ctx.emit('update-tasks')
     }
 
-    // #region global
+    //#region tasks
       const taskStore = useTaskStore()
+
+      const iTaskStore: ITaskStore = {
+        taskStore: taskStore
+      }
+
+      const allTasks = ref<Task[]>([])
+
+      // is this correct usage of provide/inject
+      const taskUse = await useTask(iTaskStore, allTasks)
+
+      const onUpdateTasks = taskUse.onUpdateTasks
+    //#endregion
+
+
+    // #region global
+      // const taskStore = useTaskStore()
     // #endregion
 
     //#region delete
@@ -128,15 +148,25 @@ export default defineComponent({
       }
       
       const deleteTask = async (e?) => {
-        if (e == destination) {
-          modal.hideModal()
+        if (e) {
+          if (e == destination) {
+            modal.hideModal()
+            const deletedId = await taskStore.deleteTask(deleteCandidate.value)
+            console.log('delete task')
+            deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
+            // null check
+            // console.log(deleteCandidate.value)
+            onUpdateTasks()
+            // ctx.emit('update-tasks')
+          }          
+        } else {
           const deletedId = await taskStore.deleteTask(deleteCandidate.value)
           console.log('delete task')
-          // console.log(deletedId)
           deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
           // null check
           // console.log(deleteCandidate.value)
-          ctx.emit('update-tasks')
+          onUpdateTasks()
+          // ctx.emit('update-tasks')
         }
       }
       
@@ -145,11 +175,13 @@ export default defineComponent({
         // console.log(task.locked)
         if (task.locked == false) {
           await taskStore.toggleDeletable(task, true)
-          ctx.emit('update-tasks')
+          onUpdateTasks()
+          // ctx.emit('update-tasks')
           // console.log(task.locked)
         } else {
           await taskStore.toggleDeletable(task, false)
-          ctx.emit('update-tasks')
+          onUpdateTasks()
+          // ctx.emit('update-tasks')
           // console.log(task.locked)
         }
       }
@@ -187,7 +219,8 @@ export default defineComponent({
             )
             taskTouched.value = false
             // this closes the edit window by updating the refs after newTask editable set to false
-            ctx.emit('update-tasks')
+            // ctx.emit('update-tasks')
+            onUpdateTasks()
           } else {
             taskStore.toggleEditable(oldTask, false)
           }
@@ -215,6 +248,7 @@ export default defineComponent({
     //#endregion
 
     return {
+      allTasks,
       updateTasks,
       taskTouched,
       nameEdit,
