@@ -6,7 +6,7 @@
       <button class="delete" @click="modal.hideModal"></button>
     </div>
     <div class="message-body">Are you sure you want to delete that?</div>
-    <button class="button is-warning" @click="deleteContact">Delete</button>
+    <button class="button is-warning" @click="deleteItem">Delete</button>
   </article>
 </template>
 
@@ -19,12 +19,19 @@ export default defineComponent({
   
   name: 'ModalWarning',
 
-  emits: ['delete-contact'],
+  props: {
+    destination: {
+      type: String,
+      required: true
+    }
+  },
+
+  emits: ['delete-item'],
 
   setup(props, ctx) {
     return {
-      modal: useModal(),
-      deleteContact: () => ctx.emit('delete-contact')
+      modal: useModal(props.destination),
+      deleteItem: () => ctx.emit('delete-item', props.destination)
     }
   }
 })

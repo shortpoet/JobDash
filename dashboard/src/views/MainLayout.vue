@@ -1,7 +1,13 @@
 <template>
-  <BaseModal :style="modalDisplay" :isActive="modal.visible">
+  <BaseModal :isActive="taskModal.visible" :destination="'#delete-task-modal'">
     <template #destination>
-      <div class="" id="modal-warning">
+      <div class="" id="delete-task-modal">
+      </div>
+    </template>
+  </BaseModal>
+  <BaseModal :isActive="contactModal.visible" :destination="'#delete-contact-modal'">
+    <template #destination>
+      <div class="" id="delete-contact-modal">
       </div>
     </template>
   </BaseModal>
@@ -24,8 +30,9 @@ import TaskCreate from './../components/task/TaskCreate.vue'
 import ContactBoard from './ContactBoard.vue'
 import TaskBoard from './TaskBoard.vue'
 import { useModal } from '../composables/useModal'
+import { Destination } from '../interfaces/modal.interface'
 export default defineComponent({
-  name: 'Home',
+  name: 'MainLayout',
 
   components: {
     ContactBoard,
@@ -34,15 +41,14 @@ export default defineComponent({
     BaseModal
   },
   setup(props, ctx) {
-    const modal = useModal()
-
-    const modalDisplay = computed(() => ({
-      // display: modal.visible.value ? 'block' : 'none'
-    }))
+    const contactDestination: Destination = '#delete-contact-modal'
+    const taskDestination: Destination = '#delete-task-modal'
+    const contactModal = useModal(contactDestination)
+    const taskModal = useModal(taskDestination)
 
     return {
-      modal,
-      modalDisplay
+      contactModal,
+      taskModal
     }
 
   }

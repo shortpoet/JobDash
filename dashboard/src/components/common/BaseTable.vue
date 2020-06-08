@@ -68,8 +68,8 @@
     #TODO
   -->
 
-  <teleport to="#delete-task-modal" v-if="modal.visible">
-    <ModalWarning @delete-item="deleteTask" :destination="'#delete-task-modal'"/>
+  <teleport to="#modal-warning" v-if="modal.visible">
+    <ModalWarning @delete-task="deleteTask"/>
   </teleport>
 
 
@@ -94,14 +94,13 @@ import { Task } from '../../interfaces/task.interface'
 import { Field } from '../../interfaces/field.interface'
 import moment from 'moment'
 import { useModal } from '../../composables/useModal'
-import { useModalMap } from '../../composables/useModalMap'
-import { Destination } from '../../interfaces/modal.interface'
+import { TableItem } from '../../interfaces/table.item.interface'
 
 export default defineComponent({
   name: 'TaskTable',
 
   props: {
-    tasks: {
+    items: {
       type: Array,
       required: true
     }
@@ -113,13 +112,35 @@ export default defineComponent({
     BaseIcon
   },
 
-  emits: ['update-tasks'],
+  emits: ['update-items', 'toggle-deletable', 'delete-item', 'edit-item'],
 
   async setup(props, ctx){
 
-    const updateTasks = () => {
-      ctx.emit('update-tasks')
+    const updateItems = () => {
+      ctx.emit('update-items')
     }
+
+    //#region dataParse
+      const parseFields = (datum, casing, sortable) => {
+        var sort = []
+        if (sortable == null) {
+          sort = Object.keys(datum).map(x => true)
+        } else {
+          sort = sortable
+        }
+        if (typeof datum === 'object' && datum !== null) {
+          return Object.keys(datum).map((x, i) => ({
+            'key': x,
+            'label': x,
+            'sortable': sort[i]
+          }))
+        } else {
+          throw new TypeError('This function is for an object')
+        }
+      }
+      
+
+    //#endregion
 
     // #region global
       const taskStore = useTaskStore()
@@ -127,55 +148,31 @@ export default defineComponent({
 
     //#region delete
       const confirmDelete = ref(false)
-      const deleteCandidate = ref<Task>(null)
-      // const modal = useModal()
+      const deleteCandidate = ref<TableItem>(null)
+      const modal = useModal()
 
-
-      // this didn't properly return a reactive ref
-      // const modalMap = useModalMap()
-      // const destination = '#delete-task-modal'
-      // modalMap.addModal(destination)
-      // const modal = modalMap.modalMap[destination]
-
-      const destination: Destination = '#delete-task-modal'
-
-      const modal = useModal(destination)
-
-      const handleConfirmDelete = (task: Task) => {
-        if (task.locked) {
-          console.log(modal)
-          deleteCandidate.value = task
+      const handleConfirmDelete = (item: TableItem) => {
+        if (item.locked) {
+          deleteCandidate.value = item
           modal.showModal()
         } else {
-          deleteCandidate.value = task
-          deleteTask()
+          deleteCandidate.value = item
+          deleteItem()
         }
       }
       
-      const deleteTask = async (e?) => {
-        if (e == destination) {
-          modal.hideModal()
-          const deletedId = await taskStore.deleteTask(deleteCandidate.value)
-          console.log('delete task')
-          // console.log(deletedId)
-          deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
-          // null check
-          // console.log(deleteCandidate.value)
-          ctx.emit('update-tasks')
-        }
+      const deleteItem = () => {
+        modal.hideModal()
+        console.log('delete table item')
+        ctx.emit('delete-item', deleteCandidate.value)
+        deleteCandidate.value = null
       }
       
-      const toggleDeletable = async (task: Task) => {
-        // console.log('task table')
-        // console.log(task.locked)
-        if (task.locked == false) {
-          await taskStore.toggleDeletable(task, true)
-          ctx.emit('update-tasks')
-          // console.log(task.locked)
+      const toggleDeletable = async (item: TableItem) => {
+        if (item.locked == false) {
+          ctx.emit('toggle-deletable', {item: item, toggle: true})
         } else {
-          await taskStore.toggleDeletable(task, false)
-          ctx.emit('update-tasks')
-          // console.log(task.locked)
+          ctx.emit('toggle-deletable', {item: item, toggle: false})
         }
       }
     //#endregion
@@ -183,45 +180,30 @@ export default defineComponent({
     //#region edit
       const nameEdit = ref() 
       const categoryEdit = ref() 
-      const descriptionEdit = ref() 
-      const taskTouched = ref(false)
+      const descriptionEdit = ref()
 
-      const toggleEditable = async (oldTask: Task) => {
-        if (oldTask.editable == false) {
-          taskStore.toggleEditable(oldTask, true)
-          nameEdit.value = oldTask.name
-          categoryEdit.value = oldTask.category
-          descriptionEdit.value = oldTask.description
+      const itemTouched = ref(false)
+
+      const toggleEditable = async (oldItem: TableItem) => {
+        if (oldItem.editable == false) {
+          ctx.emit('toggle-deletable', {item: oldItem, toggle: true})
+          // this could be done with array index of fields or a mapping of some sort maybe
+          // nameEdit.value = oldTask.name
+          // categoryEdit.value = oldTask.category
+          // descriptionEdit.value = oldTask.description
         } else {
-          if (taskTouched.value == true) {
-            const newTask: Task = {
-              _id: oldTask._id,
-              name: nameEdit.value,
-              category: categoryEdit.value,
-              description: descriptionEdit.value,
-              contact: oldTask.contact,
-              created: oldTask.created,
-              edited: moment(),
-              editable: false,
-              locked: true
-            }
-    
-            await taskStore.editTask(
-              oldTask, 
-              newTask
-            )
-            taskTouched.value = false
-            // this closes the edit window by updating the refs after newTask editable set to false
-            ctx.emit('update-tasks')
+          if (itemTouched.value == true) {
+            ctx.emit('edit-item', oldItem)
+            itemTouched.value = false
           } else {
-            taskStore.toggleEditable(oldTask, false)
+            ctx.emit('toggle-deletable', {item: oldItem, toggle: false})
           }
         }
       }
 
       const updateField = (value: string, previous: string) => {
           if (previous) {
-            taskTouched.value = true
+            itemTouched.value = true
           }
         }
       

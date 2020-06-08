@@ -26,18 +26,14 @@
 import { defineComponent, computed, ref } from 'vue'
 import { provideContactStore } from './store/contact.store'
 import { provideTaskStore } from './store/task.store'
-import BaseModal from './components/common/BaseModal.vue'
-import { useModal } from './composables/useModal'
 
 export default defineComponent({
   name: 'App',
 
   components: {
-    BaseModal
   },
 
   setup(props, ctx) {
-    const modal = useModal()
     provideContactStore()
     provideTaskStore()
 
@@ -46,7 +42,6 @@ export default defineComponent({
     }))
 
     return {
-      modal,
       modalDisplay
     }
 

@@ -24,11 +24,15 @@ import { useModal } from '../../composables/useModal'
       isActive: {
         type: Boolean,
         required: true
+      },
+      destination: {
+        type: String,
+        required: true
       }
     },
 
     setup(props, ctx) {
-      const modal = useModal()
+      const modal = useModal(props.destination)
 
       return {
         modal

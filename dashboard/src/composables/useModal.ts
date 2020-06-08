@@ -1,12 +1,20 @@
 import { ref, readonly } from "vue"
+import { useModalMap } from './useModalMap'
 
 const visible = ref(false)
 
-export function useModal() {
+export function useModal(destination) {
+  console.log(destination)
+  const modalMap = useModalMap()
+  if (!modalMap.modalMap[destination]) {
+    modalMap.addModal(destination)
+  }
+  const modal = modalMap.modalMap[destination]
+
   return {
     // make it private so that have to use public APIs (show/hide) for interaction / state change
-    visible: readonly(visible),
-    showModal: () => visible.value = true,
-    hideModal: () => visible.value = false,
+    visible: readonly(modal.visible),
+    showModal: () => modal.visible.value = true,
+    hideModal: () => modal.visible.value = false,
   }
 }

@@ -61,8 +61,8 @@
 
     </tr>
   </table>
-  <teleport to="#modal-warning" v-if="modal.visible">
-    <ModalWarning @delete-contact="deleteContact"/>
+  <teleport to="#delete-contact-modal" v-if="modal.visible">
+    <ModalWarning @delete-item="deleteContact" :destination="'#delete-contact-modal'"/>
   </teleport>
   <div />
     <!-- <Suspense>
@@ -86,6 +86,7 @@ import { Contact } from '../../interfaces/contact.interface'
 import { Field } from '../../interfaces/field.interface'
 import moment from 'moment'
 import { useModal } from '../../composables/useModal'
+import { Destination } from '../../interfaces/modal.interface'
 
 export default defineComponent({
   name: 'ContactTable',
@@ -119,10 +120,12 @@ export default defineComponent({
     //#region delete
       const confirmDelete = ref(false)
       const deleteCandidate = ref<Contact>(null)
-      const modal = useModal()
+      const destination: Destination = '#delete-contact-modal'
+      const modal = useModal(destination)
 
       const handleConfirmDelete = (contact: Contact) => {
         if (contact.locked) {
+          console.log(modal)
           deleteCandidate.value = contact
           modal.showModal()
         } else {
@@ -131,15 +134,17 @@ export default defineComponent({
         }
       }
       
-      const deleteContact = async () => {
-        modal.hideModal()
-        const deletedId = await contactStore.deleteContact(deleteCandidate.value)
-        console.log('delete contact')
-        // console.log(deletedId)
-        deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
-        // null check
-        // console.log(deleteCandidate.value)
-        ctx.emit('update-contacts')
+      const deleteContact = async (e?) => {
+        if (e == destination) {
+          modal.hideModal()
+          const deletedId = await contactStore.deleteContact(deleteCandidate.value)
+          console.log('delete contact')
+          // console.log(deletedId)
+          deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
+          // null check
+          // console.log(deleteCandidate.value)
+          ctx.emit('update-contacts')
+        }
       }
       
       const toggleDeletable = async (contact: Contact) => {

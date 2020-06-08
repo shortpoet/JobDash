@@ -1,8 +1,9 @@
 
 import { Contact } from './contact.interface';
 import { Moment } from "moment";
+import { TableItem } from './table.item.interface';
 
-export interface Task {
+export interface Task extends TableItem {
   _id: string;
   name: string;
   description: string;
