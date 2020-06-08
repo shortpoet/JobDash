@@ -53,6 +53,7 @@ export default defineComponent({
 
     const allTasks = ref<Task[]>([])
 
+    const { onUpdateTasks } = await useTask(allTasks)
 
     // onMounted(async () => {
     //   allTasks.value = await loadTasks()
@@ -72,7 +73,7 @@ export default defineComponent({
         {id:'4', name: 'Column 4'},
         {id:'5', name: 'Column 5'},
       ],
-      ...useTask(allTasks)
+      onUpdateTasks
     }
   }
 })

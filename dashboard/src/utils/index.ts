@@ -3,6 +3,8 @@ import { Contact } from '../interfaces/contact.interface'
 import { ITaskStore, useTaskStore } from '../store/task.store'
 import { Task } from '../interfaces/task.interface'
 
+// using store interface eliminates vue warn about using inject outside of setup function
+
 export const updateContacts = async (iContactStore: IContactStore): Promise<Contact[]> => {
   console.log('update contacts')
 
@@ -22,9 +24,9 @@ export const updateTasks = async (iTaskStore: ITaskStore): Promise<Task[]> => {
 
 }
 
-export const loadContacts = async (): Promise<Contact[]> => {
+export const loadContacts = async (iContactStore: IContactStore): Promise<Contact[]> => {
   console.log('load contacts')
-  const contactStore = useContactStore()
+  const contactStore = iContactStore.contactStore
   if (!contactStore.getState().contacts.loaded) {
     await contactStore.fetchContacts()
   }
@@ -36,9 +38,9 @@ export const loadContacts = async (): Promise<Contact[]> => {
 
 }
 
-export const loadTasks = async (): Promise<Task[]> => {
+export const loadTasks = async (iTaskStore: ITaskStore): Promise<Task[]> => {
   console.log('load tasks')
-  const taskStore = useTaskStore()
+  const taskStore = iTaskStore.taskStore
   if (!taskStore.getState().tasks.loaded) {
     await taskStore.fetchTasks()
   }

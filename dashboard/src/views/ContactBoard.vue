@@ -30,23 +30,10 @@ import  contact from '../store'
 import { useContactStore, IContactStore } from '../store/contact.store'
 import { Contact } from '../interfaces/contact.interface'
 import { updateContacts } from '../utils'
-
-const loadContacts = async (): Promise<Contact[]> => {
-  console.log('load contacts')
-  const contactStore = useContactStore()
-  if (!contactStore.getState().contacts.loaded) {
-    await contactStore.fetchContacts()
-  }
-
-  return contactStore.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
-    const post = contactStore.getState().contacts.all[id]
-    return accumulator.concat(post)
-  }, [])
-
-}
+import useContact from './../composables/useContact'
 
 export default defineComponent({
-  name: 'Home',
+  name: 'ContactBoard',
 
   components: {
     ContactTabs,
@@ -58,53 +45,44 @@ export default defineComponent({
   async setup() {
     console.log('setup')
 
-    const tabs = ref<Tab[]>()
-    const activeTab = ref<Tab>()
+
+    //#region tabs
+      const tabs = ref<Tab[]>()
+      const activeTab = ref<Tab>()
+
+      tabs.value = [
+        {id: 1, name: 'create', component: 'ContactCreate'},
+        {id: 2, name: 'edit', component: 'ContactEdit'}
+      ]
+
+      activeTab.value = tabs.value[0];
+
+      const selectedComponent = computed(() => {
+        switch(activeTab.value.component) {
+          case 'ContactEdit':
+            return ContactEdit
+            break
+          case 'ContactCreate':
+            return ContactCreate
+        }
+        // return () => import(`./../components/contacts/${selectedTab.value}.vue`)
+      })
+
+      const tabActivated = (tab: Tab) => {
+        console.log('tab activated')
+        console.log(tab.id)
+        // this does the same as using the update:modelValue event
+        // selectedTab.value = tab.component
+
+      }
+    //#endregion
     const allContacts = ref<Contact[]>([])
 
-    const contactStore = useContactStore()
+    // const { onUpdateContacts, allContactsRef } = useContact(allContacts)
 
-    onMounted(async () => {
-      // allContacts.value = await loadContacts()
-    })
-    // the above is not needed because the below is called 
-    // when setup is called between beforeCreate and created hooks
-    allContacts.value = await loadContacts()
+    const contactUse = await useContact(allContacts)
 
-
-    tabs.value = [
-      {id: 1, name: 'create', component: 'ContactCreate'},
-      {id: 2, name: 'edit', component: 'ContactEdit'}
-    ]
-
-    activeTab.value = tabs.value[0];
-
-    const selectedComponent = computed(() => {
-      switch(activeTab.value.component) {
-        case 'ContactEdit':
-          return ContactEdit
-          break
-        case 'ContactCreate':
-          return ContactCreate
-      }
-      // return () => import(`./../components/contacts/${selectedTab.value}.vue`)
-    })
-
-    const tabActivated = (tab: Tab) => {
-      console.log('tab activated')
-      console.log(tab.id)
-      // this does the same as using the update:modelValue event
-      // selectedTab.value = tab.component
-
-    }
-
-    const iContactStore: IContactStore = {
-      contactStore: contactStore
-    }
-
-    const onUpdateContacts = async () => {
-      allContacts.value = await updateContacts(iContactStore)
-    }
+    const onUpdateContacts = contactUse.onUpdateContacts
     
     return {
       tabs,
@@ -112,7 +90,6 @@ export default defineComponent({
       selectedComponent,
       tabActivated,
       allContacts,
-      updateContacts,
       onUpdateContacts
     }
   }

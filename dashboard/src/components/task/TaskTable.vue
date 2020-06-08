@@ -61,9 +61,18 @@
 
     </tr>
   </table>
-  <teleport to="#modal-warning" v-if="modal.visible">
+
+  <!-- 
+    TODO
+    differentiate between modals visible methods
+    #TODO
+  -->
+
+  <!-- <teleport to="#modal-warning" v-if="modal.visible">
     <ModalWarning @delete-task="deleteTask"/>
-  </teleport>
+  </teleport> -->
+
+
   <div />
     <!-- <Suspense>
       <template #default>
