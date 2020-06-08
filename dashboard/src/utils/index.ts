@@ -1,6 +1,6 @@
-import { IContactStore } from '../store/contact.store'
+import { IContactStore, useContactStore } from '../store/contact.store'
 import { Contact } from '../interfaces/contact.interface'
-import { ITaskStore } from '../store/task.store'
+import { ITaskStore, useTaskStore } from '../store/task.store'
 import { Task } from '../interfaces/task.interface'
 
 export const updateContacts = async (iContactStore: IContactStore): Promise<Contact[]> => {
@@ -22,3 +22,30 @@ export const updateTasks = async (iTaskStore: ITaskStore): Promise<Task[]> => {
 
 }
 
+export const loadContacts = async (): Promise<Contact[]> => {
+  console.log('load contacts')
+  const contactStore = useContactStore()
+  if (!contactStore.getState().contacts.loaded) {
+    await contactStore.fetchContacts()
+  }
+
+  return contactStore.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
+    const contact = contactStore.getState().contacts.all[id]
+    return accumulator.concat(contact)
+  }, [])
+
+}
+
+export const loadTasks = async (): Promise<Task[]> => {
+  console.log('load tasks')
+  const taskStore = useTaskStore()
+  if (!taskStore.getState().tasks.loaded) {
+    await taskStore.fetchTasks()
+  }
+
+  return taskStore.getState().tasks.ids.reduce<Task[]>((accumulator, id) => {
+    const task = taskStore.getState().tasks.all[id]
+    return accumulator.concat(task)
+  }, [])
+
+}
