@@ -1,6 +1,5 @@
 
 // ./src/tasks/dto/create-task.dto.ts
-
 import { Contact } from "src/contact/interfaces/contact.interface";
 
 export class CreateTaskDTO {

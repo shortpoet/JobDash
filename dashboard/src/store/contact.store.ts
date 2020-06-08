@@ -43,6 +43,7 @@ class ContactStore {
   }
   
   public geContactById(_id: string): Contact {
+    console.log(_id)
     return this.state.contacts.all[_id]
   }
 

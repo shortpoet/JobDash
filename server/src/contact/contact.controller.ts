@@ -29,9 +29,11 @@ export class ContactController {
     }
 
     // Fetch a particular contact using ID
-    @Get('contact/:contactID')
+    @Get('contact/:contact_id')
     async getContact(@Res() res, @Param('contact_id') contactID) {
+        console.log(contactID)
         const contact = await this.contactService.getContact(contactID);
+        console.log(contactID)
         if (!contact) throw new NotFoundException('Contact does not exist!');
         return res.status(HttpStatus.OK).json(contact);
     }

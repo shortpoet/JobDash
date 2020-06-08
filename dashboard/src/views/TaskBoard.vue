@@ -12,6 +12,7 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { Task } from './../interfaces/task.interface'
 import { useTaskStore, ITaskStore } from '../store/task.store'
+import { updateTasks } from '../utils'
 
 const loadTasks = async (): Promise<Task[]> => {
   console.log('load tasks')
@@ -37,9 +38,20 @@ export default defineComponent({
 
 
     onMounted(async () => {
-      // allTasks.value = await loadTasks()
-      // console.log(allTasks.value)
+      allTasks.value = await loadTasks()
+      console.log(allTasks.value)
+      allTasks.value.forEach(task => {
+        console.log(task.contact)
+      })
     })
+
+    const iTaskStore: ITaskStore = {
+      taskStore: taskStore
+    }
+
+    const onUpdateTasks = async () => {
+      allTasks.value = await updateTasks(iTaskStore)
+    }
 
     return {
       allTasks,

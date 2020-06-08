@@ -16,12 +16,16 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
+
 import { useTaskStore } from './../../store/task.store'
-import BaseInput from './../../components/common/BaseInput.vue'
+import { useContactStore } from './../../store/contact.store'
 import { Task } from '../../interfaces/task.interface'
-import moment from 'moment'
 import { Contact } from '../../interfaces/contact.interface'
-import { useContactStore } from '../../store/contact.store'
+
+import BaseInput from './../../components/common/BaseInput.vue'
+
+import moment from 'moment'
+
 export default defineComponent({
   name: 'TaskCreate',
 
@@ -34,16 +38,26 @@ export default defineComponent({
     const name = ref('name')
     const description = ref('description')
     const category = ref('category')
-    const contactId = ref(null)
+    const contactId = ref('')
     const contact = ref<Contact>()
 
     const taskStore = useTaskStore()
 
     const contactStore = useContactStore()
 
-    contact.value = await useContactStore().geContactById(contactId)
+
+    if (contact.value) {
+      console.log(contact.value)
+      console.log(contact.value._id)
+    }
+
 
     const submit = async function(e: any) {
+      contact.value = await contactStore.geContactById(contactId.value)
+
+      console.log(contact.value)
+      console.log(contact.value._id)
+
       // console.log(store.getLastId())
       const nextId = (parseInt(taskStore.getLastId()) + 1).toString()
       // console.log(nextId)
@@ -71,7 +85,8 @@ export default defineComponent({
       category,
       description,
       contact,
-      submit
+      submit,
+      contactId
     }
 
   }

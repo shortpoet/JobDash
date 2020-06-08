@@ -4,6 +4,7 @@ import { Controller, Get, Res, HttpStatus, Post, Body, Put, Query, NotFoundExcep
 import { TaskService } from './task.service';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { query } from 'express';
+var mongoose = require('mongoose')
 
 @Controller('task')
 export class TaskController {
@@ -12,7 +13,9 @@ export class TaskController {
     // add a task
     @Post('/create')
     async addTask(@Res() res, @Body() createTaskDTO: CreateTaskDTO) {
-        // console.log(createTaskDTO.locked)
+        console.log('create task')
+        console.log(createTaskDTO.contact)
+        console.log(mongoose.Types.ObjectId.isValid(createTaskDTO))
         const task = await this.taskService.addTask(createTaskDTO);
         // console.log(task.locked)
         return res.status(HttpStatus.OK).json({
@@ -25,6 +28,8 @@ export class TaskController {
     @Get('tasks')
     async getAllTask(@Res() res) {
         const tasks = await this.taskService.getAllTask();
+        console.log('logging tasks')
+        console.log(tasks)
         return res.status(HttpStatus.OK).json(tasks);
     }
 
