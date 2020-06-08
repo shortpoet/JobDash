@@ -119,7 +119,6 @@ export default defineComponent({
 
       const handleConfirmDelete = (contact: Contact) => {
         if (contact.locked) {
-          console.log(modal)
           deleteCandidate.value = contact
           modal.showModal()
         } else {

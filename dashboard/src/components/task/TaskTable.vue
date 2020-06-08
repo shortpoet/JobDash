@@ -106,22 +106,19 @@ export default defineComponent({
     //#region delete
       const confirmDelete = ref(false)
       const deleteCandidate = ref<Task>(null)
+      const destination: Destination = '#delete-task-modal'
+      const modal = useModal(destination)
+
       // const modal = useModal()
-
-
       // this didn't properly return a reactive ref
       // const modalMap = useModalMap()
       // const destination = '#delete-task-modal'
       // modalMap.addModal(destination)
       // const modal = modalMap.modalMap[destination]
 
-      const destination: Destination = '#delete-task-modal'
-
-      const modal = useModal(destination)
 
       const handleConfirmDelete = (task: Task) => {
         if (task.locked) {
-          console.log(modal)
           deleteCandidate.value = task
           modal.showModal()
         } else {

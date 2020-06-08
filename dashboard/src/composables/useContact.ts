@@ -7,7 +7,6 @@ import { updateContacts, loadContacts } from '../utils'
 export default async function useContact(allContactsRef) {
   // console.log('use contact')
 
-  
   const contactStore = useContactStore()
   
   const iContactStore: IContactStore = {

@@ -49,11 +49,11 @@ export default defineComponent({
 
   async setup() {
 
-    const taskStore = useTaskStore()
+    // const taskStore = useTaskStore()
 
-    const allTasks = ref<Task[]>([])
+    // const allTasks = ref<Task[]>([])
 
-    const { onUpdateTasks } = await useTask(allTasks)
+    // const { onUpdateTasks } = await useTask(allTasks)
 
     // onMounted(async () => {
     //   allTasks.value = await loadTasks()
@@ -62,6 +62,13 @@ export default defineComponent({
     //     console.log(task.contact)
     //   })
     // })
+
+    const allTasks = ref<Task[]>([])
+
+    // is this correct usage of provide/inject
+    const taskUse = await useTask(allTasks)
+
+    const onUpdateTasks = taskUse.onUpdateTasks
 
 
     return {

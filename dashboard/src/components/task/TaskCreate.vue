@@ -1,5 +1,4 @@
 <template>
-<section class="section task-create">
   <div class="form-container">
     <h5 class="form-heading">Task</h5>
     <hr class="form-hr"/>
@@ -11,7 +10,6 @@
       <button class="button is-success">Create</button>
     </form>
   </div>
-</section>
 </template>
 
 <script lang="ts">
