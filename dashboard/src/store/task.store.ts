@@ -2,6 +2,7 @@ import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
 import { Task } from "../interfaces/task.interface"
 import { TaskDTO } from "../interfaces/taskDTO.interface"
+import { Store } from "./store.interface"
 
 interface TasksState {
   ids: string[]
@@ -25,9 +26,10 @@ const initialTaskStoreState = () : TaskStoreState => ({
   tasks: initialTasksState()
 })
 
-class TaskStore {
+export class TaskStore extends Store {
   protected state: TaskStoreState
   constructor(initialState: TaskStoreState) {
+    super()
     this.state = reactive(initialState)
   }
 

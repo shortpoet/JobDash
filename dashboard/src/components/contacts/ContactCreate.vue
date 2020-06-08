@@ -13,10 +13,11 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
-import { useContactStore } from './../../store/contact.store'
+import { useContactStore, IContactStore } from './../../store/contact.store'
 import BaseInput from './../../components/common/BaseInput.vue'
 import { Contact } from '../../interfaces/contact.interface'
 import moment from 'moment'
+import useContact from '../../composables/useContact'
 export default defineComponent({
   name: 'ContactCreate',
 
@@ -30,7 +31,19 @@ export default defineComponent({
     const company = ref('company')
     const email = ref('email')
 
-    const contactStore = useContactStore()
+    //#region contactUse
+      const contactStore = useContactStore()
+  
+      const iContactStore: IContactStore = {
+        contactStore: contactStore
+      }
+
+      const allContacts = ref<Contact[]>([])
+
+      const contactUse = await useContact(iContactStore, allContacts)
+
+      const onUpdateContacts = contactUse.onUpdateContacts
+    //#endregion
 
 
     const submit = async function(e: any) {
@@ -49,7 +62,8 @@ export default defineComponent({
       }
       await contactStore.createContact(contact)
       console.log('create contact')
-      ctx.emit('update-contacts')
+      // ctx.emit('update-contacts')
+      onUpdateContacts()
     }
 
     const updateTable = () => {

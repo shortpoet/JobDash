@@ -2,7 +2,7 @@ import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
 import { Contact } from "../interfaces/contact.interface"
 import { ContactDTO } from "../interfaces/contactDTO.interface"
-import { StateMap } from "./store.interface"
+import { StateMap, Store } from "./store.interface"
 
 interface ContactsStateMap extends StateMap {
   ids: string[]
@@ -37,9 +37,10 @@ const initialContactStoreState = () : ContactStoreState => ({
 //   this.state.contacts.all[_id] ? this.state.contacts.all[_id] : null
 // }
 
-class ContactStore {
+export class ContactStore extends Store {
   protected state: ContactStoreState
   constructor(initialState: ContactStoreState) {
+    super()
     this.state = reactive(initialState)
   }
 

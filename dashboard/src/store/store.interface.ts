@@ -1,6 +1,6 @@
-export interface Store {
-  stateMap: StateMap
-  getState: Function
+export class Store {
+  protected state: Object
+  modules: Record<string, Store>
 }
 
 export interface StateMap {

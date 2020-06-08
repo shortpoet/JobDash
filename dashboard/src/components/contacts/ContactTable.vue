@@ -108,7 +108,7 @@ export default defineComponent({
       ctx.emit('update-contacts')
     }
     
-    //#region contacts
+    //#region contactUse
       const contactStore = useContactStore()
   
       const iContactStore: IContactStore = {
@@ -121,11 +121,6 @@ export default defineComponent({
 
       const onUpdateContacts = contactUse.onUpdateContacts
     //#endregion
-
-
-    // #region global
-      // const contactStore = useContactStore()
-    // #endregion
 
     //#region delete
       const confirmDelete = ref(false)

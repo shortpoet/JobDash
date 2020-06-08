@@ -103,7 +103,7 @@ export default defineComponent({
       ctx.emit('update-tasks')
     }
 
-    //#region tasks
+    //#region taskUse
       const taskStore = useTaskStore()
 
       const iTaskStore: ITaskStore = {
@@ -117,11 +117,6 @@ export default defineComponent({
 
       const onUpdateTasks = taskUse.onUpdateTasks
     //#endregion
-
-
-    // #region global
-      // const taskStore = useTaskStore()
-    // #endregion
 
     //#region delete
       const confirmDelete = ref(false)

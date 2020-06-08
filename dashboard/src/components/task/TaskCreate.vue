@@ -15,14 +15,16 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
 
-import { useTaskStore } from './../../store/task.store'
-import { useContactStore } from './../../store/contact.store'
+import { useTaskStore, ITaskStore } from './../../store/task.store'
+import { useContactStore, IContactStore } from './../../store/contact.store'
 import { Task } from '../../interfaces/task.interface'
 import { Contact } from '../../interfaces/contact.interface'
 
 import BaseInput from './../../components/common/BaseInput.vue'
 
 import moment from 'moment'
+import useTask from '../../composables/useTask'
+import useContact from '../../composables/useContact'
 
 export default defineComponent({
   name: 'TaskCreate',
@@ -39,9 +41,34 @@ export default defineComponent({
     const contactId = ref('')
     const contact = ref<Contact>()
 
-    const taskStore = useTaskStore()
+    //#region taskUse
+      const taskStore = useTaskStore()
 
-    const contactStore = useContactStore()
+      const iTaskStore: ITaskStore = {
+        taskStore: taskStore
+      }
+
+      const allTasks = ref<Task[]>([])
+
+      // is this correct usage of provide/inject
+      const taskUse = await useTask(iTaskStore, allTasks)
+
+      const onUpdateTasks = taskUse.onUpdateTasks
+    //#endregion
+
+    //#region contactUse
+      const contactStore = useContactStore()
+  
+      const iContactStore: IContactStore = {
+        contactStore: contactStore
+      }
+
+      const allContacts = ref<Contact[]>([])
+
+      const contactUse = await useContact(iContactStore, allContacts)
+
+      const onUpdateContacts = contactUse.onUpdateContacts
+    //#endregion
 
     const submit = async function(e: any) {
       contact.value = await contactStore.getContactById(contactId.value)
@@ -62,7 +89,8 @@ export default defineComponent({
         }
         await taskStore.createTask(task)
         console.log('create task')
-        ctx.emit('update-tasks')
+        onUpdateTasks()
+        // ctx.emit('update-tasks')
       } else {
         throw new Error(`Contact with Id - ${contactId.value} - does not exist yet`)
       }
