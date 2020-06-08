@@ -1,18 +1,5 @@
 <template>
 
-  <BaseModal :isActive="taskModal.visible" :destination="'#delete-task-modal'">
-    <template #destination>
-      <div class="" id="delete-task-modal">
-      </div>
-    </template>
-  </BaseModal>
-  <BaseModal :isActive="contactModal.visible" :destination="'#delete-contact-modal'">
-    <template #destination>
-      <div class="" id="delete-contact-modal">
-      </div>
-    </template>
-  </BaseModal>
-
   <div class="columns">
     <div class="column is-one-third">
       <TaskCreate />
@@ -36,7 +23,7 @@ import TaskBoard from './TaskBoard.vue'
 import { useModal } from '../composables/useModal'
 import { Destination } from '../interfaces/modal.interface'
 export default defineComponent({
-  name: 'MainLayout',
+  name: 'TableLayout',
 
   components: {
     ContactBoard,

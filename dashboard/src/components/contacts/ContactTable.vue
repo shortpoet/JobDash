@@ -61,18 +61,12 @@
 
     </tr>
   </table>
+
   <teleport to="#delete-contact-modal" v-if="modal.visible">
     <ModalWarning @delete-item="deleteContact" :destination="'#delete-contact-modal'"/>
   </teleport>
+  
   <div />
-    <!-- <Suspense>
-      <template #default>
-
-      </template>
-      <template #fallback>
-
-      </template>
-    </Suspense> -->
 </template>
 
 <script lang="ts">

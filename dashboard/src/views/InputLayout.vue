@@ -6,10 +6,7 @@
   <section class="section contact-section">
     <div class="columns">
       <div class="column is-one-half">
-        <ContactTabs :tabs="tabs" @tab-activated="tabActivated"  :active-tab="activeTab.name"/>
-        <component :is="selectedComponent"/>
-        <!-- <ContactCreate v-if="activeTab.name === 'create'" @update-contacts="onUpdateContacts"/>
-        <ContactEdit v-if="activeTab.name === 'edit'" /> -->
+        <ContactCreate v-if="activeTab.name === 'create'" @update-contacts="onUpdateContacts"/>
       </div>
       <div class="column is-one-half">
         <ContactTable :contacts="allContacts" @update-contacts="onUpdateContacts"/>
@@ -32,7 +29,7 @@ import { updateContacts } from '../utils'
 import useContact from './../composables/useContact'
 
 export default defineComponent({
-  name: 'ContactBoard',
+  name: 'InputLayout',
 
   components: {
     ContactTabs,
@@ -42,6 +39,7 @@ export default defineComponent({
   },
 
   async setup() {
+    console.log('setup')
 
 
     //#region tabs
@@ -56,8 +54,6 @@ export default defineComponent({
       activeTab.value = tabs.value[0];
 
       const selectedComponent = computed(() => {
-        console.log('selected component')
-        console.log(activeTab.value.component)
         switch(activeTab.value.component) {
           case 'ContactEdit':
             return ContactEdit
@@ -65,17 +61,15 @@ export default defineComponent({
           case 'ContactCreate':
             return ContactCreate
         }
-        // const path = `./../components/contacts/${activeTab.value.component}.vue`
-        // console.log(path)
-        // return () => import(path)
+        // return () => import(`./../components/contacts/${selectedTab.value}.vue`)
       })
 
       const tabActivated = (tab: Tab) => {
         console.log('tab activated')
         console.log(tab.id)
         // this does the same as using the update:modelValue event
-        // not this same in this case because it ends up only changing once or you update the name of the tab
-        activeTab.value = tab
+        // selectedTab.value = tab.component
+
       }
     //#endregion
     const allContacts = ref<Contact[]>([])

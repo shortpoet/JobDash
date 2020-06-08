@@ -16,13 +16,6 @@
       :key="task._id" 
       class="task-row"   
     >
-    
-      <!--
-        Using a component here createD a bug
-        update: no longer; wonder what the issue with my code
-      -->
-
-      <!-- <TaskRow :task="task" @update-tasks="updateTasks" /> -->
 
       <td>{{ task._id }}</td>
 
@@ -62,26 +55,11 @@
     </tr>
   </table>
 
-  <!-- 
-    TODO
-    differentiate between modals visible methods
-    #TODO
-  -->
-
   <teleport to="#delete-task-modal" v-if="modal.visible">
     <ModalWarning @delete-item="deleteTask" :destination="'#delete-task-modal'"/>
   </teleport>
 
-
   <div />
-    <!-- <Suspense>
-      <template #default>
-
-      </template>
-      <template #fallback>
-
-      </template>
-    </Suspense> -->
 </template>
 
 <script lang="ts">

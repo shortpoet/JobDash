@@ -6,7 +6,7 @@ import { updateTasks, loadTasks } from '../utils'
 import { useTaskStore, ITaskStore } from '../store/task.store'
 
 export default async function useTask(allTasksRef) {
-  console.log('use task')
+  // console.log('use task')
 
   
   const taskStore = useTaskStore()

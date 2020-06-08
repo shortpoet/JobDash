@@ -4,7 +4,6 @@ import { useModalMap } from './useModalMap'
 const visible = ref(false)
 
 export function useModal(destination) {
-  console.log(destination)
   const modalMap = useModalMap()
   if (!modalMap.modalMap[destination]) {
     modalMap.addModal(destination)

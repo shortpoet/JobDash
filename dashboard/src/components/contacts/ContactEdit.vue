@@ -25,7 +25,7 @@ export default defineComponent({
     BaseInput
   },
 
-  async setup(){
+  async setup(props, ctx){
 
     const name = ref('name')
     const company = ref('company')
@@ -34,17 +34,7 @@ export default defineComponent({
     const contactStore = useContactStore()
 
     const submit = (e: any) => {
-      const contact: Contact = {
-        _id: '-1',
-        name: name.value,
-        company: company.value,
-        email: email.value,
-        created: moment(),
-        edited: moment(),
-        editable: false,
-        locked: true
-      }
-      contactStore.createContact(contact)
+      ctx.emit('contact-edit')
     }
 
     return{
