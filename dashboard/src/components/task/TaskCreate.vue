@@ -51,21 +51,21 @@ export default defineComponent({
       const allTasks = ref<Task[]>([])
 
       // is this correct usage of provide/inject
-      const taskUse = await useTask(iTaskStore, allTasks)
+      // const taskUse = await useTask(iTaskStore, allTasks)
+      const taskUse = await useTask(taskStore, allTasks)
 
       const onUpdateTasks = taskUse.onUpdateTasks
     //#endregion
 
     //#region contactUse
+      // const contactStore = store.modules['contactStore']
       const contactStore = useContactStore()
-  
-      const iContactStore: IContactStore = {
-        contactStore: contactStore
-      }
 
+      console.log(contactStore)
+  
       const allContacts = ref<Contact[]>([])
 
-      const contactUse = await useContact(iContactStore, allContacts)
+      const contactUse = await useContact(contactStore, allContacts)
 
       const onUpdateContacts = contactUse.onUpdateContacts
     //#endregion

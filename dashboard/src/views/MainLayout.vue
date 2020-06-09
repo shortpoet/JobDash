@@ -4,7 +4,8 @@
 
   <div class="columns">
     <div class="column is-two-fifths">
-      <TabsLayout @tab-change="tabChange"/>
+      <TabsLayout />
+      <!-- <TabsLayout @tab-change="tabChange"/> -->
     </div>
     <div class="column is-one-half">
       <TableLayout @update-contacts="onUpdateContacts" @update-tasks="onUpdateTasks"/>

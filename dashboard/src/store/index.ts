@@ -9,6 +9,8 @@ const taskStore = createTaskStore()
 taskStore.getState()
 
 const store = new Store()
+console.log(store)
+store.modules = {}
 store.modules['contactStore'] = contactStore
 store.modules['taskStore'] = taskStore
 

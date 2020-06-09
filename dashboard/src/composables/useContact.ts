@@ -4,14 +4,35 @@ import { useContactStore, IContactStore } from '../store/contact.store'
 import { Contact } from '../interfaces/contact.interface'
 import { updateContacts, loadContacts } from '../utils'
 
-export default async function useContact(iContactStore, allContactsRef) {
+// export default async function useContact(allContactsRef) {
+//   // console.log('use contact')
+
+//   const contactStore = useContactStore()
+  
+//   const iContactStore: IContactStore = {
+//     contactStore: contactStore
+//   }
+  
+//   allContactsRef.value = await loadContacts(iContactStore)
+
+//   const onUpdateContacts = async () => {
+//     allContactsRef.value = await updateContacts(iContactStore)
+//   }
+  
+//   return {
+//     allContactsRef,
+//     onUpdateContacts
+//   }
+// }
+
+export default async function useContact(contactStore, allContactsRef) {
   // console.log('use contact')
 
   
-  allContactsRef.value = await loadContacts(iContactStore)
+  allContactsRef.value = await loadContacts(contactStore)
 
   const onUpdateContacts = async () => {
-    allContactsRef.value = await updateContacts(iContactStore)
+    allContactsRef.value = await updateContacts(contactStore)
   }
   
   return {

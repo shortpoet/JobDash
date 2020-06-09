@@ -56,8 +56,7 @@ export default defineComponent({
     // })
 
 
-    // is this correct usage of provide/inject
-    //#region tasks
+    //#region taskUse
       const taskStore = useTaskStore()
 
       const iTaskStore: ITaskStore = {
@@ -67,7 +66,8 @@ export default defineComponent({
       const allTasks = ref<Task[]>([])
 
       // is this correct usage of provide/inject
-      const taskUse = await useTask(iTaskStore, allTasks)
+      // const taskUse = await useTask(iTaskStore, allTasks)
+      const taskUse = await useTask(taskStore, allTasks)
 
       const onUpdateTasks = taskUse.onUpdateTasks
     //#endregion

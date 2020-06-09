@@ -26,6 +26,7 @@
 import { defineComponent, computed, ref } from 'vue'
 import { provideContactStore } from './store/contact.store'
 import { provideTaskStore } from './store/task.store'
+import { provideStore } from './store'
 
 export default defineComponent({
   name: 'App',
@@ -36,6 +37,7 @@ export default defineComponent({
   setup(props, ctx) {
     provideContactStore()
     provideTaskStore()
+    provideStore()
 
     const modalDisplay = computed(() => ({
       // display: modal.visible.value ? 'block' : 'none'

@@ -18,6 +18,9 @@ import BaseInput from './../../components/common/BaseInput.vue'
 import { Contact } from '../../interfaces/contact.interface'
 import moment from 'moment'
 import useContact from '../../composables/useContact'
+
+import {useStore} from './../../store'
+
 export default defineComponent({
   name: 'ContactCreate',
 
@@ -31,20 +34,21 @@ export default defineComponent({
     const company = ref('company')
     const email = ref('email')
 
-    //#region contactUse
-      const contactStore = useContactStore()
-  
-      const iContactStore: IContactStore = {
-        contactStore: contactStore
-      }
+    const store = useStore()
+    console.log(store)
 
+    //#region contactUse
+      // const contactStore = store.modules['contactStore']
+      const contactStore = useContactStore()
+
+      console.log(contactStore)
+  
       const allContacts = ref<Contact[]>([])
 
-      const contactUse = await useContact(iContactStore, allContacts)
+      const contactUse = await useContact(contactStore, allContacts)
 
       const onUpdateContacts = contactUse.onUpdateContacts
     //#endregion
-
 
     const submit = async function(e: any) {
       // console.log(store.getLastId())
@@ -73,7 +77,8 @@ export default defineComponent({
       name,
       company,
       email,
-      submit
+      submit,
+      onUpdateContacts
     }
 
   }

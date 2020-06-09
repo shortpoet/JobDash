@@ -117,7 +117,8 @@ export default defineComponent({
 
       const allContacts = ref<Contact[]>([])
 
-      const contactUse = await useContact(iContactStore, allContacts)
+      // const contactUse = await useContact(iContactStore, allContacts)
+      const contactUse = await useContact(contactStore, allContacts)
 
       const onUpdateContacts = contactUse.onUpdateContacts
     //#endregion

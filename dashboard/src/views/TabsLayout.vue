@@ -6,8 +6,8 @@
   <section class="section tabs-section">
     <BaseTabs :tabs="tabs" @tab-activated="tabActivated" :active-tab="activeTab.name"/>
     <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts"/> -->
-    <ContactCreate v-if="activeTab.name == 'Contact'" @update-contacts="onUpdateContacts"/>
-    <TaskCreate v-if="activeTab.name == 'Task'" @update-tasks="onUpdateTasks"/>
+    <ContactCreate v-if="activeTab.name == 'Contact'"/>
+    <TaskCreate v-if="activeTab.name == 'Task'"/>
   </section>
 </template>
 
