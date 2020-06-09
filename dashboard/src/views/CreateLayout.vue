@@ -4,10 +4,12 @@
     * will start nesting relative padding (I think)
   -->
   <section class="section tabs-section">
-    <BaseTabs :tabs="tabs" @tab-activated="tabActivated" :active-tab="activeTab.name"/>
-    <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts"/> -->
-    <ContactCreate v-if="activeTab.name == 'Contact'" @update-contats="onUpdateContacts"/>
-    <TaskCreate v-if="activeTab.name == 'Task'"/>
+    <BaseBox>
+      <BaseTabs :tabs="tabs" @tab-activated="tabActivated" :active-tab="activeTab.name"/>
+      <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts"/> -->
+      <ContactCreate v-if="activeTab.name == 'Contact'" @update-contacts="onUpdateContacts"/>
+      <TaskCreate v-if="activeTab.name == 'Task'" @update-tasks="onUpdateTasks"/>
+    </BaseBox>
   </section>
 </template>
 
@@ -15,19 +17,24 @@
 import { defineComponent, computed, ref, onMounted } from 'vue'
 import BaseTabs from './../components/common/BaseTabs.vue'
 
+import BaseBox from './../components/common/BaseBox.vue'
+
 import ContactCreate from './../components/contacts/ContactCreate.vue'
 import TaskCreate from './../components/task/TaskCreate.vue'
 
 import { Tab } from './../interfaces/tab.interface'
 
 export default defineComponent({
-  name: 'TabsLayout',
+  name: 'CreateLayout',
 
   components: {
     BaseTabs,
+    BaseBox,
     ContactCreate,
     TaskCreate,
   },
+
+  emits: ['update-contacts', 'update-tasks'],
 
   async setup(props, ctx) {
 
@@ -65,6 +72,13 @@ export default defineComponent({
       }
     //#endregion
 
+      const onUpdateContacts = () => {
+        console.log('update contacts from create layout')
+        ctx.emit('update-contacts')
+      }
+      const onUpdateTasks = () => {
+        ctx.emit('update-tasks')
+      }
 
 
     return {
@@ -72,7 +86,8 @@ export default defineComponent({
       activeTab,
       selectedComponent,
       tabActivated,
-      onUpdateContacts: () => ctx.emit('update-contacts')
+      onUpdateContacts,
+      onUpdateTasks
     }
   }
 

@@ -28,6 +28,8 @@ export default defineComponent({
     BaseInput
   },
 
+  emits: ['update-contacts'],
+
   async setup(props, ctx){
 
     const name = ref('name')
@@ -60,11 +62,11 @@ export default defineComponent({
         editable: false,
         locked: true
       }
-      console.log(contact)
+      // console.log(contact)
       await contactStore.createContact(contact)
       console.log('create contact')
       ctx.emit('update-contacts')
-      onUpdateContacts()
+      // onUpdateContacts()
     }
 
     const updateTable = () => {

@@ -50,9 +50,7 @@ export class ContactStore extends Store {
 
   public getLastId(): Contact['_id'] {
     console.log('get last')
-    console.log(this.state.contacts)
     const last = this.state.contacts.ids.slice(-1)[0]
-    console.log(last)
     // if database / store are empty return -1
     return last ? this.state.contacts.all[last]._id : '-1'
   }
@@ -60,7 +58,6 @@ export class ContactStore extends Store {
   public getContactById(_id: string): Contact;
   public getContactById(_id: string): any {
     console.log('get by id')
-    console.log(_id)
     if (this.state.contacts.all[_id]) {
       return this.state.contacts.all[_id]
     } else {

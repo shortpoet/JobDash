@@ -1,7 +1,19 @@
 <template>
   <section class="section table-section">
-    <ContactTable @update-contacts="onUpdateContacts"/>
-    <TaskTable  @update-tasks="onUpdateTasks"/>
+    <div class="table-container">
+      <BaseBox class="contact-table-container">
+        <ContactTable 
+          :contacts="contacts"
+          @update-contacts="onUpdateContacts"
+      />  
+      </BaseBox>
+      <BaseBox class="task-table-container">
+        <TaskTable
+          :tasks="tasks"
+          @update-tasks="onUpdateTasks"
+        />
+      </BaseBox>
+    </div>
 
       <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts" @update-tasks="onUpdateTasks"/> -->
       <!-- <ContactTable :contacts="allContacts" @update-contacts="onUpdateContacts"/> -->
@@ -14,6 +26,9 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
+
+import BaseBox from './../components/common/BaseBox.vue'
+
 import ContactTable from './../components/contacts/ContactTable.vue'
 import TaskTable from './../components/task/TaskTable.vue'
 
@@ -24,20 +39,28 @@ import { Tab } from '../interfaces/tab.interface'
 
 export default defineComponent({
   name: 'TableLayout',
-
+  props: {
+    contacts: {
+      type: Array,
+      required: true
+    },
+    tasks: {
+      type: Array,
+      required: true
+    }
+  },
   components: {
+    BaseBox,
     ContactTable,
     TaskTable
   },
+  emits: ['update-contacts', 'update-tasks'],
   setup(props, ctx) {
     const contactDestination: Destination = '#delete-contact-modal'
     const taskDestination: Destination = '#delete-task-modal'
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
     
-    const onUpdateContacts = () => ctx.emit('update-contacts')
-    const onUpdateTasks = () => ctx.emit('update-tasks')
-
     //#region dynamic component
       const tabs = ref<Tab[]>()
       const activeTab = ref<Tab>()
@@ -66,6 +89,14 @@ export default defineComponent({
         // }
       })
     //#endregion
+
+    const onUpdateContacts = () => {
+      console.log('update contacts from create layout')
+      ctx.emit('update-contacts')
+    }
+    const onUpdateTasks = () => {
+      ctx.emit('update-tasks')
+    }
 
     return {
       contactModal,

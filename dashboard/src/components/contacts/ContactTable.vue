@@ -12,7 +12,7 @@
       </tr>
     </thead>
     <tr
-      v-for="contact in allContacts"
+      v-for="contact in contacts"
       :key="contact._id" 
       class="contact-row"   
     >
@@ -71,16 +71,16 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch } from 'vue'
-import { useContactStore, IContactStore } from './../../store/contact.store'
-import ContactRow from './../../components/contacts/ContactRow.vue'
+import moment from 'moment'
 import BaseInput from './../../components/common/BaseInput.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
 import ModalWarning from './../../components/common/ModalWarning.vue'
+
 import { Contact } from '../../interfaces/contact.interface'
 import { Field } from '../../interfaces/field.interface'
-import moment from 'moment'
-import { useModal } from '../../composables/useModal'
 import { Destination } from '../../interfaces/modal.interface'
+
+import { useModal } from '../../composables/useModal'
 import useContact from '../../composables/useContact'
 import { useStore } from '../../store'
 
@@ -88,20 +88,19 @@ export default defineComponent({
   name: 'ContactTable',
 
   props: {
-    // contacts: {
-    //   type: Array,
-    //   required: true
-    // }
+    contacts: {
+      type: Array,
+      required: true
+    }
   },
 
   components: {
-    ContactRow,
     BaseInput,
     ModalWarning,
     BaseIcon
   },
 
-  emits: ['update-tasks', 'update-contacts'],
+  emits: ['update-contacts'],
 
   async setup(props, ctx){
 
@@ -115,15 +114,6 @@ export default defineComponent({
       const store = useStore()
       const contactStore = store.modules['contactStore']
 
-      // const iContactStore: IContactStore = {
-      //   contactStore: contactStore
-      // }
-
-      const allContacts = ref<Contact[]>([])
-
-      const contactUse = await useContact(contactStore, allContacts)
-
-      const onUpdateContacts = contactUse.onUpdateContacts
     //#endregion
 
 
@@ -153,8 +143,7 @@ export default defineComponent({
             console.log('delete contact')
             // null check
             deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
-            onUpdateContacts()
-            // ctx.emit('update-contacts')
+            ctx.emit('update-contacts')
           }
         } else {
           // no event no modal
@@ -162,20 +151,17 @@ export default defineComponent({
           console.log('delete contact')
           // null check
           deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
-          onUpdateContacts()
-          // ctx.emit('update-contacts')
+          ctx.emit('update-contacts')
         }
       }
       
       const toggleDeletable = async (contact: Contact) => {
         if (contact.locked == false) {
           await contactStore.toggleDeletable(contact, true)
-          onUpdateContacts()
-          // ctx.emit('update-contacts')
+          ctx.emit('update-contacts')
         } else {
           await contactStore.toggleDeletable(contact, false)
-          onUpdateContacts()
-          // ctx.emit('update-contacts')
+          ctx.emit('update-contacts')
         }
       }
     //#endregion
@@ -194,7 +180,7 @@ export default defineComponent({
           emailEdit.value = oldContact.email
           // without this line when using module toggle wouldn't update
           // v-if wasn't triggered
-          onUpdateContacts()
+          ctx.emit('update-contacts')
 
         } else {
           if (contactTouched.value == true) {
@@ -216,7 +202,7 @@ export default defineComponent({
             contactTouched.value = false
             // this closes the edit window by updating the refs after newContact editable set to false
             // ctx.emit('update-contacts')
-            onUpdateContacts()
+            ctx.emit('update-contacts')
           } else {
             contactStore.toggleEditable(oldContact, false)
           }
@@ -244,16 +230,15 @@ export default defineComponent({
     //#endregion
 
     return {
-      allContacts,
       updateContacts,
       contactTouched,
       nameEdit,
       companyEdit,
       emailEdit,
+      modal,
       deleteContact,
       toggleEditable,
       toggleDeletable,
-      modal,
       handleConfirmDelete
     }
 

@@ -13,7 +13,7 @@
       </tr>
     </thead>
     <tr
-      v-for="task in allTasks"
+      v-for="task in tasks"
       :key="task._id" 
       class="task-row"   
     >
@@ -67,16 +67,17 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch } from 'vue'
-import { useTaskStore, ITaskStore } from './../../store/task.store'
+import moment from 'moment'
+
 import BaseInput from './../../components/common/BaseInput.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
 import ModalWarning from './../../components/common/ModalWarning.vue'
+
 import { Task } from '../../interfaces/task.interface'
 import { Field } from '../../interfaces/field.interface'
-import moment from 'moment'
-import { useModal } from '../../composables/useModal'
-import { useModalMap } from '../../composables/useModalMap'
 import { Destination } from '../../interfaces/modal.interface'
+
+import { useModal } from '../../composables/useModal'
 import useTask from '../../composables/useTask'
 import { useStore } from '../../store'
 
@@ -84,10 +85,10 @@ export default defineComponent({
   name: 'TaskTable',
 
   props: {
-    // tasks: {
-    //   type: Array,
-    //   required: true
-    // }
+    tasks: {
+      type: Array,
+      required: true
+    }
   },
 
   components: {
@@ -96,30 +97,14 @@ export default defineComponent({
     BaseIcon
   },
 
-  emits: ['update-tasks', 'update-contacts'],
+  emits: ['update-tasks'],
 
   async setup(props, ctx){
-
-    const updateTasks = () => {
-      ctx.emit('update-tasks')
-    }
 
     const store = useStore()
 
     //#region taskUse
       const taskStore = store.modules['taskStore']
-
-      // const iTaskStore: ITaskStore = {
-      //   taskStore: taskStore
-      // }
-
-      const allTasks = ref<Task[]>([])
-
-      // is this correct usage of provide/inject
-      // const taskUse = await useTask(iTaskStore, allTasks)
-      const taskUse = await useTask(taskStore, allTasks)
-
-      const onUpdateTasks = taskUse.onUpdateTasks
     //#endregion
 
     //#region delete
@@ -155,8 +140,7 @@ export default defineComponent({
             deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
             // null check
             // console.log(deleteCandidate.value)
-            onUpdateTasks()
-            // ctx.emit('update-tasks')
+            ctx.emit('update-tasks')
           }          
         } else {
           const deletedId = await taskStore.deleteTask(deleteCandidate.value)
@@ -164,8 +148,7 @@ export default defineComponent({
           deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
           // null check
           // console.log(deleteCandidate.value)
-          onUpdateTasks()
-          // ctx.emit('update-tasks')
+          ctx.emit('update-tasks')
         }
       }
       
@@ -174,13 +157,11 @@ export default defineComponent({
         // console.log(task.locked)
         if (task.locked == false) {
           await taskStore.toggleDeletable(task, true)
-          onUpdateTasks()
-          // ctx.emit('update-tasks')
+          ctx.emit('update-tasks')
           // console.log(task.locked)
         } else {
           await taskStore.toggleDeletable(task, false)
-          onUpdateTasks()
-          // ctx.emit('update-tasks')
+          ctx.emit('update-tasks')
           // console.log(task.locked)
         }
       }
@@ -218,8 +199,7 @@ export default defineComponent({
             )
             taskTouched.value = false
             // this closes the edit window by updating the refs after newTask editable set to false
-            // ctx.emit('update-tasks')
-            onUpdateTasks()
+            ctx.emit('update-tasks')
           } else {
             taskStore.toggleEditable(oldTask, false)
           }
@@ -247,16 +227,14 @@ export default defineComponent({
     //#endregion
 
     return {
-      allTasks,
-      updateTasks,
       taskTouched,
       nameEdit,
       categoryEdit,
       descriptionEdit,
+      modal,
       deleteTask,
       toggleEditable,
       toggleDeletable,
-      modal,
       handleConfirmDelete
     }
 

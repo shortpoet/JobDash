@@ -1,3 +1,14 @@
+.table-container {
+  height: 32rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-table-container,
+.task-table-container {
+  max-height: 50%;
+}
+
 .contact-row {
   .icon-cell {
     text-align: center;

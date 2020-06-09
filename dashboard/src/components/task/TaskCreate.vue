@@ -34,6 +34,8 @@ export default defineComponent({
     BaseInput
   },
 
+  emits: ['update-tasks'],
+
   async setup(props, ctx){
 
     const name = ref('name')
@@ -89,8 +91,7 @@ export default defineComponent({
         }
         await taskStore.createTask(task)
         console.log('create task')
-        onUpdateTasks()
-        // ctx.emit('update-tasks')
+        ctx.emit('update-tasks')
       } else {
         throw new Error(`Contact with Id - ${contactId.value} - does not exist yet`)
       }
