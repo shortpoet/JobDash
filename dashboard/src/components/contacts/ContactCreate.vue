@@ -38,24 +38,33 @@ export default defineComponent({
     console.log(store)
 
     //#region contactUse
-      // const contactStore = store.modules['contactStore']
       const contactStore = useContactStore()
+      const contactStoreModule = store.modules['contactStore']
 
       console.log(contactStore)
+      console.log(contactStoreModule)
   
       const allContacts = ref<Contact[]>([])
+      const allContactsModule = ref<Contact[]>([])
 
-      const contactUse = await useContact(contactStore, allContacts)
+      // const contactUse = await useContact(contactStore, allContacts)
+      const contactUseModule = await useContact(contactStoreModule, allContactsModule)
 
-      const onUpdateContacts = contactUse.onUpdateContacts
+      console.log(allContacts.value)
+      console.log(allContactsModule.value)
+
+      // const onUpdateContacts = contactUse.onUpdateContacts
+      const onUpdateContactsModule = contactUseModule.onUpdateContacts
     //#endregion
 
     const submit = async function(e: any) {
       // console.log(store.getLastId())
       const nextId = (parseInt(contactStore.getLastId()) + 1).toString()
-      // console.log(nextId)
+      const nextIdModule = (parseInt(contactStoreModule.getLastId()) + 1).toString()
+      console.log(nextId)
+      console.log(nextIdModule)
       const contact: Contact = {
-        _id: nextId,
+        _id: nextIdModule,
         name: name.value,
         company: company.value,
         email: email.value,
@@ -64,10 +73,11 @@ export default defineComponent({
         editable: false,
         locked: true
       }
-      await contactStore.createContact(contact)
+      console.log(contact)
+      await contactStoreModule.createContact(contact)
       console.log('create contact')
-      // ctx.emit('update-contacts')
-      onUpdateContacts()
+      ctx.emit('update-contacts')
+      onUpdateContactsModule()
     }
 
     const updateTable = () => {
@@ -78,7 +88,7 @@ export default defineComponent({
       company,
       email,
       submit,
-      onUpdateContacts
+      // onUpdateContacts
     }
 
   }

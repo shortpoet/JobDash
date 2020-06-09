@@ -14,6 +14,8 @@ store.modules = {}
 store.modules['contactStore'] = contactStore
 store.modules['taskStore'] = taskStore
 
+console.log(contactStore)
+
 export const provideStore = () => {
   provide('store', store)
 }

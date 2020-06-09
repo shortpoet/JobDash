@@ -36,7 +36,7 @@ export const updateContacts = async (contactStore: ContactStore): Promise<Contac
 // }
 export const updateTasks = async (taskStore: TaskStore): Promise<Task[]> => {
   console.log('update tasks')
-  console.log(taskStore)
+  // console.log(taskStore)
 
   return taskStore.getState().tasks.ids.reduce<Task[]>((accumulator, id) => {
     const task = taskStore.getState().tasks.all[id]
@@ -60,12 +60,11 @@ export const updateTasks = async (taskStore: TaskStore): Promise<Task[]> => {
 // }
 export const loadContacts = async (contactStore: ContactStore): Promise<Contact[]> => {
   console.log('load contacts')
-  console.log(contactStore)
-  console.log(contactStore.getState())
+  // console.log(contactStore)
+  // console.log(contactStore.getState())
   if (!contactStore.getState().contacts.loaded) {
     await contactStore.fetchContacts()
   }
-  console.log('2')
   return contactStore.getState().contacts.ids.reduce<Contact[]>((accumulator, id) => {
     const contact = contactStore.getState().contacts.all[id]
     return accumulator.concat(contact)
@@ -88,8 +87,8 @@ export const loadContacts = async (contactStore: ContactStore): Promise<Contact[
 // }
 export const loadTasks = async (taskStore: TaskStore): Promise<Task[]> => {
   console.log('load tasks')
-  console.log(taskStore)
-  console.log(taskStore.getState())
+  // console.log(taskStore)
+  // console.log(taskStore.getState())
   // const taskStore = iTaskStore.taskStore
   if (!taskStore.getState().tasks.loaded) {
     await taskStore.fetchTasks()

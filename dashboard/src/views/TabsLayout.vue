@@ -6,7 +6,7 @@
   <section class="section tabs-section">
     <BaseTabs :tabs="tabs" @tab-activated="tabActivated" :active-tab="activeTab.name"/>
     <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts"/> -->
-    <ContactCreate v-if="activeTab.name == 'Contact'"/>
+    <ContactCreate v-if="activeTab.name == 'Contact'" @update-contats="onUpdateContacts"/>
     <TaskCreate v-if="activeTab.name == 'Task'"/>
   </section>
 </template>
@@ -66,11 +66,13 @@ export default defineComponent({
     //#endregion
 
 
+
     return {
       tabs,
       activeTab,
       selectedComponent,
-      tabActivated
+      tabActivated,
+      onUpdateContacts: () => ctx.emit('update-contacts')
     }
   }
 

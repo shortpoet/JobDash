@@ -49,8 +49,10 @@ export class ContactStore extends Store {
   }
 
   public getLastId(): Contact['_id'] {
+    console.log('get last')
+    console.log(this.state.contacts)
     const last = this.state.contacts.ids.slice(-1)[0]
-    // console.log(last)
+    console.log(last)
     // if database / store are empty return -1
     return last ? this.state.contacts.all[last]._id : '-1'
   }
@@ -193,7 +195,9 @@ export const provideContactStore = () =>  {
 
 
 export const createContactStore = () => {
-  return new ContactStore(initialContactStoreState())
+  const contactStore = new ContactStore(initialContactStoreState())
+  contactStore.getState()
+  return contactStore
 }
 
 export const useContactStore = (): ContactStore => {

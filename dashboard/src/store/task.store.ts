@@ -170,7 +170,9 @@ export const provideTaskStore = () =>  {
 
 
 export const createTaskStore = () => {
-  return new TaskStore(initialTaskStoreState())
+  const taskStore = new TaskStore(initialTaskStoreState())
+  taskStore.getState()
+  return taskStore
 }
 
 export const useTaskStore = (): TaskStore => {
