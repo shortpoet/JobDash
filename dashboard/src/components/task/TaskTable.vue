@@ -18,7 +18,9 @@
       class="task-row"   
     >
 
-      <td>{{ task._id }}</td>
+      <td class="id-cell" @click="''">
+        <BaseIcon name="external-link" color="purple">{{ task._id }}</BaseIcon>
+      </td>
 
       <td v-if="task.editable" contenteditable>
         <BaseInput type="text" name="Name" v-model="nameEdit" />

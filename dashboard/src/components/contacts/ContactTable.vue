@@ -24,7 +24,9 @@
 
       <!-- <ContactRow :contact="contact" @update-contacts="updateContacts" /> -->
 
-      <td>{{ contact._id }}</td>
+      <td class="id-cell" @click="openCard(contact._id)">
+        <BaseIcon name="external-link" color="purple">{{ contact._id }}</BaseIcon>
+      </td>
 
       <td v-if="contact.editable" contenteditable>
         <BaseInput type="text" name="Name" v-model="nameEdit" />
@@ -62,19 +64,30 @@
     </tr>
   </table>
 
-  <teleport to="#delete-contact-modal" v-if="modal.visible">
+  <teleport to="#delete-contact-modal" v-if="deleteContactModal.visible">
     <ModalWarning @delete-item="deleteContact" :destination="'#delete-contact-modal'"/>
   </teleport>
-  
+
+  <teleport to="#contact-card-modal" v-if="contactCardModal.visible">
+    <router-view/>
+    <ContactCard @save-item="editContact" :destination="'#contact-card-modal'"/>
+  </teleport>
+
+
   <div />
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+
 import moment from 'moment'
+
 import BaseInput from './../../components/common/BaseInput.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
 import ModalWarning from './../../components/common/ModalWarning.vue'
+
+import ContactCard from './ContactCard.vue'
 
 import { Contact } from '../../interfaces/contact.interface'
 import { Field } from '../../interfaces/field.interface'
@@ -97,7 +110,8 @@ export default defineComponent({
   components: {
     BaseInput,
     ModalWarning,
-    BaseIcon
+    BaseIcon,
+    ContactCard
   },
 
   emits: ['update-contacts'],
@@ -108,6 +122,17 @@ export default defineComponent({
       ctx.emit('update-contacts')
     }
     
+    //#region deleteContactModal
+
+    const destination: Destination = '#delete-contact-modal'
+
+    const deleteContactModal = useModal(destination)
+
+    const contactCardDestination: Destination = '#contact-card-modal'
+
+    const contactCardModal = useModal(contactCardDestination)
+
+    //#endregion
 
     //#region contactUse
 
@@ -116,17 +141,24 @@ export default defineComponent({
 
     //#endregion
 
+    //#region openCard
+      const router = useRouter()
+      const openCard = (_id) => {
+        console.log(_id)
+        console.log(ctx)
+        contactCardModal.showModal()
+        router.push({ name: '#contact-card-modal', params: { id: _id } })
+      }
+    //#endregion
 
     //#region delete
       const confirmDelete = ref(false)
       const deleteCandidate = ref<Contact>(null)
-      const destination: Destination = '#delete-contact-modal'
-      const modal = useModal(destination)
 
       const handleConfirmDelete = (contact: Contact) => {
         if (contact.locked) {
           deleteCandidate.value = contact
-          modal.showModal()
+          deleteContactModal.showModal()
         } else {
           deleteCandidate.value = contact
           deleteContact()
@@ -138,7 +170,7 @@ export default defineComponent({
         if (e) {
           // check if correct destination
           if (e == destination) {
-            modal.hideModal()
+            deleteContactModal.hideModal()
             const deletedId = await contactStore.deleteContact(deleteCandidate.value)
             console.log('delete contact')
             // null check
@@ -146,7 +178,7 @@ export default defineComponent({
             ctx.emit('update-contacts')
           }
         } else {
-          // no event no modal
+          // no event no deleteContactModal
           const deletedId = await contactStore.deleteContact(deleteCandidate.value)
           console.log('delete contact')
           // null check
@@ -230,12 +262,14 @@ export default defineComponent({
     //#endregion
 
     return {
+      openCard,
       updateContacts,
       contactTouched,
       nameEdit,
       companyEdit,
       emailEdit,
-      modal,
+      deleteContactModal,
+      contactCardModal,
       deleteContact,
       toggleEditable,
       toggleDeletable,

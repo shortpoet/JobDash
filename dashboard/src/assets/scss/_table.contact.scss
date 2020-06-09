@@ -2,6 +2,9 @@
   height: 32rem;
   display: flex;
   flex-direction: column;
+  > div > table > thead > tr > th {
+    white-space: nowrap;
+  }
 }
 
 .contact-table-container,
@@ -9,7 +12,13 @@
   max-height: 50%;
 }
 
-.contact-row {
+
+.contact-row,
+.task-row {
+  .id-cell {
+    text-align: left;
+    cursor: pointer;
+  }
   .icon-cell {
     text-align: center;
     cursor: pointer;

@@ -3,7 +3,7 @@
     <BaseModal
       v-for="destination in destinations"
       :key="destination"
-      :isActive="taskModal.visible"
+      :isActive="thisModalVisibility(destination)"
       :destination="destination"
     >
       <template #destination>
@@ -38,16 +38,23 @@ export default defineComponent({
   async setup(props, ctx) {
 
     
-    const contactDestination: Destination = '#delete-contact-modal'
-    const taskDestination: Destination = '#delete-task-modal'
-    const destinations: Destination[] = [contactDestination, taskDestination]
-    const contactModal = useModal(contactDestination)
-    const taskModal = useModal(taskDestination)
+    const contactDeleteDestination: Destination = '#delete-contact-modal'
+    const taskDeleteDestination: Destination = '#delete-task-modal'
+    const contactCardDestination: Destination = '#contact-card-modal'
+    const destinations: Destination[] = [contactDeleteDestination, taskDeleteDestination, contactCardDestination]
+    const contactDeleteModal = useModal(contactDeleteDestination)
+    const taskDeleteModal = useModal(taskDeleteDestination)
+    const contactCardModal = useModal(contactCardDestination)
+
+    // any modal works to access getModel
+    const thisModalVisibility = destination => contactDeleteModal.getModal(destination).visible.value
 
     return {
+      thisModalVisibility,
       destinations,
-      contactModal,
-      taskModal
+      contactDeleteModal,
+      taskDeleteModal,
+      contactCardModal
     }
 
   }

@@ -22,6 +22,12 @@
 
   <TaskBoard />
 
+  <!-- <teleport to="#contact-card-modal" v-if="contactCardModal.visible">
+    <router-view/>
+    <ContactCard @save-item="editContact" :destination="'#contact-card-modal'"/>
+  </teleport> -->
+
+
   <div />
 </template>
 
@@ -30,6 +36,7 @@ import { defineComponent, computed, ref } from 'vue'
 
 import ModalLayout from './ModalLayout.vue'
 
+import ContactCard from './../components/contacts/ContactCard.vue'
 
 import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
@@ -51,15 +58,16 @@ export default defineComponent({
     ModalLayout,
     CreateLayout,
     TableLayout,
-    TaskBoard
+    TaskBoard,
+    ContactCard
   },
   async setup(props, ctx) {
-    
-    const contactDestination: Destination = '#delete-contact-modal'
-    const taskDestination: Destination = '#delete-task-modal'
-    const contactModal = useModal(contactDestination)
-    const taskModal = useModal(taskDestination)
-    
+
+    const contactCardDestination: Destination = '#contact-card-modal'
+
+    const contactCardModal = useModal(contactCardDestination)
+
+
     //#region contactUse
 
       const store = useStore()
@@ -94,8 +102,7 @@ export default defineComponent({
 
 
     return {
-      contactModal,
-      taskModal,
+      contactCardModal,
       allContacts,
       allTasks,
       onUpdateContacts,

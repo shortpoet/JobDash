@@ -35,8 +35,6 @@ export default defineComponent({
   },
 
   setup(props, ctx) {
-    provideContactStore()
-    provideTaskStore()
     provideStore()
 
     const modalDisplay = computed(() => ({

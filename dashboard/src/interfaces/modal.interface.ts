@@ -20,4 +20,4 @@ export class Modal implements IModal {
   }
 }
 
-export type Destination = '#delete-contact-modal' | '#delete-task-modal'
+export type Destination = '#delete-contact-modal' | '#delete-task-modal' | '#contact-card-modal' | '#task-card-modal'
