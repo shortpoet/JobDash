@@ -82,6 +82,7 @@ import moment from 'moment'
 import { useModal } from '../../composables/useModal'
 import { Destination } from '../../interfaces/modal.interface'
 import useContact from '../../composables/useContact'
+import { useStore } from '../../store'
 
 export default defineComponent({
   name: 'ContactTable',
@@ -108,20 +109,23 @@ export default defineComponent({
       ctx.emit('update-contacts')
     }
     
+
     //#region contactUse
-      const contactStore = useContactStore()
-  
-      const iContactStore: IContactStore = {
-        contactStore: contactStore
-      }
+
+      const store = useStore()
+      const contactStore = store.modules['contactStore']
+
+      // const iContactStore: IContactStore = {
+      //   contactStore: contactStore
+      // }
 
       const allContacts = ref<Contact[]>([])
 
-      // const contactUse = await useContact(iContactStore, allContacts)
       const contactUse = await useContact(contactStore, allContacts)
 
       const onUpdateContacts = contactUse.onUpdateContacts
     //#endregion
+
 
     //#region delete
       const confirmDelete = ref(false)
@@ -188,6 +192,10 @@ export default defineComponent({
           nameEdit.value = oldContact.name
           companyEdit.value = oldContact.company
           emailEdit.value = oldContact.email
+          // without this line when using module toggle wouldn't update
+          // v-if wasn't triggered
+          onUpdateContacts()
+
         } else {
           if (contactTouched.value == true) {
             const newContact: Contact = {

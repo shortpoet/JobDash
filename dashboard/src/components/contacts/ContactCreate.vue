@@ -34,37 +34,24 @@ export default defineComponent({
     const company = ref('company')
     const email = ref('email')
 
-    const store = useStore()
-    console.log(store)
 
     //#region contactUse
-      const contactStore = useContactStore()
-      const contactStoreModule = store.modules['contactStore']
+      const store = useStore()
+      const contactStore = store.modules['contactStore']
 
-      console.log(contactStore)
-      console.log(contactStoreModule)
-  
       const allContacts = ref<Contact[]>([])
-      const allContactsModule = ref<Contact[]>([])
 
-      // const contactUse = await useContact(contactStore, allContacts)
-      const contactUseModule = await useContact(contactStoreModule, allContactsModule)
+      const contactUse = await useContact(contactStore, allContacts)
 
-      console.log(allContacts.value)
-      console.log(allContactsModule.value)
-
-      // const onUpdateContacts = contactUse.onUpdateContacts
-      const onUpdateContactsModule = contactUseModule.onUpdateContacts
+      const onUpdateContacts = contactUse.onUpdateContacts
     //#endregion
 
     const submit = async function(e: any) {
       // console.log(store.getLastId())
       const nextId = (parseInt(contactStore.getLastId()) + 1).toString()
-      const nextIdModule = (parseInt(contactStoreModule.getLastId()) + 1).toString()
       console.log(nextId)
-      console.log(nextIdModule)
       const contact: Contact = {
-        _id: nextIdModule,
+        _id: nextId,
         name: name.value,
         company: company.value,
         email: email.value,
@@ -74,10 +61,10 @@ export default defineComponent({
         locked: true
       }
       console.log(contact)
-      await contactStoreModule.createContact(contact)
+      await contactStore.createContact(contact)
       console.log('create contact')
       ctx.emit('update-contacts')
-      onUpdateContactsModule()
+      onUpdateContacts()
     }
 
     const updateTable = () => {
@@ -88,7 +75,6 @@ export default defineComponent({
       company,
       email,
       submit,
-      // onUpdateContacts
     }
 
   }

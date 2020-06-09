@@ -78,6 +78,7 @@ import { useModal } from '../../composables/useModal'
 import { useModalMap } from '../../composables/useModalMap'
 import { Destination } from '../../interfaces/modal.interface'
 import useTask from '../../composables/useTask'
+import { useStore } from '../../store'
 
 export default defineComponent({
   name: 'TaskTable',
@@ -103,12 +104,14 @@ export default defineComponent({
       ctx.emit('update-tasks')
     }
 
-    //#region taskUse
-      const taskStore = useTaskStore()
+    const store = useStore()
 
-      const iTaskStore: ITaskStore = {
-        taskStore: taskStore
-      }
+    //#region taskUse
+      const taskStore = store.modules['taskStore']
+
+      // const iTaskStore: ITaskStore = {
+      //   taskStore: taskStore
+      // }
 
       const allTasks = ref<Task[]>([])
 

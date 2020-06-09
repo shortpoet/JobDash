@@ -25,6 +25,7 @@ import BaseInput from './../../components/common/BaseInput.vue'
 import moment from 'moment'
 import useTask from '../../composables/useTask'
 import useContact from '../../composables/useContact'
+import { useStore } from '../../store'
 
 export default defineComponent({
   name: 'TaskCreate',
@@ -41,12 +42,14 @@ export default defineComponent({
     const contactId = ref('')
     const contact = ref<Contact>()
 
-    //#region taskUse
-      const taskStore = useTaskStore()
+    const store = useStore()
 
-      const iTaskStore: ITaskStore = {
-        taskStore: taskStore
-      }
+    //#region taskUse
+      const taskStore = store.modules['taskStore']
+
+      // const iTaskStore: ITaskStore = {
+      //   taskStore: taskStore
+      // }
 
       const allTasks = ref<Task[]>([])
 
@@ -58,11 +61,8 @@ export default defineComponent({
     //#endregion
 
     //#region contactUse
-      // const contactStore = store.modules['contactStore']
-      const contactStore = useContactStore()
+      const contactStore = store.modules['contactStore']
 
-      console.log(contactStore)
-  
       const allContacts = ref<Contact[]>([])
 
       const contactUse = await useContact(contactStore, allContacts)
