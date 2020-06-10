@@ -64,7 +64,6 @@ export default defineComponent({
 
       const tabActivated = (tab: Tab) => {
         console.log('tab activated')
-        console.log(tab.id)
         // this does the same as using the update:modelValue event
         // not this same in this case because it ends up only changing once or you update the name of the tab
         activeTab.value = tab

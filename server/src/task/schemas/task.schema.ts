@@ -20,6 +20,7 @@ export const TaskSchema = new mongoose.Schema({
   // work
   // https://stackoverflow.com/a/34280778/12658653
   contact: [ContactSchema],
+  // contact: ContactSchema,
   created: {
     type: Date,
     default: Date.now

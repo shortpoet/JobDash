@@ -33,6 +33,7 @@ export const loadRecords = async (store: (ContactStore | TaskStore), caller: str
 
   return store.getState().records.ids.reduce<any[]>((accumulator, id) => {
     const record = store.getState().records.all[id]
+    // console.log(record)
     return accumulator.concat(record)
   }, [])
 

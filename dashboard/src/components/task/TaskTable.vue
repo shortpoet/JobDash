@@ -18,7 +18,7 @@
       class="task-row"   
     >
 
-      <td class="id-cell" @click="openCard">
+      <td class="has-text-left id-cell" @click="openCard">
         <BaseIcon name="external-link" color="purple">{{ task._id }}</BaseIcon>
       </td>
 
@@ -26,21 +26,21 @@
         <BaseInput type="text" name="Name" v-model="nameEdit" />
           {{ nameEdit }}
       </td>
-      <td v-else>{{ task.name }}</td>
+      <td class="has-text-centered" v-else>{{ task.name }}</td>
 
       <td v-if="task.editable" contenteditable>
         <BaseInput type="text" name="Category" v-model="categoryEdit" />
           {{ categoryEdit }}
       </td>
-      <td v-else>{{ task.category }}</td>
+      <td class="has-text-centered" v-else>{{ task.category }}</td>
 
       <td v-if="task.editable" contenteditable>
         <BaseInput type="text" name="Category" v-model="descriptionEdit" />
           {{ descriptionEdit }}
       </td>
-      <td v-else>{{ task.description }}</td>
+      <td class="has-text-centered" v-else>{{ task.description }}</td>
 
-      <td>{{ task.contact._id }}</td>
+      <td class="has-text-centered">{{ task.contact._id }}</td>
 
       <td class="icon-cell" @click="handleConfirmDelete(task)">
         <BaseIcon color="red" name="trash-2"></BaseIcon>
@@ -72,7 +72,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch } from 'vue'
+import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import moment from 'moment'
 
 import BaseInput from './../../components/common/BaseInput.vue'
@@ -89,6 +89,7 @@ import { useModal } from '../../composables/useModal'
 import useTask from '../../composables/useTask'
 import { useStore } from '../../store'
 import { useRouter } from 'vue-router'
+import { StoreConstructor } from '../../store/store.interface'
 import { TaskStore } from '../../store/task.store'
 
 export default defineComponent({
@@ -96,6 +97,7 @@ export default defineComponent({
 
   props: {
     tasks: {
+      // type: Object.prototype.constructor(taskStore),
       type: Array,
       required: true
     }
@@ -112,7 +114,17 @@ export default defineComponent({
 
   async setup(props, ctx){
 
+    onMounted(() => {
+      // const tasks: Task[] = props.tasks.forEach(task => {
+      //   console.log(task.contact)
+      // })
+    })
+
+
     const store = useStore()
+    const taskStore: TaskStore = store.modules['taskStore']
+
+
 
     //#region taskCardModal
 
@@ -138,7 +150,8 @@ export default defineComponent({
     //#endregion
 
     //#region taskUse
-      const taskStore: TaskStore = store.modules['taskStore']
+      // const taskStore: TaskStore = store.modules['taskStore']
+      // Object.prototype.constructor(taskStore)
     //#endregion
 
     //#region delete

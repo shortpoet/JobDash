@@ -43,7 +43,7 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
   }
 
   async createRecord(contact: Contact) {
-    console.log('create record - contact store')
+    // console.log('create record - contact store')
     super.createRecord(contact, '_id')
     const response = await axios.post<ContactDTO>('http://localhost:3000/contact/create', contact)
     this.fetchRecords()

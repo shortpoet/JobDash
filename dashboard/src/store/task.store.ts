@@ -3,6 +3,7 @@ import axios from "axios"
 import { Task } from "../interfaces/task.interface"
 import { TaskDTO } from "../interfaces/taskDTO.interface"
 import { StoreState, Store, StateMap, IStore, StoreAxios } from "./store.interface"
+import { Contact } from "../interfaces/contact.interface"
 
 interface TasksStateMap extends StateMap {
   ids: string[]
@@ -39,7 +40,6 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   }
 
   async createRecord(task: Task) {
-    console.log('createRecord - task store')
     super.createRecord(task, '_id')
     const response = await axios.post<TaskDTO>('http://localhost:3000/task/create', task)
     this.fetchRecords()
@@ -64,7 +64,11 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   async fetchRecords() {
     // get is generic so can specify type
     const response = await axios.get<Task[]>('http://localhost:3000/task/tasks')
-    this.addRecords(response.data, '_id')
+    let tasks: Task[] = response.data.map((task: Task)=> {
+      task.contact = task.contact[0]
+      return task
+    })
+    this.addRecords(tasks, '_id')
   }
 
   toggleEditable(task: Task, editable: boolean) {

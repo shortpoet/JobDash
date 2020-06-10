@@ -9,14 +9,14 @@ export class TaskService {
   constructor(@InjectModel('Task') private readonly taskModel: Model<Task>) { }
   // fetch all tasks
   async getAllTask(): Promise<Task[]> {
-    const tasks = await this.taskModel.find()
-      .populate('contact')
-      // .populate({ 
-      //   path: 'pages',
+    const tasks: Task[] = await this.taskModel.find()
+      .populate('Contact')
+      // .populate({
+      //   path: 'contact',
       //   populate: {
-      //     path: 'components',
-      //     model: 'Component'
-      //   } 
+      //     path: 'contact',
+      //     model: 'Contact'
+      //   }
       // })
       .exec();
     return tasks;
@@ -29,6 +29,7 @@ export class TaskService {
   // post a single task
   async addTask(createTaskDTO: CreateTaskDTO): Promise<Task> {
     const newTask = await this.taskModel(createTaskDTO);
+    console.log(newTask)
     return newTask.save();
   }
   // Edit task details

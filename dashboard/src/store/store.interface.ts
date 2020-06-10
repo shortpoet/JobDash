@@ -78,20 +78,14 @@ export class Store<T> extends BaseStore<T> {
   
   public createRecord(record: any, idSymbol:(string | number)): void {
     console.log('create record - interface')
-    console.log(record)
     const id = record[idSymbol]
     this.state.records.all[id] = record
-    console.log(id)
-    console.log(this.state.records.ids)
     this.state.records.ids.push(id.toString())
-    console.log(this.state.records.ids)
   }
 
   public deleteRecord(record: any, idSymbol:(string | number)): void {
     const id = record[idSymbol]
-    console.log(this.state.records.all)
     delete this.state.records.all[id]
-    console.log(this.state.records.all)
     const index = this.state.records.ids.indexOf(idSymbol.toString())
     this.state.records.ids.splice(index, 1)
   }

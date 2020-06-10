@@ -15,6 +15,9 @@
 
 .contact-row,
 .task-row {
+  >td {
+    text-align: center;
+  }
   .id-cell {
     text-align: left;
     cursor: pointer;

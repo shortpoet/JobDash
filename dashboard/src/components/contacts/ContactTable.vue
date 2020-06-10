@@ -14,16 +14,9 @@
     <tr
       v-for="contact in contacts"
       :key="contact._id" 
-      class="contact-row"   
+      class="contact-row has-text-centered"   
     >
     
-      <!--
-        Using a component here createD a bug
-        update: no longer; wonder what the issue with my code
-      -->
-
-      <!-- <ContactRow :contact="contact" @update-contacts="updateContacts" /> -->
-
       <td class="id-cell" @click="openCard(contact._id)">
         <BaseIcon name="external-link" color="purple">{{ contact._id }}</BaseIcon>
       </td>
@@ -119,10 +112,6 @@ export default defineComponent({
   emits: ['update-contacts'],
 
   async setup(props, ctx){
-
-    const updateContacts = () => {
-      ctx.emit('update-contacts')
-    }
     
     //#region deleteContactModal
 
@@ -156,10 +145,11 @@ export default defineComponent({
     //#endregion
 
     //#region contactUse
-
       const store = useStore()
       const contactStore: ContactStore = store.modules['contactStore']
-
+      const allContactsRef = ref<Contact[]>()
+      const contactUse = await useContact(contactStore, allContactsRef)
+      // const toggleEditable
     //#endregion
 
     //#region delete
@@ -217,6 +207,8 @@ export default defineComponent({
       const companyEdit = ref() 
       const emailEdit = ref()
       const contactTouched = ref(false)
+    
+      const edits = { nameEdit, companyEdit, emailEdit, contactTouched } 
 
       const editContact = async (oldContact: Contact, newContact: Contact) => {
         contactStore.editRecord(
@@ -225,6 +217,7 @@ export default defineComponent({
           '_id'
         )
       }
+
 
       const toggleEditable = async (oldContact: Contact) => {
         if (oldContact.editable == false) {
@@ -255,30 +248,40 @@ export default defineComponent({
         }
       }
 
-      const updateField = (value: string, previous: string) => {
-          if (previous) {
-            contactTouched.value = true
-          }
-        }
-      
-      watch(
-        () => nameEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
-      watch(
-        () => companyEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
-      watch(
-        () => emailEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
+      // const toggleEditable = async (oldContact: Contact) => {
+      //   if (oldContact.editable == false) {
+      //     contactStore.toggleEditable(oldContact, true)
+      //     nameEdit.value = oldContact.name
+      //     companyEdit.value = oldContact.company
+      //     emailEdit.value = oldContact.email
+      //   } else {
+      //     if (contactTouched.value == true) {
+      //       const newContact: Contact = {
+      //         _id: oldContact._id,
+      //         name: nameEdit.value,
+      //         company: companyEdit.value,
+      //         email: emailEdit.value,
+      //         created: oldContact.created,
+      //         edited: moment(),
+      //         editable: false,
+      //         locked: true
+      //       }
+      //       await editContact(oldContact, newContact)
+      //       contactTouched.value = false
+      //       // this closes the edit window by updating the refs after newContact editable set to false
+      //       // ctx.emit('update-contacts')
+      //       ctx.emit('update-contacts')
+      //     } else {
+      //       contactStore.toggleEditable(oldContact, false)
+      //     }
+      //   }
+      // }
+
     //#endregion
 
     return {
       cardIsOpen,
       openCard,
-      updateContacts,
       contactTouched,
       nameEdit,
       companyEdit,

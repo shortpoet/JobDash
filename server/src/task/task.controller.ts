@@ -14,8 +14,9 @@ export class TaskController {
     @Post('/create')
     async addTask(@Res() res, @Body() createTaskDTO: CreateTaskDTO) {
         console.log('create task')
-        console.log(createTaskDTO.contact)
-        console.log(mongoose.Types.ObjectId.isValid(createTaskDTO))
+        // console.log(createTaskDTO)
+        // console.log(createTaskDTO.contact)
+        // console.log(mongoose.Types.ObjectId.isValid(createTaskDTO))
         const task = await this.taskService.addTask(createTaskDTO);
         // console.log(task.locked)
         return res.status(HttpStatus.OK).json({
@@ -28,8 +29,12 @@ export class TaskController {
     @Get('tasks')
     async getAllTask(@Res() res) {
         const tasks = await this.taskService.getAllTask();
-        console.log('logging tasks')
-        console.log(tasks)
+        // console.log('logging tasks')
+        // console.log(tasks)
+        // tasks.forEach(task => {
+        //     console.log(task)
+        //     console.log(task.contact)
+        // })
         return res.status(HttpStatus.OK).json(tasks);
     }
 

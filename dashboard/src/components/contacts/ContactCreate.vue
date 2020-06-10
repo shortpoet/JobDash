@@ -57,7 +57,6 @@ export default defineComponent({
         locked: true
       }
       await contactStore.createRecord(contact)
-      console.log('create contact')
       ctx.emit('update-contacts')
       // onUpdateContacts()
     }

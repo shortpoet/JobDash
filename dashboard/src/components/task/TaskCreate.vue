@@ -69,32 +69,28 @@ export default defineComponent({
     const submit = async function(e: any) {
       const _contact: Contact = await contactStore.getRecordById(contactId.value)
       if (_contact) {
-        const contact: Contact = {
-          _id: _contact._id,
-          name: _contact.name,
-          company: _contact.company,
-          email: _contact.email,
-          created: _contact.created,
-          edited: _contact.edited,
-          editable: _contact.editable,
-          locked: _contact.locked
-        }
-        console.log(contact)
-        // console.log(store.getLastId())
+        // const contact: Contact = {
+        //   _id: _contact._id,
+        //   name: _contact.name,
+        //   company: _contact.company,
+        //   email: _contact.email,
+        //   created: _contact.created,
+        //   edited: _contact.edited,
+        //   editable: _contact.editable,
+        //   locked: _contact.locked
+        // }
         const nextId = (parseInt(taskStore.getLastId()) + 1).toString()
-        // console.log(nextId)
         const task: Task = {
           _id: nextId,
           name: name.value,
           category: category.value,
           description: description.value,
-          contact: contact,
+          contact: _contact,
           created: moment(),
           edited: moment(),
           editable: false,
           locked: true
         }
-        console.log('create task - submit')
         await taskStore.createRecord(task)
         ctx.emit('update-tasks')
       } else {
