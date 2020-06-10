@@ -6,7 +6,7 @@
       <BaseInput type="text" name="Name" v-model="name" />
       <BaseInput type="text" name="Description" v-model="description" />
       <BaseInput type="text" name="Category" v-model="category" />
-      <BaseInput type="text" name="ContactId" v-model="contactId" />
+      <BaseInput type="text" name="Contact Id" v-model="contactId" />
       <button class="button is-success">Create</button>
     </form>
   </div>

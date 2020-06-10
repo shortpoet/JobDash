@@ -14,3 +14,10 @@
   padding: 0rem 0rem 0rem 0rem;
   border: .1rem solid $gray-hr;
 }
+
+#disabled-input {
+  // background-color: whitesmoke;
+  // border-color: whitesmoke;
+  // box-shadow: none;
+  cursor: not-allowed;
+}

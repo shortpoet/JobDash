@@ -54,7 +54,6 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   async editRecord(oldTask: Task, newTask: Task, idSymbol: (string | number)) {
     super.editRecord(oldTask, newTask, '_id')
     console.log('writing to db')
-
     const response = await axios.put<TaskDTO>(
       `http://localhost:3000/task/update?task_id=${oldTask._id}`,
       newTask

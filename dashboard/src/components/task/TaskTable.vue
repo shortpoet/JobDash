@@ -18,7 +18,7 @@
       class="task-row"   
     >
 
-      <td class="has-text-left id-cell" @click="openCard">
+      <td class="has-text-left id-cell" @click="openCard(task)">
         <BaseIcon name="external-link" color="purple">{{ task._id }}</BaseIcon>
       </td>
 
@@ -65,7 +65,7 @@
   </teleport>
 
   <teleport to="#task-card-modal" v-if="taskCardModal.visible">
-    <TaskCard @save-item="editTask" :destination="'#task-card-modal'"/>
+    <TaskCard @update-tasks="updateTasks" :destination="'#task-card-modal'"/>
   </teleport>
 
   <div />
@@ -136,17 +136,17 @@ export default defineComponent({
 
     //#region openCard
       const router = useRouter()
-      const openCard = (_id) => {
-        console.log(_id)
-        console.log(ctx)
+      const openCard = (task: Task) => {
         taskCardModal.showModal()
-        router.push({ name: '#task-card-modal', params: { id: _id } })
+        router.push({ name: '#task-card-modal', params: { id: task._id } })
       }
       const cardIsOpen = computed(() => {
-        console.log(router.currentRoute.value.name)
-        console.log(taskCardDestination)
         return router.currentRoute.value.name === taskCardDestination
       })
+    //#endregion
+
+    //#region updateTasks
+      const updateTasks = () => ctx.emit('update-tasks')
     //#endregion
 
     //#region taskUse
@@ -283,6 +283,7 @@ export default defineComponent({
       taskCardModal,
       openCard,
       cardIsOpen,
+      updateTasks,
       deleteTask,
       toggleEditable,
       toggleDeletable,
