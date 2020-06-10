@@ -15,8 +15,8 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
 
-import { useTaskStore, ITaskStore } from './../../store/task.store'
-import { useContactStore, IContactStore } from './../../store/contact.store'
+import { useTaskStore, ITaskStore, TaskStore } from './../../store/task.store'
+import { useContactStore, IContactStore, ContactStore } from './../../store/contact.store'
 import { Task } from '../../interfaces/task.interface'
 import { Contact } from '../../interfaces/contact.interface'
 
@@ -42,12 +42,12 @@ export default defineComponent({
     const description = ref('description')
     const category = ref('category')
     const contactId = ref('')
-    const contact = ref<Contact>()
+    // const contact = ref<Contact>()
 
     const store = useStore()
 
     //#region taskUse
-      const taskStore = store.modules['taskStore']
+      const taskStore: TaskStore = store.modules['taskStore']
 
       // const iTaskStore: ITaskStore = {
       //   taskStore: taskStore
@@ -63,18 +63,23 @@ export default defineComponent({
     //#endregion
 
     //#region contactUse
-      const contactStore = store.modules['contactStore']
-
-      const allContacts = ref<Contact[]>([])
-
-      const contactUse = await useContact(contactStore, allContacts)
-
-      const onUpdateContacts = contactUse.onUpdateContacts
+      const contactStore: ContactStore = store.modules['contactStore']
     //#endregion
 
     const submit = async function(e: any) {
-      contact.value = await contactStore.getContactById(contactId.value)
-      if (contact.value) {
+      const _contact: Contact = await contactStore.getRecordById(contactId.value)
+      if (_contact) {
+        const contact: Contact = {
+          _id: _contact._id,
+          name: _contact.name,
+          company: _contact.company,
+          email: _contact.email,
+          created: _contact.created,
+          edited: _contact.edited,
+          editable: _contact.editable,
+          locked: _contact.locked
+        }
+        console.log(contact)
         // console.log(store.getLastId())
         const nextId = (parseInt(taskStore.getLastId()) + 1).toString()
         // console.log(nextId)
@@ -83,14 +88,14 @@ export default defineComponent({
           name: name.value,
           category: category.value,
           description: description.value,
-          contact: contact.value,
+          contact: contact,
           created: moment(),
           edited: moment(),
           editable: false,
           locked: true
         }
-        await taskStore.createTask(task)
-        console.log('create task')
+        console.log('create task - submit')
+        await taskStore.createRecord(task)
         ctx.emit('update-tasks')
       } else {
         throw new Error(`Contact with Id - ${contactId.value} - does not exist yet`)
@@ -105,7 +110,6 @@ export default defineComponent({
       name,
       category,
       description,
-      contact,
       submit,
       contactId
     }

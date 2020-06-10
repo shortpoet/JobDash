@@ -24,8 +24,6 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
-import { provideContactStore } from './store/contact.store'
-import { provideTaskStore } from './store/task.store'
 import { provideStore } from './store'
 
 export default defineComponent({

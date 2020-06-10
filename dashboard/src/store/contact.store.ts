@@ -2,19 +2,20 @@ import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
 import { Contact } from "../interfaces/contact.interface"
 import { ContactDTO } from "../interfaces/contactDTO.interface"
-import { StateMap, Store } from "./store.interface"
+import { StateMap, Store, StoreState, IStore, StoreAxios } from "./store.interface"
 
-interface ContactsStateMap extends StateMap {
+interface ContactStateMap extends StateMap {
   ids: string[]
   all: Record<string, Contact>
   loaded: boolean
 }
 
-interface ContactStoreState {
-  contacts: ContactsStateMap
+interface ContactStoreState extends StoreState{
+  records: StateMap,
+  // contacts: StateMap
 }
 
-const initialContactsStateMap = () : ContactsStateMap => ({
+const initialContactsStateMap = () : ContactStateMap => ({
   ids: [
   ],
   all: {
@@ -23,68 +24,54 @@ const initialContactsStateMap = () : ContactsStateMap => ({
 })
 
 const initialContactStoreState = () : ContactStoreState => ({
-  contacts: initialContactsStateMap()
+  records: initialContactsStateMap(),
+  // contacts: initialContactsStateMap()
 })
 
-// declare function getContactById(_id: string): any;
 
-// let getContactById: (_id: string) => Contact = 
-// function(_id: string): Contact {
-//   return this.state.contacts.all[_id]
-// }
-// getContactById = 
-// function(_id: string): any {
-//   this.state.contacts.all[_id] ? this.state.contacts.all[_id] : null
-// }
-
-export class ContactStore extends Store {
+export class ContactStore extends StoreAxios<Contact> implements IStore<Contact> {
   protected state: ContactStoreState
   constructor(initialState: ContactStoreState) {
-    super()
-    this.state = reactive(initialState)
-  }
-
-  public getState(): ContactStoreState {
-    return readonly(this.state)
+    super(initialState)
+    // this.state['contacts'] = this.state.records
+    // this.state = reactive(initialState)
   }
 
   public getLastId(): Contact['_id'] {
-    console.log('get last')
-    const last = this.state.contacts.ids.slice(-1)[0]
-    // if database / store are empty return -1
-    return last ? this.state.contacts.all[last]._id : '-1'
+    const last = this.getLast<Contact>()
+    return last ? last._id : '-1'
   }
 
-  public getContactById(_id: string): Contact;
-  public getContactById(_id: string): any {
-    console.log('get by id')
-    if (this.state.contacts.all[_id]) {
-      return this.state.contacts.all[_id]
-    } else {
-      console.log('is null')
-      return null
-    }
-    console.log(_id)
-    this.state.contacts.all[_id] ? this.state.contacts.all[_id] : null
-  }
-
-  async createContact(contact: Contact) {
+  async createRecord(contact: Contact) {
+    console.log('create record - contact store')
+    super.createRecord(contact, '_id')
     const response = await axios.post<ContactDTO>('http://localhost:3000/contact/create', contact)
-    this.state.contacts.all[response.data.contact._id] = response.data.contact
-    this.state.contacts.ids.push(response.data.contact._id.toString())
-    this.fetchContacts()
+    this.fetchRecords()
   }
 
-  async deleteContact(contact: Contact) {
-    // console.log(contact._id)
-    // console.log(this.state.contacts.all[contact._id])
+  async deleteRecord(contact: Contact): Promise<string> {
+    super.deleteRecord(contact, '_id')
     const response = await axios.delete<ContactDTO>(`http://localhost:3000/contact/delete?contact_id=${contact._id}`)
-    // console.log(response)
-    delete this.state.contacts.all[response.data.contact._id]
-    const index = this.state.contacts.ids.indexOf(response.data.contact._id.toString())
-    this.state.contacts.ids.splice(index, 1)
     return response.data.contact._id
-    // console.log(this.state.contacts.all)
+  }
+
+  
+  async editRecord(oldContact: Contact, newContact: Contact, idSymbol: (string | number)) {
+    super.editRecord(oldContact, newContact, '_id')
+    console.log('writing to db')
+
+    const response = await axios.put<ContactDTO>(
+      `http://localhost:3000/contact/update?contact_id=${oldContact._id}`,
+      newContact
+    )
+  }
+
+  async fetchRecords() {
+    // get is generic so can specify type
+    const data = await this._fetchRecords('http://localhost:3000/contact/contacts')
+    console.log('fetch records')
+    this.addRecords(data, '_id')
+    this.state.records.loaded = true
   }
 
   toggleEditable(contact: Contact, editable: boolean) {
@@ -99,7 +86,7 @@ export class ContactStore extends Store {
     // practice optimization
     // #TODO
     // this works 
-    this.state.contacts.all[contact._id].editable = editable
+    this.state.records.all[contact._id].editable = editable
     // this doesn't work because can't set value on readonly property (contact is part of contact Contact[] which is a ref)
     // contact.editable = editable
   }
@@ -112,7 +99,7 @@ export class ContactStore extends Store {
     //
     // without this line I was getting the bug where I had to click twice
     //
-    this.state.contacts.all[oldContact._id].locked = deletable
+    this.state.records.all[oldContact._id].locked = deletable
     //
     // console.log('new state locked', this.state.contacts.all[oldContact._id].locked)
     const newContact: Contact = {
@@ -126,61 +113,8 @@ export class ContactStore extends Store {
       locked: deletable
     }
     // console.log('new locked', newContact.locked)
-    this.editContact(oldContact, newContact)
+    this.editRecord(oldContact, newContact, '_id')
   }
-  
-  async editContact(oldContact: Contact, newContact: Contact) {
-    // console.log('old locked', oldContact.locked)
-    // console.log('new locked', newContact.locked)
-    console.log('writing to db')
-
-    const response = await axios.put<ContactDTO>(
-      `http://localhost:3000/contact/update?contact_id=${oldContact._id}`,
-      newContact
-    )
-    // console.log('response locked', response.data.contact.locked)
-    this.state.contacts.all[response.data.contact._id] = response.data.contact
-  }
-
-  async fetchContacts() {
-    // get is generic so can specify type
-    const response = await axios.get<Contact[]>('http://localhost:3000/contact/contacts')
-    // to avoid mutating at all costs can do 
-    // response.data.reduce(...)
-
-    // this initial code resets state
-    // const ids: string[] = []
-    // const all: Record<string, Post> = {}
-
-    // console.log(response.data)
-
-    for (const contact of response.data) {
-      // console.log(contact)
-
-
-
-      // do a check to account for duplicates
-      if (!this.state.contacts.ids.includes(contact._id)) {
-        this.state.contacts.ids.push(contact._id)
-      }
-      // using number as key to JS object, it implicitly assumes it is a string and calls .toString() automatically
-      this.state.contacts.all[contact._id] = contact
-    }
-
-    this.state.contacts.loaded = true
-
-    // old implementation 
-
-    // this.state.posts = {
-    //   ids,
-    //   all,
-    //   loaded: true
-    // }
-
-    // console.log(this.state.contacts)
-
-  }
-
 }
 
 const contactStore = new ContactStore(initialContactStoreState())

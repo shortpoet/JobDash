@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
-import { useContactStore, IContactStore } from './../../store/contact.store'
+import { useContactStore, IContactStore, ContactStore } from './../../store/contact.store'
 import BaseInput from './../../components/common/BaseInput.vue'
 import { Contact } from '../../interfaces/contact.interface'
 import moment from 'moment'
@@ -39,19 +39,13 @@ export default defineComponent({
 
     //#region contactUse
       const store = useStore()
-      const contactStore = store.modules['contactStore']
+      const contactStore: ContactStore = store.modules['contactStore']
 
-      const allContacts = ref<Contact[]>([])
-
-      const contactUse = await useContact(contactStore, allContacts)
-
-      const onUpdateContacts = contactUse.onUpdateContacts
     //#endregion
 
     const submit = async function(e: any) {
       // console.log(store.getLastId())
       const nextId = (parseInt(contactStore.getLastId()) + 1).toString()
-      console.log(nextId)
       const contact: Contact = {
         _id: nextId,
         name: name.value,
@@ -62,8 +56,7 @@ export default defineComponent({
         editable: false,
         locked: true
       }
-      // console.log(contact)
-      await contactStore.createContact(contact)
+      await contactStore.createRecord(contact)
       console.log('create contact')
       ctx.emit('update-contacts')
       // onUpdateContacts()

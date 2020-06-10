@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch } from 'vue'
+import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 import moment from 'moment'
@@ -97,6 +97,7 @@ import { Destination } from '../../interfaces/modal.interface'
 import { useModal } from '../../composables/useModal'
 import useContact from '../../composables/useContact'
 import { useStore } from '../../store'
+import { ContactStore } from '../../store/contact.store'
 
 export default defineComponent({
   name: 'ContactTable',
@@ -157,7 +158,7 @@ export default defineComponent({
     //#region contactUse
 
       const store = useStore()
-      const contactStore = store.modules['contactStore']
+      const contactStore: ContactStore = store.modules['contactStore']
 
     //#endregion
 
@@ -177,11 +178,14 @@ export default defineComponent({
       
       const deleteContact = async (e?) => {
         // check for event
+        // TODO
+        // add check for foreign key"
+        // #TODO
         if (e) {
           // check if correct destination
           if (e == destination) {
             deleteContactModal.hideModal()
-            const deletedId = await contactStore.deleteContact(deleteCandidate.value)
+            const deletedId = await contactStore.deleteRecord(deleteCandidate.value)
             console.log('delete contact')
             // null check
             deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
@@ -189,7 +193,7 @@ export default defineComponent({
           }
         } else {
           // no event no deleteContactModal
-          const deletedId = await contactStore.deleteContact(deleteCandidate.value)
+          const deletedId = await contactStore.deleteRecord(deleteCandidate.value)
           console.log('delete contact')
           // null check
           deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
@@ -215,9 +219,10 @@ export default defineComponent({
       const contactTouched = ref(false)
 
       const editContact = async (oldContact: Contact, newContact: Contact) => {
-        contactStore.editContact(
+        contactStore.editRecord(
           oldContact, 
-          newContact
+          newContact,
+          '_id'
         )
       }
 

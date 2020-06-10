@@ -40,7 +40,7 @@
       </td>
       <td v-else>{{ task.description }}</td>
 
-      <td>{{ task.contact[0]._id }}</td>
+      <td>{{ task.contact._id }}</td>
 
       <td class="icon-cell" @click="handleConfirmDelete(task)">
         <BaseIcon color="red" name="trash-2"></BaseIcon>
@@ -89,6 +89,7 @@ import { useModal } from '../../composables/useModal'
 import useTask from '../../composables/useTask'
 import { useStore } from '../../store'
 import { useRouter } from 'vue-router'
+import { TaskStore } from '../../store/task.store'
 
 export default defineComponent({
   name: 'TaskTable',
@@ -137,7 +138,7 @@ export default defineComponent({
     //#endregion
 
     //#region taskUse
-      const taskStore = store.modules['taskStore']
+      const taskStore: TaskStore = store.modules['taskStore']
     //#endregion
 
     //#region delete
@@ -168,7 +169,7 @@ export default defineComponent({
         if (e) {
           if (e == destination) {
             modal.hideModal()
-            const deletedId = await taskStore.deleteTask(deleteCandidate.value)
+            const deletedId = await taskStore.deleteRecord(deleteCandidate.value)
             console.log('delete task')
             deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
             // null check
@@ -176,7 +177,7 @@ export default defineComponent({
             ctx.emit('update-tasks')
           }          
         } else {
-          const deletedId = await taskStore.deleteTask(deleteCandidate.value)
+          const deletedId = await taskStore.deleteRecord(deleteCandidate.value)
           console.log('delete task')
           deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
           // null check
@@ -226,9 +227,10 @@ export default defineComponent({
               locked: true
             }
     
-            await taskStore.editTask(
+            await taskStore.editRecord(
               oldTask, 
-              newTask
+              newTask,
+              '_id'
             )
             taskTouched.value = false
             // this closes the edit window by updating the refs after newTask editable set to false
