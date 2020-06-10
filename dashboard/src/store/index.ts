@@ -18,8 +18,6 @@ const initialStoreState = (): StoreState => ({
 })
 
 const store = new Store(initialStoreState())
-// console.log(store)
-
 
 const contactStore = createContactStore()
 contactStore.getState()
@@ -30,18 +28,11 @@ store.modules = {}
 store.modules['contactStore'] = contactStore
 store.modules['taskStore'] = taskStore
 
-// console.log(contactStore)
-
 export const provideStore = () => {
   provide('store', store)
 }
 
 export const useStore = (): StoreAxios<Contact|Task> => {
-  // instead of returning store directly
-  // create new var called store
-  // inject this via 'store' string
-  // search for closest component that called provideStore with same string 
-  // and return that value
   const store = inject<StoreAxios<Contact|Task>>('store')
   return store
 }

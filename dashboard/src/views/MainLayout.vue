@@ -72,13 +72,8 @@ export default defineComponent({
 
 
     //#region contactUse
-
       const store = useStore()
       const contactStore = store.modules['contactStore']
-
-      // const iContactStore: IContactStore = {
-      //   contactStore: contactStore
-      // }
 
       const allContacts = ref<Contact[]>([])
 

@@ -1,4 +1,4 @@
-import { ref, readonly } from "vue"
+import { ref } from "vue"
 import { Modal } from "../interfaces/modal.interface"
 
 const modalMap = ref<Record<string, Modal>>()

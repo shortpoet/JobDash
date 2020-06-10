@@ -1,6 +1,5 @@
 
-import { defineComponent, computed, ref, onMounted, watch } from 'vue'
-import { useContactStore, IContactStore } from '../store/contact.store.explore'
+import { ref, watch } from 'vue'
 import { Contact } from '../interfaces/contact.interface'
 import { updateRecords, loadRecords } from '../utils'
 import moment from 'moment'

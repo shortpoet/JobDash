@@ -2,8 +2,7 @@ import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
 import { Task } from "../interfaces/task.interface"
 import { TaskDTO } from "../interfaces/taskDTO.interface"
-import { StoreState, Store, StateMap, IStore, StoreAxios } from "./store.interface"
-import { Contact } from "../interfaces/contact.interface"
+import { StoreState, StateMap, IStore, StoreAxios } from "./store.interface"
 
 interface TasksStateMap extends StateMap {
   ids: string[]
@@ -31,7 +30,6 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   protected state: TaskStoreState
   constructor(initialState: TaskStoreState) {
     super(initialState)
-    // this.state = reactive(initialState)
   }
 
   public getLastId(): Task['_id'] {
@@ -88,16 +86,8 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   }
   
   toggleDeletable(oldTask: Task, deletable: boolean) {
-    // console.log('toggle deletable')
-    // console.log(deletable)
-    // console.log('old locked', oldTask.locked)
-    // console.log('old state locked', this.state.tasks.all[oldTask._id].locked)
-    //
     // without this line I was getting the bug where I had to click twice
-    //
     this.state.records.all[oldTask._id].locked = deletable
-    //
-    // console.log('new state locked', this.state.tasks.all[oldTask._id].locked)
 
     const newTask: Task = {
       _id: oldTask._id,
@@ -110,7 +100,6 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
       editable: oldTask.editable,
       locked: deletable
     }
-    // console.log('new locked', newTask.locked)
     this.editRecord(oldTask, newTask, '_id')
   }  
 }
@@ -130,11 +119,6 @@ export const createTaskStore = () => {
 }
 
 export const useTaskStore = (): TaskStore => {
-  // instead of returning store directly
-  // create new var called store
-  // inject this via 'store' string
-  // search for closest component that called provideStore with same string 
-  // and return that value
   const taskStore = inject<TaskStore>('taskStore')
   return taskStore
 }

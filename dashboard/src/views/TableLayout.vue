@@ -77,24 +77,18 @@ export default defineComponent({
     const taskModal = useModal(taskDestination)
     
     //#region contactCardModal
-
       const contactCardDestination: Destination = '#contact-card-modal'
 
       const contactCardModal = useModal(contactCardDestination)
-
     //#endregion
 
     //#region openCard
       const router = useRouter()
       const openCard = (_id) => {
-        console.log(_id)
-        console.log(ctx)
         contactCardModal.showModal()
         router.push({ name: '#contact-card-modal', params: { id: _id } })
       }
       const cardIsOpen = computed(() => {
-        console.log(router.currentRoute.value.name)
-        console.log(contactCardDestination)
         return router.currentRoute.value.name === contactCardDestination
       })
     //#endregion
@@ -130,7 +124,6 @@ export default defineComponent({
     //#endregion
 
     const onUpdateContacts = () => {
-      console.log('update contacts from create layout')
       ctx.emit('update-contacts')
     }
     const onUpdateTasks = () => {

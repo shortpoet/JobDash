@@ -51,8 +51,6 @@ export default defineComponent({
       activeTab.value = tabs.value[0];
 
       const selectedComponent = computed(() => {
-        // console.log('selected component')
-        // console.log(activeTab.value.component)
         switch(activeTab.value.component) {
           case 'TaskCreate':
             return TaskCreate
@@ -72,7 +70,6 @@ export default defineComponent({
     //#endregion
 
       const onUpdateContacts = () => {
-        console.log('update contacts from create layout')
         ctx.emit('update-contacts')
       }
       const onUpdateTasks = () => {

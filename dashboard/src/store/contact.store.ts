@@ -43,7 +43,6 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
   }
 
   async createRecord(contact: Contact) {
-    // console.log('create record - contact store')
     super.createRecord(contact, '_id')
     const response = await axios.post<ContactDTO>('http://localhost:3000/contact/create', contact)
     this.fetchRecords()
@@ -93,15 +92,8 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
   
   toggleDeletable(oldContact: Contact, deletable: boolean) {
     console.log('toggle deletable')
-    // console.log(deletable)
-    // console.log('old locked', oldContact.locked)
-    // console.log('old state locked', this.state.contacts.all[oldContact._id].locked)
-    //
     // without this line I was getting the bug where I had to click twice
-    //
     this.state.records.all[oldContact._id].locked = deletable
-    //
-    // console.log('new state locked', this.state.contacts.all[oldContact._id].locked)
     const newContact: Contact = {
       _id: oldContact._id,
       name: oldContact.name,
@@ -112,7 +104,6 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
       editable: oldContact.editable,
       locked: deletable
     }
-    // console.log('new locked', newContact.locked)
     this.editRecord(oldContact, newContact, '_id')
   }
 }
