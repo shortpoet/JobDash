@@ -68,8 +68,9 @@
     <ModalWarning @delete-item="deleteContact" :destination="'#delete-contact-modal'"/>
   </teleport>
 
+  <!-- <teleport to="#contact-card-modal" v-if="cardIsOpen"> -->
   <teleport to="#contact-card-modal" v-if="contactCardModal.visible">
-    <router-view/>
+    <!-- <router-view/> -->
     <ContactCard @save-item="editContact" :destination="'#contact-card-modal'"/>
   </teleport>
 
@@ -124,20 +125,17 @@ export default defineComponent({
     
     //#region deleteContactModal
 
-    const destination: Destination = '#delete-contact-modal'
+      const destination: Destination = '#delete-contact-modal'
 
-    const deleteContactModal = useModal(destination)
-
-    const contactCardDestination: Destination = '#contact-card-modal'
-
-    const contactCardModal = useModal(contactCardDestination)
+      const deleteContactModal = useModal(destination)
 
     //#endregion
 
-    //#region contactUse
+    //#region contactCardModal
 
-      const store = useStore()
-      const contactStore = store.modules['contactStore']
+      const contactCardDestination: Destination = '#contact-card-modal'
+
+      const contactCardModal = useModal(contactCardDestination)
 
     //#endregion
 
@@ -149,6 +147,18 @@ export default defineComponent({
         contactCardModal.showModal()
         router.push({ name: '#contact-card-modal', params: { id: _id } })
       }
+      const cardIsOpen = computed(() => {
+        console.log(router.currentRoute.value.name)
+        console.log(contactCardDestination)
+        return router.currentRoute.value.name === contactCardDestination
+      })
+    //#endregion
+
+    //#region contactUse
+
+      const store = useStore()
+      const contactStore = store.modules['contactStore']
+
     //#endregion
 
     //#region delete
@@ -204,16 +214,19 @@ export default defineComponent({
       const emailEdit = ref()
       const contactTouched = ref(false)
 
+      const editContact = async (oldContact: Contact, newContact: Contact) => {
+        contactStore.editContact(
+          oldContact, 
+          newContact
+        )
+      }
+
       const toggleEditable = async (oldContact: Contact) => {
         if (oldContact.editable == false) {
           contactStore.toggleEditable(oldContact, true)
           nameEdit.value = oldContact.name
           companyEdit.value = oldContact.company
           emailEdit.value = oldContact.email
-          // without this line when using module toggle wouldn't update
-          // v-if wasn't triggered
-          ctx.emit('update-contacts')
-
         } else {
           if (contactTouched.value == true) {
             const newContact: Contact = {
@@ -227,10 +240,7 @@ export default defineComponent({
               locked: true
             }
     
-            await contactStore.editContact(
-              oldContact, 
-              newContact
-            )
+            await editContact(oldContact, newContact)
             contactTouched.value = false
             // this closes the edit window by updating the refs after newContact editable set to false
             // ctx.emit('update-contacts')
@@ -262,6 +272,7 @@ export default defineComponent({
     //#endregion
 
     return {
+      cardIsOpen,
       openCard,
       updateContacts,
       contactTouched,

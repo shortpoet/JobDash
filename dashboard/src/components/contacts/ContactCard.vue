@@ -1,9 +1,11 @@
 <template>
-  <div class="form-container">
-    <h5 class="form-heading">Contact</h5>
+  <div class="card contact-card form-container">
+    <div class="contact-card-header">
+      <h5 class="form-heading">Contact</h5>
+      <button class="delete is-pulled-right" @click="modal.hideModal"></button>
+    </div>
     <hr class="form-hr"/>
     <form action="submit" @submit.prevent="submit">
-      <button class="delete" @click="modal.hideModal"></button>
       <BaseInput type="text" name="Name" v-model="name" />
       <BaseInput type="text" name="Company" v-model="company" />
       <BaseInput type="text" name="Email" v-model="email" />
@@ -68,6 +70,7 @@ export default defineComponent({
 
     const submit = async function(e: any) {
       console.log(props.destination)
+      console.log(e)
     }
 
     const updateTable = () => {

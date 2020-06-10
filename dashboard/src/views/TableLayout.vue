@@ -15,6 +15,17 @@
       </BaseBox>
     </div>
 
+    <!-- 
+      Errors:
+        - Failed to locate Teleport target with selector "#contact-card-modal". 
+        - Invalid Teleport target on mount: null
+      when using the computed value.  i guess it tries to compute before dom is available
+    <teleport to="#contact-card-modal" v-if="cardIsOpen">
+      <router-view/>
+      <ContactCard @save-item="'editContact'" :destination="'#contact-card-modal'"/>
+    </teleport> 
+    -->
+
       <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts" @update-tasks="onUpdateTasks"/> -->
       <!-- <ContactTable :contacts="allContacts" @update-contacts="onUpdateContacts"/> -->
       <!-- <TaskTable :tasks="allTasks" @update-tasks="onUpdateTasks"/> -->
@@ -32,10 +43,13 @@ import BaseBox from './../components/common/BaseBox.vue'
 import ContactTable from './../components/contacts/ContactTable.vue'
 import TaskTable from './../components/task/TaskTable.vue'
 
+import ContactCard from './../components/contacts/ContactCard.vue'
+
 import { useModal } from '../composables/useModal'
 import { Destination } from '../interfaces/modal.interface'
 
 import { Tab } from '../interfaces/tab.interface'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'TableLayout',
@@ -52,7 +66,8 @@ export default defineComponent({
   components: {
     BaseBox,
     ContactTable,
-    TaskTable
+    TaskTable,
+    ContactCard
   },
   emits: ['update-contacts', 'update-tasks'],
   setup(props, ctx) {
@@ -61,6 +76,30 @@ export default defineComponent({
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
     
+    //#region contactCardModal
+
+      const contactCardDestination: Destination = '#contact-card-modal'
+
+      const contactCardModal = useModal(contactCardDestination)
+
+    //#endregion
+
+    //#region openCard
+      const router = useRouter()
+      const openCard = (_id) => {
+        console.log(_id)
+        console.log(ctx)
+        contactCardModal.showModal()
+        router.push({ name: '#contact-card-modal', params: { id: _id } })
+      }
+      const cardIsOpen = computed(() => {
+        console.log(router.currentRoute.value.name)
+        console.log(contactCardDestination)
+        return router.currentRoute.value.name === contactCardDestination
+      })
+    //#endregion
+    
+
     //#region dynamic component
       const tabs = ref<Tab[]>()
       const activeTab = ref<Tab>()
@@ -101,6 +140,7 @@ export default defineComponent({
     return {
       contactModal,
       taskModal,
+      cardIsOpen,
       onUpdateContacts,
       onUpdateTasks
     }

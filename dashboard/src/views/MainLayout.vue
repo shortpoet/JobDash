@@ -22,10 +22,13 @@
 
   <TaskBoard />
 
-  <!-- <teleport to="#contact-card-modal" v-if="contactCardModal.visible">
+  <!-- 
+    causes append child node error
+  <teleport to="#contact-card-modal" v-if="contactCardModal.visible">
     <router-view/>
     <ContactCard @save-item="editContact" :destination="'#contact-card-modal'"/>
-  </teleport> -->
+  </teleport> 
+  -->
 
 
   <div />
