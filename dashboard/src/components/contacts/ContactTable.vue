@@ -17,7 +17,7 @@
       class="contact-row has-text-centered"   
     >
     
-      <td class="id-cell" @click="openCard(contact._id)">
+      <td class="id-cell" @click="openCard(contact)">
         <BaseIcon name="external-link" color="purple">{{ contact._id }}</BaseIcon>
       </td>
 
@@ -64,7 +64,7 @@
   <!-- <teleport to="#contact-card-modal" v-if="cardIsOpen"> -->
   <teleport to="#contact-card-modal" v-if="contactCardModal.visible">
     <!-- <router-view/> -->
-    <ContactCard @save-item="editContact" :destination="'#contact-card-modal'"/>
+    <ContactCard @update-contacts="updateContacts" :destination="'#contact-card-modal'"/>
   </teleport>
 
 
@@ -131,17 +131,19 @@ export default defineComponent({
 
     //#region openCard
       const router = useRouter()
-      const openCard = (_id) => {
-        console.log(_id)
-        console.log(ctx)
+      const openCard = (contact: Contact) => {
         contactCardModal.showModal()
-        router.push({ name: '#contact-card-modal', params: { id: _id } })
+        router.push({ name: '#contact-card-modal', params: { id: contact._id } })
       }
       const cardIsOpen = computed(() => {
         console.log(router.currentRoute.value.name)
         console.log(contactCardDestination)
         return router.currentRoute.value.name === contactCardDestination
       })
+    //#endregion
+
+    //#region updateContacts
+      const updateContacts = () => ctx.emit('update-contacts')
     //#endregion
 
     //#region contactUse
@@ -286,6 +288,7 @@ export default defineComponent({
       nameEdit,
       companyEdit,
       emailEdit,
+      updateContacts,
       deleteContactModal,
       contactCardModal,
       deleteContact,

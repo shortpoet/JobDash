@@ -6,16 +6,16 @@
     </div>
     <hr class="form-hr"/>
     <form action="submit" @submit.prevent="submit">
-      <BaseInput type="text" name="Name" v-model="name" />
-      <BaseInput type="text" name="Company" v-model="company" />
-      <BaseInput type="text" name="Email" v-model="email" />
+      <BaseInput type="text" name="Name" v-model="nameEdit" />
+      <BaseInput type="text" name="Company" v-model="companyEdit" />
+      <BaseInput type="text" name="Email" v-model="emailEdit" />
       <button class="button is-success">Save</button>
     </form>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent, computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import moment from 'moment'
 
@@ -26,6 +26,7 @@ import { Contact } from '../../interfaces/contact.interface'
 import useContact from '../../composables/useContact'
 import { useModal } from '../../composables/useModal'
 import { useStore } from './../../store'
+import { ContactStore } from '../../store/contact.store'
 
 export default defineComponent({
   name: 'ContactCard',
@@ -45,16 +46,6 @@ export default defineComponent({
 
   async setup(props, ctx){
 
-    const name = ref('name')
-    const company = ref('company')
-    const email = ref('email')
-
-    const nameEdit = ref() 
-    const companyEdit = ref() 
-    const emailEdit = ref()
-    const contactTouched = ref(false)
-
-
     //#region modal
       const modal = useModal(props.destination)
     //#endregion
@@ -62,24 +53,74 @@ export default defineComponent({
     //#region contactUse
       const store = useStore()
       const router = useRouter()
-      const contactStore = store.modules['contactStore']
+      const contactStore: ContactStore = store.modules['contactStore']
+      const id: string = typeof(router.currentRoute.value.params.id) == 'string' ? router.currentRoute.value.params.id : router.currentRoute.value.params.id[0]
+      const contact: Contact = contactStore.getRecordById(id)
+
       console.log(router)
       // const contact = contactStore.getContactById()
 
     //#endregion
+    //#region initValues
+      const nameEdit = ref() 
+      const companyEdit = ref() 
+      const emailEdit = ref()
+      const contactTouched = ref(false)
+
+      nameEdit.value = contact.name
+      companyEdit.value = contact.company
+      emailEdit.value = contact.email
+
+      const contactEdit = ref<Contact>({...contact})
+
+      const taskTouched = ref(false)
+
+    //#endregion
+    //#region updateValues
+      const updateField = (value: string, previous: string) => {
+          if (previous) {
+            taskTouched.value = true
+          }
+        }
+      
+      watch(
+        () => nameEdit.value,
+        (value: string, previous: string) => updateField(value, previous)
+      )
+      watch(
+        () => companyEdit.value,
+        (value: string, previous: string) => updateField(value, previous)
+      )
+      watch(
+        () => emailEdit.value,
+        (value: string, previous: string) => updateField(value, previous)
+      )
+
+    //#endregion
 
     const submit = async function(e: any) {
-      console.log(props.destination)
-      console.log(e)
+      if (taskTouched.value == true) {
+        contactEdit.value.name = nameEdit.value
+        contactEdit.value.company = companyEdit.value
+        contactEdit.value.email = emailEdit.value
+        await contactStore.editRecord(
+          contact, 
+          contactEdit.value,
+          '_id'
+        )
+        taskTouched.value = false
+        ctx.emit('update-contacts')
+      }
+      modal.hideModal()
     }
 
     const updateTable = () => {
     }
 
     return{
-      name,
-      company,
-      email,
+      nameEdit,
+      companyEdit,
+      emailEdit,
       submit,
       modal
     }

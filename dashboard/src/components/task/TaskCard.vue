@@ -95,7 +95,6 @@ export default defineComponent({
       )
 
     //#endregion
-
     const submit = async function(e: any) {
       if (taskTouched.value == true) {
         taskEdit.value.name = nameEdit.value
