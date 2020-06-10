@@ -239,7 +239,6 @@ export default defineComponent({
               editable: false,
               locked: true
             }
-    
             await editContact(oldContact, newContact)
             contactTouched.value = false
             // this closes the edit window by updating the refs after newContact editable set to false

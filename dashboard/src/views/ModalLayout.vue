@@ -41,10 +41,12 @@ export default defineComponent({
     const contactDeleteDestination: Destination = '#delete-contact-modal'
     const taskDeleteDestination: Destination = '#delete-task-modal'
     const contactCardDestination: Destination = '#contact-card-modal'
-    const destinations: Destination[] = [contactDeleteDestination, taskDeleteDestination, contactCardDestination]
+    const taskCardDestination: Destination = '#task-card-modal'
+    const destinations: Destination[] = [contactDeleteDestination, taskDeleteDestination, contactCardDestination, taskCardDestination]
     const contactDeleteModal = useModal(contactDeleteDestination)
     const taskDeleteModal = useModal(taskDeleteDestination)
     const contactCardModal = useModal(contactCardDestination)
+    const taskCardModal = useModal(taskCardDestination)
 
     // any modal works to access getModel
     const thisModalVisibility = destination => contactDeleteModal.getModal(destination).visible.value
@@ -54,7 +56,8 @@ export default defineComponent({
       destinations,
       contactDeleteModal,
       taskDeleteModal,
-      contactCardModal
+      contactCardModal,
+      taskCardModal
     }
 
   }

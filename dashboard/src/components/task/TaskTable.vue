@@ -18,7 +18,7 @@
       class="task-row"   
     >
 
-      <td class="id-cell" @click="''">
+      <td class="id-cell" @click="openCard">
         <BaseIcon name="external-link" color="purple">{{ task._id }}</BaseIcon>
       </td>
 
@@ -64,6 +64,10 @@
     <ModalWarning @delete-item="deleteTask" :destination="'#delete-task-modal'"/>
   </teleport>
 
+  <teleport to="#task-card-modal" v-if="taskCardModal.visible">
+    <TaskCard @save-item="editTask" :destination="'#task-card-modal'"/>
+  </teleport>
+
   <div />
 </template>
 
@@ -75,6 +79,8 @@ import BaseInput from './../../components/common/BaseInput.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
 import ModalWarning from './../../components/common/ModalWarning.vue'
 
+import TaskCard from './TaskCard.vue'
+
 import { Task } from '../../interfaces/task.interface'
 import { Field } from '../../interfaces/field.interface'
 import { Destination } from '../../interfaces/modal.interface'
@@ -82,6 +88,7 @@ import { Destination } from '../../interfaces/modal.interface'
 import { useModal } from '../../composables/useModal'
 import useTask from '../../composables/useTask'
 import { useStore } from '../../store'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'TaskTable',
@@ -96,7 +103,8 @@ export default defineComponent({
   components: {
     BaseInput,
     ModalWarning,
-    BaseIcon
+    BaseIcon,
+    TaskCard
   },
 
   emits: ['update-tasks'],
@@ -104,6 +112,29 @@ export default defineComponent({
   async setup(props, ctx){
 
     const store = useStore()
+
+    //#region taskCardModal
+
+      const taskCardDestination: Destination = '#task-card-modal'
+
+      const taskCardModal = useModal(taskCardDestination)
+
+    //#endregion
+
+    //#region openCard
+      const router = useRouter()
+      const openCard = (_id) => {
+        console.log(_id)
+        console.log(ctx)
+        taskCardModal.showModal()
+        router.push({ name: '#task-card-modal', params: { id: _id } })
+      }
+      const cardIsOpen = computed(() => {
+        console.log(router.currentRoute.value.name)
+        console.log(taskCardDestination)
+        return router.currentRoute.value.name === taskCardDestination
+      })
+    //#endregion
 
     //#region taskUse
       const taskStore = store.modules['taskStore']
@@ -234,6 +265,9 @@ export default defineComponent({
       categoryEdit,
       descriptionEdit,
       modal,
+      taskCardModal,
+      openCard,
+      cardIsOpen,
       deleteTask,
       toggleEditable,
       toggleDeletable,
