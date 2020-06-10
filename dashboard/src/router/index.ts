@@ -13,6 +13,13 @@ const routes: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "about" */ "../components/contacts/ContactCard.vue"),
         props: route => ({destination: route.name})
+      },
+      {
+        path: 'task/:id',
+        name: '#task-card-modal',
+        component: () =>
+          import(/* webpackChunkName: "about" */ "../components/task/TaskCard.vue"),
+        props: route => ({destination: route.name})
       }
     ]    
   }
