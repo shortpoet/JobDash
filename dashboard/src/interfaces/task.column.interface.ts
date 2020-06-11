@@ -1,7 +1,8 @@
 import { Task } from "./task.interface";
+import { Ref } from "vue";
 
 export interface ITaskColumn {
   id: number
   category: string
-  tasks: Task[]
+  tasks: Ref<Task[]>
 }

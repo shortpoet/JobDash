@@ -23,17 +23,26 @@ export default defineComponent({
     TaskCell
   },
   props: {
+    category: {
+      type: String,
+      required: true
+    },
+    tasks: {
+      type: Array as () => Task[],
+      required: true
+    },
     column: {
       type: Object as () => ITaskColumn,
       required: true
     }
   },
   setup(props, ctx) {
-    const category = ref(props.column.category)
-    const tasks = ref<Task[]>(props.column.tasks)
+    // const category = ref(props.column.category)
+    // const tasks = ref<Task[]>(props.column.tasks.value)
+    // console.log(tasks.value)
     return {
-      category,
-      tasks
+      // category,
+      // tasks
     }
   }
 })

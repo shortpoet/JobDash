@@ -5,6 +5,14 @@
   -->
   <section class="section task-section">
 
+    <div class="box">
+      <ul v-for="(item, i) in tasks" :key="i">
+        <li>
+        {{ item.name }}
+        </li>
+      </ul>
+    </div>
+
     <div class="container task-board">
       <div class="columns-container">
         <div class="columns is-centered">
@@ -13,7 +21,7 @@
             v-for="column in columns"
             :key="column.id"
           >
-            <TaskColumn :column="column"/>  
+            <TaskColumn :column="column" :category="column.category" :tasks="column.tasks"/>  
           </div>
         </div>
       </div>
@@ -56,41 +64,56 @@ export default defineComponent({
 
   async setup(props) {
     
-    const columns = ref<ITaskColumn[]>()
-    const tasks = ref<Task[]>()
+    // needs to be initialized as emtpty array
+    const columns = ref<ITaskColumn[]>([])
+    // const tasks = ref<Task[]>()
     // const tasks = ref([])
 
-    tasks.value = props.tasks
+    // tasks.value = props.tasks
 
     const columnNames = ref([])
 
-    columnNames.value = [...new Set(tasks.value.map(task => task.category))]
 
-    // columnNames.value = tasks.value.map(task => {
-    //   return task.filter((task, index, tasks) => tasks.indexOf(task.category) == index)
-    // })
-
-
-    const cols = []
-    columnNames.value.forEach((category, i) => {
-      cols.push({
-        id: i,
-        category: category,
-        tasks: tasks.value.filter(task => task.category == category)
+    const setColumns = () => {
+      columns.value = []
+      columnNames.value = []
+      columnNames.value = [...new Set(props.tasks.map(task => task.category))]
+      columnNames.value.forEach((category, i) => {
+        const categorized = props.tasks.filter(task => task.category == category)
+        const colRef = ref(categorized)
+        const iTaskColumn: ITaskColumn = {
+          id: i,
+          category: category,
+          tasks: colRef
         }
-      )
-    })
-    columns.value = cols
-    console.log(columnNames.value)
-    
-    // watch(
-    //   () => tasks[0].value,
-    //   (value: string, previous: string) => {
-    //     if (value != previous) {
+        console.log(iTaskColumn)
+        console.log(columns.value)
+        columns.value.push(iTaskColumn)
+      })
+    }
 
-    //     }
-    //   }
-    // )
+    setColumns()
+    // const cols = []
+    // columnNames.value.forEach((category, i) => {
+    //   const colRef = ref<ITaskColumn>({
+    //     id: i,
+    //     category: category,
+    //     tasks: tasks.value.filter(task => task.category == category)
+    //   })
+    //   cols.push(colRef)
+    // })
+  
+    // columns.value = cols
+    // console.log(columnNames.value)
+
+    watch(
+      () => props.tasks.length.toString(),
+      (value: string, previous: string) => {
+        if (value != previous) {
+          setColumns()
+        }
+      }
+    )
     console.log(columns.value)
 
     const _columns = [
