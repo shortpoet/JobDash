@@ -1,6 +1,6 @@
 import { Task } from "./task.interface";
 
 export interface TaskDTO {
-  message: string
+  dtoLog: string
   task: Task
 }

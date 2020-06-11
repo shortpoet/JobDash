@@ -20,7 +20,7 @@ export class TaskController {
         const task = await this.taskService.addTask(createTaskDTO);
         // console.log(task.locked)
         return res.status(HttpStatus.OK).json({
-            message: "Task has been created successfully",
+            dtoLog: "Task has been created successfully",
             task
         })
     }
@@ -54,7 +54,7 @@ export class TaskController {
         // console.log(task.id)
         if (!task) throw new NotFoundException('Task does not exist!');
         return res.status(HttpStatus.OK).json({
-            message: 'Task has been successfully updated',
+            dtoLog: 'Task has been successfully updated',
             task
         });
     }
@@ -65,7 +65,7 @@ export class TaskController {
         const task = await this.taskService.deleteTask(task_id);
         if (!task) throw new NotFoundException('Task does not exist');
         return res.status(HttpStatus.OK).json({
-            message: 'Task has been deleted',
+            dtoLog: 'Task has been deleted',
             task
         })
     }

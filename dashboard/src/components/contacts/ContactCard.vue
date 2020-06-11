@@ -21,6 +21,8 @@ import moment from 'moment'
 
 import BaseInput from './../../components/common/BaseInput.vue'
 
+import MessageWriter from './../../components/common/MessageWriter.vue'
+
 import { Contact } from '../../interfaces/contact.interface'
 
 import useContact from '../../composables/useContact'
@@ -39,7 +41,8 @@ export default defineComponent({
   },
 
   components: {
-    BaseInput
+    BaseInput,
+    MessageWriter
   },
 
   emits: ['update-contacts'],

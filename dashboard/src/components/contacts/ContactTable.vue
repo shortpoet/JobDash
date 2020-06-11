@@ -9,6 +9,7 @@
         <th>Delete</th>
         <th>Edit</th>
         <th>Locked</th>
+        <th>Message</th>
       </tr>
     </thead>
     <tr
@@ -17,7 +18,7 @@
       class="contact-row has-text-centered"   
     >
     
-      <td class="id-cell" @click="openCard(contact)">
+      <td class="id-cell" @click="openContactCard(contact)">
         <BaseIcon name="external-link" color="purple">{{ contact._id }}</BaseIcon>
       </td>
 
@@ -54,6 +55,10 @@
         <BaseIcon color="silver" name="unlock"></BaseIcon>
       </td>
 
+      <td class="icon-cell" @click="openMessageModal(contact)">
+        <BaseIcon color="green" name="mail"></BaseIcon>        
+      </td>
+
     </tr>
   </table>
 
@@ -65,6 +70,11 @@
   <teleport to="#contact-card-modal" v-if="contactCardModal.visible">
     <!-- <router-view/> -->
     <ContactCard @update-contacts="updateContacts" :destination="'#contact-card-modal'"/>
+  </teleport>
+
+  <teleport to="#message-modal" v-if="messageModal.visible">
+    <!-- <router-view/> -->
+    <ContactCard @send-message="sendMessage" :destination="'#message-modal'"/>
   </teleport>
 
 
@@ -86,6 +96,7 @@ import ContactCard from './ContactCard.vue'
 import { Contact } from '../../interfaces/contact.interface'
 import { Field } from '../../interfaces/field.interface'
 import { Destination } from '../../interfaces/modal.interface'
+import { Message } from './../../interfaces/message.interface' 
 
 import { useModal } from '../../composables/useModal'
 import useContact from '../../composables/useContact'
@@ -129,9 +140,9 @@ export default defineComponent({
 
     //#endregion
 
-    //#region openCard
-      const router = useRouter()
-      const openCard = (contact: Contact) => {
+    const router = useRouter()
+    //#region openContactCard
+      const openContactCard = (contact: Contact) => {
         contactCardModal.showModal()
         router.push({ name: '#contact-card-modal', params: { id: contact._id } })
       }
@@ -140,6 +151,48 @@ export default defineComponent({
         console.log(contactCardDestination)
         return router.currentRoute.value.name === contactCardDestination
       })
+    //#endregion
+
+    //#region messageModal
+
+      const messageDestination: Destination = '#message-modal'
+
+      const messageModal = useModal(messageDestination)
+
+    //#endregion
+
+    //#region createMessage
+      const createMessage = (contact: Contact): Message => {
+        const message: Message = {
+          _id: '-1',
+          subject: '',
+          body: '',
+          category: '',
+          contact: contact,
+          created: moment(),
+          edited: moment(),
+          editable: false,
+          locked: true
+        }
+        return message
+      }
+    //#endregion
+
+    //#region openMessageModal
+      const openMessageModal = (contact: Contact) => {
+        const message = createMessage(contact)
+        
+        messageModal.showModal()
+        router.push({ name: '#contact-card-modal', params: { id: contact._id } })
+      }
+      const messageIsOpen = computed(() => {
+        console.log(router.currentRoute.value.name)
+        console.log(messageDestination)
+        return router.currentRoute.value.name === messageDestination
+      })
+    //#endregion
+
+    //#region sendMessage
     //#endregion
 
     //#region updateContacts
@@ -283,7 +336,7 @@ export default defineComponent({
 
     return {
       cardIsOpen,
-      openCard,
+      openContactCard,
       contactTouched,
       nameEdit,
       companyEdit,

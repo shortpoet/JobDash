@@ -16,7 +16,7 @@ export class ContactController {
         const contact = await this.contactService.addContact(createContactDTO);
         // console.log(contact.locked)
         return res.status(HttpStatus.OK).json({
-            message: "Contact has been created successfully",
+            dtoLog: "Contact has been created successfully",
             contact
         })
     }
@@ -46,7 +46,7 @@ export class ContactController {
         // console.log(contact.id)
         if (!contact) throw new NotFoundException('Contact does not exist!');
         return res.status(HttpStatus.OK).json({
-            message: 'Contact has been successfully updated',
+            dtoLog: 'Contact has been successfully updated',
             contact
         });
     }
@@ -57,7 +57,7 @@ export class ContactController {
         const contact = await this.contactService.deleteContact(contact_id);
         if (!contact) throw new NotFoundException('Contact does not exist');
         return res.status(HttpStatus.OK).json({
-            message: 'Contact has been deleted',
+            dtoLog: 'Contact has been deleted',
             contact
         })
     }

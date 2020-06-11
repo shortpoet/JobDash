@@ -20,6 +20,13 @@ const routes: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "about" */ "../components/task/TaskCard.vue"),
         props: route => ({destination: route.name})
+      },
+      {
+        path: 'contact/:id/message/:id',
+        name: '#message-modal',
+        component: () =>
+          import(/* webpackChunkName: "about" */ "../components/common/MessageWriter.vue"),
+        props: route => ({destination: route.name})
       }
     ]    
   }

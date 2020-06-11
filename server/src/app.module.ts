@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ContactModule } from './contact/contact.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TaskModule } from './task/task.module';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { TaskModule } from './task/task.module';
       }
     ),
     ContactModule,
-    TaskModule
+    TaskModule,
+    MessageModule
   ],
   controllers: [AppController],
   providers: [AppService],
