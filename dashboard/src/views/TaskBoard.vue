@@ -14,17 +14,19 @@
             @dragstart.self so that nested pickupTask doesn't trigger this event listener
           -->
           <div class="column task-column-container"
-            v-for="column in columns"
+            v-for="(column, columnIndex) in columns"
             :key="column.id"
             draggable
-            @dragstart.self="pickupColumn($event, column)"
+            @dragstart.self="pickupColumn($event, column, columnIndex)"
             @dragover.prevent
             @dragenter.prevent
+            @drop="moveTaskOrColumn($event, column.tasks, columnIndex)"
           >
             <TaskColumn
               :column="column" 
               :category="column.category"
               :tasks="column.tasks"
+              :column-index="columnIndex"
             />  
           </div>
         </div>
@@ -111,14 +113,45 @@ export default defineComponent({
     //#endregion
 
     //#region drag
-      const pickupColumn = (e: DragEvent, column: ITaskColumn) => {
+      const pickupColumn = (e: DragEvent, column: ITaskColumn, fromColumnIndex: number) => {
         console.log('pickup columns')
         console.log(e)
         e.dataTransfer.effectAllowed = 'move'
         e.dataTransfer.dropEffect = 'move'
 
+        e.dataTransfer.setData('from-column-index', fromColumnIndex.toString())
         e.dataTransfer.setData('column-category', column.category.toString())
         console.log(e.dataTransfer.getData('column-category'))
+      }
+      const moveTask = (e: DragEvent, toTasks: Task[], toTaskIndex: number) => {
+        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+        const fromTasks = columns[fromColumnIndex].tasks
+        const fromTaskIndex = e.dataTransfer.getData('from-task-index')
+
+        // this.$store.commit('MOVE_TASK', {
+        //   fromTasks,
+        //   fromTaskIndex,
+        //   toTasks,
+        //   toTaskIndex
+        // })
+      }
+      const moveColumn = (e: DragEvent, toColumnIndex: number) => {
+        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+
+        // this.$store.commit('MOVE_COLUMN', {
+        //   fromColumnIndex,
+        //   toColumnIndex
+        // })
+
+      }
+      const moveTaskOrColumn = (e: DragEvent, toTasks: Task[], toColumnIndex: number, toTaskIndex: number) => {
+        const type = e.dataTransfer.getData('type')
+
+        if (type === 'task') {
+          moveTask(e, toTasks, toTaskIndex !== undefined ? toTaskIndex : toTasks.length)
+        } else {
+          moveColumn(e, toColumnIndex)
+        }
       }
     //#endregion
 
