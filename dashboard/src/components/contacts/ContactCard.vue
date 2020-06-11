@@ -27,6 +27,7 @@ import { Contact } from '../../interfaces/contact.interface'
 
 import useContact from '../../composables/useContact'
 import { useModal } from '../../composables/useModal'
+import { useUpdateValues } from '../../composables/useUpdateValues'
 import { useStore } from './../../store'
 import { ContactStore } from '../../store/contact.store'
 
@@ -76,33 +77,15 @@ export default defineComponent({
 
       const contactEdit = ref<Contact>({...contact})
 
-      const taskTouched = ref(false)
 
     //#endregion
+    
     //#region updateValues
-      const updateField = (value: string, previous: string) => {
-          if (previous) {
-            taskTouched.value = true
-          }
-        }
-      
-      watch(
-        () => nameEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
-      watch(
-        () => companyEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
-      watch(
-        () => emailEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
-
+      useUpdateValues(contactTouched, [nameEdit, companyEdit, emailEdit])
     //#endregion
 
     const submit = async function(e: any) {
-      if (taskTouched.value == true) {
+      if (contactTouched.value == true) {
         contactEdit.value.name = nameEdit.value
         contactEdit.value.company = companyEdit.value
         contactEdit.value.email = emailEdit.value
@@ -111,7 +94,7 @@ export default defineComponent({
           contactEdit.value,
           '_id'
         )
-        taskTouched.value = false
+        contactTouched.value = false
         ctx.emit('update-contacts')
       }
       modal.hideModal()

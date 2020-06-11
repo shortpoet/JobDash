@@ -37,11 +37,33 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
     return last ? last._id : '-1'
   }
 
-  async createRecord(message: Message) {
+  async createRecord(message: Message, idSymbol:(string | number) = '_id', pushToDb: boolean = true) {
+    console.log('create record - message')
+    console.log(message)
+    console.log(idSymbol)
+    console.log(pushToDb)
     super.createRecord(message, '_id')
-    const response = await axios.post<MessageDTO>('http://localhost:3000/message/create', message)
-    this.fetchRecords()
+    if(pushToDb) {
+      console.log('writing to db')
+      const response = await axios.post<MessageDTO>('http://localhost:3000/message/create', message)
+      console.log(response)
+      this.fetchRecords()
+    }
   }
+
+  // // https://mariusschulz.com/blog/typing-destructured-object-parameters-in-typescript
+  // async createRecord(
+  //   message: Message,
+  //   { idSymbol = '_id'}: { idSymbol?: string} = {},
+  //   { pushToDb = true}: { pushToDb?: boolean} = {}
+  // ) {
+  //   super.createRecord(message, '_id')
+  //   if(pushToDb) {
+  //     const response = await axios.post<MessageDTO>('http://localhost:3000/message/create', message)
+  //     this.fetchRecords()
+  //   }
+  // }
+  
   
   async deleteRecord(message: Message): Promise<string> {
     super.deleteRecord(message, '_id')

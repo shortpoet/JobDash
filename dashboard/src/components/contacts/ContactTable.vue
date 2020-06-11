@@ -74,7 +74,7 @@
 
   <teleport to="#message-modal" v-if="messageModal.visible">
     <!-- <router-view/> -->
-    <ContactCard @send-message="sendMessage" :destination="'#message-modal'"/>
+    <MessageWriter @send-message="sendMessage" :destination="'#message-modal'" :message="message"/>
   </teleport>
 
 
@@ -90,6 +90,7 @@ import moment from 'moment'
 import BaseInput from './../../components/common/BaseInput.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
 import ModalWarning from './../../components/common/ModalWarning.vue'
+import MessageWriter from './../../components/common/MessageWriter.vue'
 
 import ContactCard from './ContactCard.vue'
 
@@ -102,6 +103,8 @@ import { useModal } from '../../composables/useModal'
 import useContact from '../../composables/useContact'
 import { useStore } from '../../store'
 import { ContactStore } from '../../store/contact.store'
+import { MessageStore } from '../../store/message.store'
+import { useUpdateValues } from '../../composables/useUpdateValues'
 
 export default defineComponent({
   name: 'ContactTable',
@@ -117,7 +120,8 @@ export default defineComponent({
     BaseInput,
     ModalWarning,
     BaseIcon,
-    ContactCard
+    ContactCard,
+    MessageWriter
   },
 
   emits: ['update-contacts'],
@@ -141,6 +145,21 @@ export default defineComponent({
     //#endregion
 
     const router = useRouter()
+    const store = useStore()
+    //#region contactUse
+      const contactStore: ContactStore = store.modules['contactStore']
+      const allContactsRef = ref<Contact[]>()
+      const contactUse = await useContact(contactStore, allContactsRef)
+      // const toggleEditable
+    //#endregion
+
+    //#region messageUse
+      const messageStore: MessageStore = store.modules['messageStore']
+      // const allMessagesRef = ref<Message[]>()
+      // const messageUse = await useMessage(messageStore, allMessagesRef)
+      // const toggleEditable
+    //#endregion
+
     //#region openContactCard
       const openContactCard = (contact: Contact) => {
         contactCardModal.showModal()
@@ -178,12 +197,13 @@ export default defineComponent({
       }
     //#endregion
 
+    const message = ref<Message>()
     //#region openMessageModal
       const openMessageModal = (contact: Contact) => {
-        const message = createMessage(contact)
-        
+        message.value = createMessage(contact)
+        messageStore.createRecord(message.value, '', false)
         messageModal.showModal()
-        router.push({ name: '#contact-card-modal', params: { id: contact._id } })
+        router.push({ name: '#message-modal', params: { id: contact._id } })
       }
       const messageIsOpen = computed(() => {
         console.log(router.currentRoute.value.name)
@@ -193,18 +213,14 @@ export default defineComponent({
     //#endregion
 
     //#region sendMessage
+      const sendMessage = (e) => {
+        console.log(e)
+        console.log(router.currentRoute.value)
+      }
     //#endregion
 
     //#region updateContacts
       const updateContacts = () => ctx.emit('update-contacts')
-    //#endregion
-
-    //#region contactUse
-      const store = useStore()
-      const contactStore: ContactStore = store.modules['contactStore']
-      const allContactsRef = ref<Contact[]>()
-      const contactUse = await useContact(contactStore, allContactsRef)
-      // const toggleEditable
     //#endregion
 
     //#region delete
@@ -261,8 +277,12 @@ export default defineComponent({
       const nameEdit = ref() 
       const companyEdit = ref() 
       const emailEdit = ref()
-      const contactTouched = ref(false)
-    
+      
+      //#region updateValues
+        const contactTouched = ref(false)
+        useUpdateValues(contactTouched, [nameEdit, companyEdit, emailEdit])
+      //#endregion
+
       const edits = { nameEdit, companyEdit, emailEdit, contactTouched } 
 
       const editContact = async (oldContact: Contact, newContact: Contact) => {
@@ -335,6 +355,10 @@ export default defineComponent({
     //#endregion
 
     return {
+      messageModal,
+      openMessageModal,
+      sendMessage,
+      message,
       cardIsOpen,
       openContactCard,
       contactTouched,

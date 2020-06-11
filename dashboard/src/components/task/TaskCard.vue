@@ -28,6 +28,7 @@ import useTask from '../../composables/useTask'
 import { useModal } from '../../composables/useModal'
 import { useStore } from './../../store'
 import { TaskStore } from '../../store/task.store'
+import { useUpdateValues } from '../../composables/useUpdateValues'
 
 export default defineComponent({
   name: 'TaskCard',
@@ -75,25 +76,7 @@ export default defineComponent({
     //#endregion
 
     //#region updateValues
-      const updateField = (value: string, previous: string) => {
-          if (previous) {
-            taskTouched.value = true
-          }
-        }
-      
-      watch(
-        () => nameEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
-      watch(
-        () => categoryEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
-      watch(
-        () => descriptionEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
-
+      useUpdateValues(taskTouched, [nameEdit, descriptionEdit, categoryEdit])
     //#endregion
     const submit = async function(e: any) {
       if (taskTouched.value == true) {

@@ -37,6 +37,7 @@ export abstract class BaseStore<T> implements IStore<T> {
   abstract getLast<T>(): T; 
   abstract getLast(): any; 
   abstract createRecord(record: any, idSymbol:(string | number)): void;
+  abstract createRecord(record: any, idSymbol:(string | number), pushToDb: Boolean): void;
   abstract addRecords(records: any[], idSymbol:(string | number)): void;
 }
 

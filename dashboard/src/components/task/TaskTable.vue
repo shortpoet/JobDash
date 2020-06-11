@@ -91,6 +91,7 @@ import { useStore } from '../../store'
 import { useRouter } from 'vue-router'
 import { StoreConstructor } from '../../store/store.interface'
 import { TaskStore } from '../../store/task.store'
+import { useUpdateValues } from '../../composables/useUpdateValues'
 
 export default defineComponent({
   name: 'TaskTable',
@@ -218,7 +219,11 @@ export default defineComponent({
       const nameEdit = ref() 
       const categoryEdit = ref() 
       const descriptionEdit = ref() 
-      const taskTouched = ref(false)
+      
+      //#region updateValues
+        const taskTouched = ref(false)
+        useUpdateValues(taskTouched, [nameEdit, descriptionEdit, categoryEdit])
+      //#endregion
 
       const toggleEditable = async (oldTask: Task) => {
         if (oldTask.editable == false) {
@@ -254,24 +259,6 @@ export default defineComponent({
         }
       }
 
-      const updateField = (value: string, previous: string) => {
-          if (previous) {
-            taskTouched.value = true
-          }
-        }
-      
-      watch(
-        () => nameEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
-      watch(
-        () => categoryEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
-      watch(
-        () => descriptionEdit.value,
-        (value: string, previous: string) => updateField(value, previous)
-      )
     //#endregion
 
     return {
