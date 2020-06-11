@@ -9,3 +9,12 @@
     }
   }
 }
+
+.task-column-container {
+  display: flex;
+  flex-direction: column;
+}
+.task-cell-container {
+  display: flex;
+  flex-direction: column;
+}

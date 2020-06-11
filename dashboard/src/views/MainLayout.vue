@@ -20,7 +20,9 @@
     </div>
   </div>
 
-  <TaskBoard />
+  <TaskBoard
+    :tasks="allTasks"
+  />
 
   <!-- 
     causes append child node error
