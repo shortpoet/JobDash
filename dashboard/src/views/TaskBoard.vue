@@ -5,23 +5,27 @@
   -->
   <section class="section task-section">
 
-    <div class="box">
-      <ul v-for="(item, i) in tasks" :key="i">
-        <li>
-        {{ item.name }}
-        </li>
-      </ul>
-    </div>
-
     <div class="container task-board">
       <div class="columns-container">
         <div class="columns is-centered">
           <!-- column class here makes column background expand past name to fill available space except padding -->
-          <div class="column has-text-centered task-column-container"
+          <!-- 
+            must use $event as variable
+            @dragstart.self so that nested pickupTask doesn't trigger this event listener
+          -->
+          <div class="column task-column-container"
             v-for="column in columns"
             :key="column.id"
+            draggable
+            @dragstart.self="pickupColumn($event, column)"
+            @dragover.prevent
+            @dragenter.prevent
           >
-            <TaskColumn :column="column" :category="column.category" :tasks="column.tasks"/>  
+            <TaskColumn
+              :column="column" 
+              :category="column.category"
+              :tasks="column.tasks"
+            />  
           </div>
         </div>
       </div>
@@ -62,71 +66,66 @@ export default defineComponent({
     }
   },
 
+  emits: ['dragstart', 'draggable'],
+
   async setup(props) {
     
-    // needs to be initialized as emtpty array
     const columns = ref<ITaskColumn[]>([])
-    // const tasks = ref<Task[]>()
-    // const tasks = ref([])
-
-    // tasks.value = props.tasks
 
     const columnNames = ref([])
 
-
-    const setColumns = () => {
-      columns.value = []
-      columnNames.value = []
-      columnNames.value = [...new Set(props.tasks.map(task => task.category))]
-      columnNames.value.forEach((category, i) => {
-        const categorized = props.tasks.filter(task => task.category == category)
-        const colRef = ref(categorized)
-        const iTaskColumn: ITaskColumn = {
-          id: i,
-          category: category,
-          tasks: colRef
-        }
-        console.log(iTaskColumn)
-        console.log(columns.value)
-        columns.value.push(iTaskColumn)
-      })
-    }
-
-    setColumns()
-    // const cols = []
-    // columnNames.value.forEach((category, i) => {
-    //   const colRef = ref<ITaskColumn>({
-    //     id: i,
-    //     category: category,
-    //     tasks: tasks.value.filter(task => task.category == category)
-    //   })
-    //   cols.push(colRef)
-    // })
-  
-    // columns.value = cols
-    // console.log(columnNames.value)
-
-    watch(
-      () => props.tasks.length.toString(),
-      (value: string, previous: string) => {
-        if (value != previous) {
-          setColumns()
-        }
+    //#region setColumns
+      const setColumns = () => {
+        columns.value = []
+        columnNames.value = []
+        columnNames.value = [...new Set(props.tasks.map(task => task.category))]
+        columnNames.value.forEach((category, i) => {
+          const categorized = props.tasks.filter(task => task.category == category)
+          const colRef = ref(categorized)
+          const iTaskColumn: ITaskColumn = {
+            id: i,
+            category: category,
+            tasks: colRef
+          }
+          columns.value.push(iTaskColumn)
+        })
       }
-    )
-    console.log(columns.value)
 
-    const _columns = [
-      {id:'1', category: 'Column 1'},
-      {id:'2', category: 'Column 2'},
-      {id:'3', category: 'Column 3'},
-      {id:'4', category: 'Column 4'},
-      {id:'5', category: 'Column 5'},
-    ]
+      watch(
+        () => props.tasks.length.toString(),
+        (value: string, previous: string) => {
+          if (value != previous) {
+            setColumns()
+          }
+        },
+        {immediate: true}
+      )
+
+      const _columns = [
+        {id:'1', category: 'Column 1'},
+        {id:'2', category: 'Column 2'},
+        {id:'3', category: 'Column 3'},
+        {id:'4', category: 'Column 4'},
+        {id:'5', category: 'Column 5'},
+      ]
+    //#endregion
+
+    //#region drag
+      const pickupColumn = (e: DragEvent, column: ITaskColumn) => {
+        console.log('pickup columns')
+        console.log(e)
+        e.dataTransfer.effectAllowed = 'move'
+        e.dataTransfer.dropEffect = 'move'
+
+        e.dataTransfer.setData('column-category', column.category.toString())
+        console.log(e.dataTransfer.getData('column-category'))
+      }
+    //#endregion
 
     return {
       _columns,
-      columns
+      columns,
+      pickupColumn
     }
   }
 })

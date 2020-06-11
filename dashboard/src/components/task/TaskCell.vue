@@ -18,7 +18,7 @@ export default defineComponent({
   },
   setup(props, ctx) {
     const task = ref<Task>(props.task)
-    console.log(task.value)
+    // console.log(task.value)
     return {
       task
     }

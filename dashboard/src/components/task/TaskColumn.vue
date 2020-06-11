@@ -2,8 +2,10 @@
   <div class="had-text-centered task-column-category">{{ category }}</div>
   <div class="task-cells-container">
     <div class="task-cell-container"
-      v-for="task in tasks"
+      v-for="(task, i) in tasks"
       :key="task._id"
+      draggable
+      @dragstart="pickupTask($event, task, i)"
     >
       <TaskCell :task="task" />
     </div>
@@ -36,11 +38,30 @@ export default defineComponent({
       required: true
     }
   },
+
+  emits: ['dragstart', 'draggable'],
+
   setup(props, ctx) {
     // const category = ref(props.column.category)
     // const tasks = ref<Task[]>(props.column.tasks.value)
     // console.log(tasks.value)
+
+    //#region drag
+      const pickupTask = (e: DragEvent, task: Task, index: number) => {
+        console.log('pickup task')
+        console.log(e)
+        e.dataTransfer.effectAllowed = 'move'
+        e.dataTransfer.dropEffect = 'move'
+
+        e.dataTransfer.setData('task-category', task.category.toString())
+        e.dataTransfer.setData('task-index', index.toString())
+        console.log(e.dataTransfer.getData('task-category'))
+        console.log(e.dataTransfer.getData('task-index'))
+      }
+    //#endregion
+
     return {
+      pickupTask,
       // category,
       // tasks
     }
