@@ -5,14 +5,16 @@
   -->
   <section class="section task-section">
 
-    <div class="task-board container">
-      <div class="columns is-centered">
-        <!-- column class here makes column background expand past name to fill available space except padding -->
-        <div class="column has-text-centered task-column-container"
-          v-for="column in columns"
-          :key="column.id"
-        >
-          <TaskColumn :column="column"/>  
+    <div class="container task-board">
+      <div class="columns-container">
+        <div class="columns is-centered">
+          <!-- column class here makes column background expand past name to fill available space except padding -->
+          <div class="column has-text-centered task-column-container"
+            v-for="column in columns"
+            :key="column.id"
+          >
+            <TaskColumn :column="column"/>  
+          </div>
         </div>
       </div>
     </div>

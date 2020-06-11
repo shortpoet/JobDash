@@ -1,20 +1,46 @@
-.task-board{
-  background-color: $royal-purple;
+.task-board {
+  background-color: $forest-green;
   color: $white;
-  .columns {
-    margin: 0rem .75rem 0rem .75rem;
-    .column{
-      background-color: $forest-green;
-      margin: .75rem .75rem .75rem .75rem;
+  padding: .75rem;
+  .columns-container {
+    background-color: $royal-purple;
+    margin: .75rem .75rem .75rem .75rem;
+    padding: .75rem .75rem .75rem .75rem;
+    .columns {
+      // margin: .75rem .75rem .75rem .75rem;
+      // padding: .75rem .75rem .75rem .75rem;
+      // background-color: $forest-green;
+      // .task-column-container {
+      //   margin: .75rem .75rem .75rem .75rem;
+      //   display: flex;
+      //   flex-direction: column;
+      //   background-color:$royal-purple;
+      // }
+      .task-column-container {
+        margin: .5rem .5rem .5rem .5rem;
+        padding: .5rem .5rem .5rem .5rem;
+        background-color: $royal-purple;
+        .task-column-category {
+          background-color: $forest-green;
+          margin: .5rem .5rem .5rem .5rem;
+          padding: .5rem .5rem .5rem .5rem;
+          // display: flex;
+          // flex-direction: column;
+        }
+        .task-cell-container {
+          background-color: $forest-green;
+          margin: .5rem .5rem .5rem .5rem;
+          padding: .5rem .5rem .5rem .5rem;
+          display: flex;
+          flex-direction: column;
+        }
+      }
     }
   }
 }
 
-.task-column-container {
-  display: flex;
-  flex-direction: column;
-}
-.task-cell-container {
-  display: flex;
-  flex-direction: column;
+.task-cells-container {
+  // margin: .5rem .5rem .5rem .5rem;
+  // display: flex;
+  // flex-direction: column;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="had-text-centered task-column">{{ category }}</div>
+  <div class="had-text-centered task-column-category">{{ category }}</div>
   <div class="task-cells-container">
     <div class="task-cell-container"
       v-for="task in tasks"
