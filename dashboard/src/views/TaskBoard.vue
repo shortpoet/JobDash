@@ -49,6 +49,7 @@ export default defineComponent({
   props: {
     tasks: {
       type: Array as () => Task[],
+      // type: Array,
       required: true
     }
   },
@@ -57,15 +58,31 @@ export default defineComponent({
     
     const columns = ref<ITaskColumn[]>()
     const tasks = ref<Task[]>()
+    // const tasks = ref([])
 
     tasks.value = props.tasks
 
-    columns.value = tasks.value.map((task, i) => ({
-      id: i,
-      category: task.category,
-      tasks: tasks.value.filter(_task => task.category == _task.category)
-    }))
+    const columnNames = ref([])
 
+    columnNames.value = [...new Set(tasks.value.map(task => task.category))]
+
+    // columnNames.value = tasks.value.map(task => {
+    //   return task.filter((task, index, tasks) => tasks.indexOf(task.category) == index)
+    // })
+
+
+    const cols = []
+    columnNames.value.forEach((category, i) => {
+      cols.push({
+        id: i,
+        category: category,
+        tasks: tasks.value.filter(task => task.category == category)
+        }
+      )
+    })
+    columns.value = cols
+    console.log(columnNames.value)
+    
     // watch(
     //   () => tasks[0].value,
     //   (value: string, previous: string) => {
