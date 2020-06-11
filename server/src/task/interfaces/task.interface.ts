@@ -1,6 +1,6 @@
 // ./src/task/interfaces/task.interface.ts
 import { Document } from 'mongoose';
-import { Contact } from 'src/contact/interfaces/contact.interface';
+import { Contact } from './../../../src/contact/interfaces/contact.interface';
 
 export interface Task extends Document {
     readonly _id: string;

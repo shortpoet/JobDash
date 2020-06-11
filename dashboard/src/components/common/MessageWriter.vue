@@ -41,6 +41,7 @@ import { Message } from './../../interfaces/message.interface'
 import { useUpdateValues } from '../../composables/useUpdateValues'
 import { Destination } from '../../interfaces/modal.interface'
 import { useModal } from '../../composables/useModal'
+import  useMessage from '../../composables/useMessage'
 import { MessageStore } from '../../store/message.store'
 import { useStore } from '../../store'
 import { ContactStore } from '../../store/contact.store'
@@ -55,10 +56,14 @@ export default defineComponent({
     }
   },
   // emits: ['submit-message'],
-  setup(props, ctx) {
+  async setup(props, ctx) {
 
     const store = useStore()
     const messageStore: MessageStore = store.modules['messageStore']
+    const allMessagesRef = ref<Message[]>()
+    const messageUse = await useMessage(messageStore, allMessagesRef)
+    console.log('messages')
+    console.log(allMessagesRef.value)
     // const contactStore: ContactStore = store.modules['contactStore']
     // const _contact: Contact = await contactStore.getRecordById(props.message.contact._id)
 
@@ -84,7 +89,7 @@ export default defineComponent({
     const submit = async function(e: any) {
       console.log('submit - message writer')
       const nextId = (parseInt(messageStore.getLastId()) + 1).toString()
-
+      console.log(nextId)
       if (messageTouched.value == true) {
         console.log('message touched')
         messageEdit.value._id = nextId

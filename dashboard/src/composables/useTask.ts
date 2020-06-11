@@ -7,8 +7,8 @@ export default async function useTask(taskStore, allTasksRef) {
   allTasksRef.value = await loadRecords(taskStore, 'tasks')
 
   const onUpdateTasks = async () => {
-    console.log('use task - update')
-    const newValue = await updateRecords(taskStore,'contacts')
+    console.log('use task - update') 
+    const newValue = await updateRecords(taskStore, 'tasks')
     allTasksRef.value = newValue
   }
 
