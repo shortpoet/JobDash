@@ -1,13 +1,8 @@
 // ./src/task/schemas/customer.schema.ts
 import * as mongoose from 'mongoose';
-import moment from 'moment';
 
-// import { ContactController } from 'src/contact/contact.controller';
-// import { Contact } from 'src/contact/interfaces/contact.interface';
 // import { ContactSchema } from 'src/contact/schemas/contact.schema';
 // debug
-import { ContactController } from './../../../src/contact/contact.controller';
-import { Contact } from './../../../src/contact/interfaces/contact.interface';
 import { ContactSchema } from './../../../src/contact/schemas/contact.schema';
 
 
