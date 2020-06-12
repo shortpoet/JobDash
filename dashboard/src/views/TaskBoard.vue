@@ -54,6 +54,9 @@ import { ITaskColumn } from './../interfaces/task.column.interface'
 import { Task } from '../interfaces/task.interface'
 import TaskColumn from './../components/task/TaskColumn.vue'
 import { useStorage } from './../composables/useStorage'
+import useColumns from './../composables/useColumns'
+import { useStore } from '../store'
+import { ColumnStore } from '../store/column.store'
 
 export default defineComponent({
   name: 'TaskBoard',
@@ -131,7 +134,7 @@ export default defineComponent({
       })
 
       const out = Object.keys(orderMap.value).map((category, i) => ({
-        id: i,
+        order: i,
         category: category,
         tasks: categoryColumns[category]
       }))
@@ -144,7 +147,13 @@ export default defineComponent({
       // console.log(out)
       return out
     })
-  
+
+    columns.value = columnsComputed.value
+    const columnStore: ColumnStore = useStore().modules['columnStore']
+    const columnsUse = useColumns(columnStore, columnsComputed.value)
+    console.log('col store')
+    console.log(columnStore.getState().records.all)
+
     //#region drag
       const pickupColumn = (e: DragEvent, fromColumn: ITaskColumn) => {
         console.log('pickup columns')
@@ -175,7 +184,7 @@ export default defineComponent({
         let fromColumnIndex = orderMap[fromColumnCategory]
         console.log(orderMap)
         console.log('from column index', fromColumnIndex)
-        orderMap[fromColumnCategory] = toColumn.id
+        orderMap[fromColumnCategory] = toColumn.order
         console.log(orderMap)
         orderMap[toColumn.category] = fromColumnIndex
         console.log(orderMap)

@@ -8,7 +8,7 @@ import { Ref } from "vue";
 // }
 
 export interface ITaskColumn {
-  id: number
+  order: number
   category: string
   tasks: Record<string, Task>
 }
