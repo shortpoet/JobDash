@@ -1,11 +1,12 @@
 <template>
-  <div class="card contact-card form-container">
+  <div class="card contact-card form-container" v-if="loaded">
     <div class="contact-card-header">
       <h5 class="form-heading">Contact</h5>
       <button class="delete is-pulled-right" @click="modal.hideModal"></button>
     </div>
     <hr class="form-hr"/>
     <form action="submit" @submit.prevent="submit">
+      <BaseInput type="text" name="Id" :readonly="true" v-model="contactEdit._id" />
       <BaseInput type="text" name="Name" v-model="nameEdit" />
       <BaseInput type="text" name="Company" v-model="companyEdit" />
       <BaseInput type="text" name="Email" v-model="emailEdit" />
@@ -54,61 +55,60 @@ export default defineComponent({
       const modal = useModal(props.destination)
     //#endregion
 
-    //#region contactUse
+    //#region initValues
       const store = useStore()
       const router = useRouter()
       const contactStore: ContactStore = store.modules['contactStore']
-      const id: string = typeof(router.currentRoute.value.params.id) == 'string' ? router.currentRoute.value.params.id : router.currentRoute.value.params.id[0]
-      const contact: Contact = contactStore.getRecordById(id)
 
-      console.log(router)
-      // const contact = contactStore.getContactById()
+      const id = ref()
+      const contact = ref<Contact>()
 
-    //#endregion
-    //#region initValues
+      const contactEdit = ref<Contact>()
+      const loaded = ref(false)
+
       const nameEdit = ref() 
       const companyEdit = ref() 
       const emailEdit = ref()
       const contactTouched = ref(false)
 
-      nameEdit.value = contact.name
-      companyEdit.value = contact.company
-      emailEdit.value = contact.email
-
-      const contactEdit = ref<Contact>({...contact})
-
-
-    //#endregion
+      setTimeout(() => {
+        id.value = typeof(router.currentRoute.value.params.id) == 'string' ? router.currentRoute.value.params.id : router.currentRoute.value.params.id[0]
+        contact.value = contactStore.getRecordById(id.value)
+        nameEdit.value = contact.value.name
+        companyEdit.value = contact.value.company
+        emailEdit.value = contact.value.email
+        contactEdit.value = {...contact.value}
+        loaded.value = true
+      }, .1)
     
     //#region updateValues
       useUpdateValues(contactTouched, [nameEdit, companyEdit, emailEdit])
+
+      const submit = async function(e: any) {
+        if (contactTouched.value == true) {
+          contactEdit.value.name = nameEdit.value
+          contactEdit.value.company = companyEdit.value
+          contactEdit.value.email = emailEdit.value
+          await contactStore.editRecord(
+            contact.value, 
+            contactEdit.value,
+            '_id'
+          )
+          contactTouched.value = false
+          ctx.emit('update-contacts')
+        }
+        modal.hideModal()
+      }
     //#endregion
 
-    const submit = async function(e: any) {
-      if (contactTouched.value == true) {
-        contactEdit.value.name = nameEdit.value
-        contactEdit.value.company = companyEdit.value
-        contactEdit.value.email = emailEdit.value
-        await contactStore.editRecord(
-          contact, 
-          contactEdit.value,
-          '_id'
-        )
-        contactTouched.value = false
-        ctx.emit('update-contacts')
-      }
-      modal.hideModal()
-    }
-
-    const updateTable = () => {
-    }
-
     return{
+      contactEdit,
       nameEdit,
       companyEdit,
       emailEdit,
       submit,
-      modal
+      modal,
+      loaded
     }
 
   }

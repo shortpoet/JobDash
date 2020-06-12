@@ -1,11 +1,12 @@
 <template>
-  <div class="card task-card form-container">
+  <div class="card task-card form-container" v-if="loaded">
     <div class="task-card-header">
       <h5 class="form-heading">Task</h5>
       <button class="delete is-pulled-right" @click="modal.hideModal"></button>
     </div>
     <hr class="form-hr"/>
     <form action="submit" @submit.prevent="submit">
+      <BaseInput type="text" name="Id" :readonly="true" v-model="taskEdit._id" />
       <BaseInput type="text" name="Name" v-model="nameEdit" />
       <BaseInput type="text" name="Description" v-model="descriptionEdit" />
       <BaseInput type="text" name="Category" v-model="categoryEdit" />
@@ -52,49 +53,55 @@ export default defineComponent({
       const modal = useModal(props.destination)
     //#endregion
 
-    //#region taskUse
-      const store = useStore()
-      const router: Router = useRouter()
-      const taskStore: TaskStore = store.modules['taskStore']
-      const id: string = typeof(router.currentRoute.value.params.id) == 'string' ? router.currentRoute.value.params.id : router.currentRoute.value.params.id[0]
-      const task: Task = taskStore.getRecordById(id)
-    //#endregion
-
     //#region initValues
+      const id = ref('')
+      const task = ref<Task>()
       const nameEdit = ref()
       const descriptionEdit = ref()
       const categoryEdit = ref()
 
-      nameEdit.value = task.name
-      descriptionEdit.value = task.description
-      categoryEdit.value = task.category
-
-      const taskEdit = ref<Task>({...task})
-
+      const taskEdit = ref<Task>()
       const taskTouched = ref(false)
 
+      const loaded = ref(false)
+
+      const store = useStore()
+      const router: Router = useRouter()
+      const taskStore: TaskStore = store.modules['taskStore']
+      // need this otherwise router is a step behind
+      setTimeout(() => {
+        id.value =  typeof(router.currentRoute.value.params.id) == 'string' ? router.currentRoute.value.params.id : router.currentRoute.value.params.id[0]
+        task.value = taskStore.getRecordById(id.value)
+        nameEdit.value = task.value.name
+        descriptionEdit.value = task.value.description
+        categoryEdit.value = task.value.category
+        taskEdit.value = {...task.value}
+        loaded.value = true
+      }, .1)  
     //#endregion
 
     //#region updateValues
       useUpdateValues(taskTouched, [nameEdit, descriptionEdit, categoryEdit])
-    //#endregion
-    const submit = async function(e: any) {
-      if (taskTouched.value == true) {
-        taskEdit.value.name = nameEdit.value
-        taskEdit.value.description = descriptionEdit.value
-        taskEdit.value.category = categoryEdit.value
-        await taskStore.editRecord(
-          task, 
-          taskEdit.value,
-          '_id'
-        )
-        taskTouched.value = false
-        ctx.emit('update-tasks')
+    
+      const submit = async function(e: any) {
+        if (taskTouched.value == true) {
+          taskEdit.value.name = nameEdit.value
+          taskEdit.value.description = descriptionEdit.value
+          taskEdit.value.category = categoryEdit.value
+          await taskStore.editRecord(
+            task.value, 
+            taskEdit.value,
+            '_id'
+          )
+          taskTouched.value = false
+          ctx.emit('update-tasks')
+        }
+        modal.hideModal()
       }
-      modal.hideModal()
-    }
+    //#endregion
 
     return{
+      loaded,
       nameEdit,
       descriptionEdit,
       categoryEdit,

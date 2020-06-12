@@ -14,7 +14,7 @@
             @dragstart.self so that nested pickupTask doesn't trigger this event listener
           -->
           <div class="column task-column-container"
-            v-for="(column, columnIndex) in columns"
+            v-for="(column, columnIndex) in columnsComputed"
             :key="column.id"
             draggable
             @dragstart.self="pickupColumn($event, column, columnIndex)"
@@ -25,7 +25,7 @@
             <TaskColumn
               :column="column" 
               :category="column.category"
-              :tasks="column.tasks"
+              :tasks-map="column.tasks"
               :column-index="columnIndex"
               :column-names="columnNames"
               :all-tasks="allTasks"
@@ -91,72 +91,77 @@ export default defineComponent({
       return catArr
     })
 
-    const columnsComputed = computed<ITaskColumn[]>((): ITaskColumn[] => {
-      const taskColumns: Record<string, Task[]> = {}
-      props.tasks.forEach(task => {
-        if (task.category in taskColumns) {
-          taskColumns[task.category].push(task)
-        } else {
-          taskColumns[task.category] = []
-          taskColumns[task.category].push(task)
-        }
-      })
-      
-      return Object.keys(taskColumns).map((category, i) => ({
-        id: i,
-        category: category,
-        tasks: taskColumns[category]
-      }))
-    })
-
     // const columnsComputed = computed<ITaskColumn[]>((): ITaskColumn[] => {
-    //   const categoryColumns: Record<string, Task[]> = {}
+    //   const taskColumns: Record<string, Task[]> = {}
     //   props.tasks.forEach(task => {
-    //     if (task.category in categoryColumns) {
-    //       categoryColumns[task.category][]
+    //     if (task.category in taskColumns) {
+    //       taskColumns[task.category].push(task)
     //     } else {
-    //       categoryColumns[task.category] = []
-    //       categoryColumns[task.category].push(task)
+    //       taskColumns[task.category] = []
+    //       taskColumns[task.category].push(task)
     //     }
     //   })
       
-    //   Object.keys(categoryColumns).map((category, i) => ({
+    //   return Object.keys(taskColumns).map((category, i) => ({
     //     id: i,
     //     category: category,
-    //     tasks: categoryColumns[category]
+    //     tasks: taskColumns[category]
     //   }))
-    //   return categoryColumns
     // })
+
+    const columnsComputed = computed<ITaskColumn[]>((): ITaskColumn[] => {
+      const categoryColumns: Record<string, Record<string, Task>> = {}
+      // console.log(categoryColumns)
+      props.tasks.forEach(task => {
+        if (task) {
+          if (task.category in categoryColumns) {
+            categoryColumns[task.category][task._id] = task
+          }else {
+            categoryColumns[task.category] = {}
+            // categoryColumns[task.category][task._id] = <Task>{}
+            categoryColumns[task.category][task._id] = task
+          }
+        }
+      })
+      
+      const out = Object.keys(categoryColumns).map((category, i) => ({
+        id: i,
+        category: category,
+        tasks: categoryColumns[category]
+      }))
+      // console.log(out)
+      return out
+    })
 
     
   
 
     //#region setColumns
-      const setColumns = () => {
-        columns.value = []
-        columnNames.value = []
-        columnNames.value = [...new Set(props.tasks.map(task => task.category))]
-        columnNames.value.forEach((category, i) => {
-          const categorized = props.tasks.filter(task => task.category == category)
-          // const colRef = ref(categorized)
-          const iTaskColumn: ITaskColumn = {
-            id: i,
-            category: category,
-            tasks: categorized
-          }
-          columns.value.push(iTaskColumn)
-        })
-      }
-      // setColumns()
-      watch(
-        () => props.tasks.length.toString(),
-        (value: string, previous: string) => {
-          if (value != previous) {
-            setColumns()
-          }
-        },
-        {immediate: true}
-      )
+      // const setColumns = () => {
+      //   columns.value = []
+      //   columnNames.value = []
+      //   columnNames.value = [...new Set(props.tasks.map(task => task.category))]
+      //   columnNames.value.forEach((category, i) => {
+      //     const categorized = props.tasks.filter(task => task.category == category)
+      //     // const colRef = ref(categorized)
+      //     const iTaskColumn: ITaskColumn = {
+      //       id: i,
+      //       category: category,
+      //       tasks: categorized
+      //     }
+      //     columns.value.push(iTaskColumn)
+      //   })
+      // }
+      // // setColumns()
+      // watch(
+      //   () => props.tasks.length.toString(),
+      //   (value: string, previous: string) => {
+      //     if (value != previous) {
+      //       setColumns()
+      //     }
+      //   },
+      //   {immediate: true}
+      // )
 
       const _columns = [
         {id:'1', category: 'Column 1'},

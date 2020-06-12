@@ -1,6 +1,6 @@
 <template>
   <div class="task-cell">
-    {{ task.name }}
+    {{taskId}}: {{ taskName }}
   </div>
 </template>
 
@@ -14,7 +14,16 @@ export default defineComponent({
     task: {
       type: Object as () => Task,
       required: true
-    }
+    },
+    // making these props makes them reactive to edit
+    taskName: {
+      type: String,
+      required: true
+    },
+    taskId: {
+      type: String,
+      required: true
+    },
   },
   setup(props, ctx) {
     const task = ref<Task>(props.task)

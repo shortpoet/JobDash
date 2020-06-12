@@ -138,8 +138,14 @@ export default defineComponent({
     //#region openCard
       const router = useRouter()
       const openCard = (task: Task) => {
+        console.log('task table')
+        console.log(task._id)
         taskCardModal.showModal()
-        router.push({ name: '#task-card-modal', params: { id: task._id } })
+        router.push({
+          name: '#task-card-modal',
+          path: `/task/${task._id}`,
+          params: { id: task._id } 
+        })
       }
       const cardIsOpen = computed(() => {
         return router.currentRoute.value.name === taskCardDestination

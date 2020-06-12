@@ -2,14 +2,14 @@
   <div class="had-text-centered task-column-category">{{ category }}</div>
   <div class="task-cells-container">
     <div class="task-cell-container"
-      v-for="(task, taskIndex) in tasks"
+      v-for="(task, taskIndex) in tasksMap"
       :key="task._id"
       draggable
       @dragstart="pickupTask($event, task, taskIndex, columnIndex)"
       @click="openCard(task)"
       @drag.stop="moveTaskOrColumn($event, tasks, columnIndex, taskIndex)"
     >
-      <TaskCell :task="task" />
+      <TaskCell :task="task" :task-name="task.name" :task-id="task._id"/>
     </div>
   </div>
   <div />
@@ -34,8 +34,8 @@ export default defineComponent({
       type: String,
       required: true
     },
-    tasks: {
-      type: Array as () => Task[],
+    tasksMap: {
+      type: Object as () => Record<string, Task>,
       required: true
     },
     column: {
@@ -62,6 +62,33 @@ export default defineComponent({
     // const category = ref(props.column.category)
     // const tasks = ref<Task[]>(props.column.tasks.value)
     // console.log(tasks.value)
+
+    const tasks = computed(() => Object.values(props.tasksMap))
+    // console.log(tasks.value)
+
+    //#region taskCardModal
+
+      const taskCardDestination: Destination = '#task-card-modal'
+
+      const taskCardModal = useModal(taskCardDestination)
+
+    //#endregion
+
+    //#region openCard
+      const router = useRouter()
+      const openCard = (task: Task) => {
+        console.log('task column')
+        // console.log(task)
+        console.log(task._id)
+        // console.log(task.category)
+
+        taskCardModal.showModal()
+        router.push({ name: '#task-card-modal', params: { id: task._id } })
+      }
+      const cardIsOpen = computed(() => {
+        return router.currentRoute.value.name === taskCardDestination
+      })
+    //#endregion
 
     //#region drag
       const pickupTask = (e: DragEvent, task: Task, fromTaskIndex: number, fromColumnIndex: number) => {
@@ -110,30 +137,12 @@ export default defineComponent({
 
     //#endregion
     
-    //#region taskCardModal
-
-      const taskCardDestination: Destination = '#task-card-modal'
-
-      const taskCardModal = useModal(taskCardDestination)
-
-    //#endregion
-
-    //#region openCard
-      const router = useRouter()
-      const openCard = (task: Task) => {
-        taskCardModal.showModal()
-        router.push({ name: '#task-card-modal', params: { id: task._id } })
-      }
-      const cardIsOpen = computed(() => {
-        return router.currentRoute.value.name === taskCardDestination
-      })
-    //#endregion
 
     return {
       pickupTask,
-      openCard
+      openCard,
       // category,
-      // tasks
+      tasks
     }
   }
 })

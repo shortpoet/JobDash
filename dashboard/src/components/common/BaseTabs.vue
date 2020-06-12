@@ -11,9 +11,14 @@
           :key="i"
           @click="activateTab(tab)"
           :class="{'is-active': activeTab === tab.name}"
-        ><a>
-          {{ tab.name }}
-        </a></li>
+        >
+          <a>
+            {{ tab.name }}
+          </a>
+        </li>
+        <li>
+          <a href="/">Home</a>
+        </li>
       </ul>
     </div>
   </section>
