@@ -4,5 +4,11 @@ import { Ref } from "vue";
 export interface ITaskColumn {
   id: number
   category: string
-  tasks: Ref<Task[]>
+  tasks: Task[]
 }
+
+// export interface ITaskColumn {
+//   id: number
+//   category: string
+//   tasks: Record<string, Task[]>
+// }

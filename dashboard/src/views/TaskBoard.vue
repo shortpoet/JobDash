@@ -27,6 +27,8 @@
               :category="column.category"
               :tasks="column.tasks"
               :column-index="columnIndex"
+              :column-names="columnNames"
+              :all-tasks="allTasks"
             />  
           </div>
         </div>
@@ -48,7 +50,7 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from 'vue'
+import { defineComponent, ref, onMounted, watch, computed } from 'vue'
 import { ITaskColumn } from './../interfaces/task.column.interface'
 import { Task } from '../interfaces/task.interface'
 import TaskColumn from './../components/task/TaskColumn.vue'
@@ -71,10 +73,63 @@ export default defineComponent({
   emits: ['dragstart', 'draggable'],
 
   async setup(props) {
+
+    const allTasks = ref<Task[]>(props.tasks)
     
     const columns = ref<ITaskColumn[]>([])
 
     const columnNames = ref([])
+
+
+    const categories = computed<string[]>(() => {
+      const catArr = []
+      props.tasks.forEach(task => {
+        if (!catArr.includes(task.category)) {
+          catArr.push(task.category)
+        }
+      })
+      return catArr
+    })
+
+    const columnsComputed = computed<ITaskColumn[]>((): ITaskColumn[] => {
+      const taskColumns: Record<string, Task[]> = {}
+      props.tasks.forEach(task => {
+        if (task.category in taskColumns) {
+          taskColumns[task.category].push(task)
+        } else {
+          taskColumns[task.category] = []
+          taskColumns[task.category].push(task)
+        }
+      })
+      
+      return Object.keys(taskColumns).map((category, i) => ({
+        id: i,
+        category: category,
+        tasks: taskColumns[category]
+      }))
+    })
+
+    // const columnsComputed = computed<ITaskColumn[]>((): ITaskColumn[] => {
+    //   const categoryColumns: Record<string, Task[]> = {}
+    //   props.tasks.forEach(task => {
+    //     if (task.category in categoryColumns) {
+    //       categoryColumns[task.category][]
+    //     } else {
+    //       categoryColumns[task.category] = []
+    //       categoryColumns[task.category].push(task)
+    //     }
+    //   })
+      
+    //   Object.keys(categoryColumns).map((category, i) => ({
+    //     id: i,
+    //     category: category,
+    //     tasks: categoryColumns[category]
+    //   }))
+    //   return categoryColumns
+    // })
+
+    
+  
 
     //#region setColumns
       const setColumns = () => {
@@ -83,16 +138,16 @@ export default defineComponent({
         columnNames.value = [...new Set(props.tasks.map(task => task.category))]
         columnNames.value.forEach((category, i) => {
           const categorized = props.tasks.filter(task => task.category == category)
-          const colRef = ref(categorized)
+          // const colRef = ref(categorized)
           const iTaskColumn: ITaskColumn = {
             id: i,
             category: category,
-            tasks: colRef
+            tasks: categorized
           }
           columns.value.push(iTaskColumn)
         })
       }
-
+      // setColumns()
       watch(
         () => props.tasks.length.toString(),
         (value: string, previous: string) => {
@@ -158,7 +213,11 @@ export default defineComponent({
     return {
       _columns,
       columns,
-      pickupColumn
+      pickupColumn,
+      columnNames,
+      allTasks,
+      columnsComputed,
+      categories
     }
   }
 })

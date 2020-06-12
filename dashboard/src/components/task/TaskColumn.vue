@@ -7,6 +7,7 @@
       draggable
       @dragstart="pickupTask($event, task, taskIndex, columnIndex)"
       @click="openCard(task)"
+      @drag.stop="moveTaskOrColumn($event, tasks, columnIndex, taskIndex)"
     >
       <TaskCell :task="task" />
     </div>
@@ -44,6 +45,14 @@ export default defineComponent({
     columnIndex: {
       type: Number,
       required: true
+    },
+    columnNames: {
+      type: Array,
+      required: true
+    },
+    allTasks: {
+      type: Array as () => Task[],
+      required: true
     }
   },
 
@@ -66,6 +75,39 @@ export default defineComponent({
         e.dataTransfer.setData('from-task-index', fromTaskIndex.toString())
         e.dataTransfer.setData('type', 'task')
       }
+
+      const moveTask = (e: DragEvent, toTasks: Task[], toTaskIndex: number) => {
+        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+        const fromTaskCategory = props.columnNames[fromColumnIndex]
+        const fromTasks = props.allTasks.filter(task => task.category == fromTaskCategory)
+        const fromTaskIndex = e.dataTransfer.getData('from-task-index')
+
+        // this.$store.commit('MOVE_TASK', {
+        //   fromTasks,
+        //   fromTaskIndex,
+        //   toTasks,
+        //   toTaskIndex
+        // })
+      }
+      const moveColumn = (e: DragEvent, toColumnIndex: number) => {
+        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+
+        // this.$store.commit('MOVE_COLUMN', {
+        //   fromColumnIndex,
+        //   toColumnIndex
+        // })
+
+      }
+      const moveTaskOrColumn = (e: DragEvent, toTasks: Task[], toColumnIndex: number, toTaskIndex: number) => {
+        const type = e.dataTransfer.getData('type')
+
+        if (type === 'task') {
+          moveTask(e, toTasks, toTaskIndex !== undefined ? toTaskIndex : toTasks.length)
+        } else {
+          moveColumn(e, toColumnIndex)
+        }
+      }
+
     //#endregion
     
     //#region taskCardModal
