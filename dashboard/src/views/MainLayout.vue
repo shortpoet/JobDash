@@ -60,8 +60,11 @@ export default defineComponent({
     
     const contactCardDestination: Destination = '#contact-card-modal'
     const taskCardDestination: Destination = '#task-card-modal'
+    const messageDestination: Destination = '#message-modal'
+
     const contactCardModal = useModal(contactCardDestination)
     const taskCardModal = useModal(taskCardDestination)
+    const messageModal = useModal(messageDestination)
 
     //#region cardModal
       const targetsLoadedRef = ref(false)
@@ -85,22 +88,34 @@ export default defineComponent({
       })
 
       const handleModal = () => {
-        if (routeIsCard.value.isCard) {
-          // console.log('route is card')
-          if (routeIsCard.value.type == 'contact') {
-            if(document.querySelector(contactCardDestination)) {
-              contactCardModal.showModal()
-            }
-          }
-          if (routeIsCard.value.type == 'task') {
-            if(document.querySelector(taskCardDestination)) {
-              taskCardModal.showModal()
-            }
-          }
-          if (document.querySelector(taskCardDestination)) {
-            // console.log('target loaded from handle modal')
-          }
+        switch(router.currentRoute.value.name) {
+          case contactCardDestination:
+            contactCardModal.showModal()
+            break
+          case taskCardDestination:
+            taskCardModal.showModal()
+            break
+          case messageDestination:
+            messageModal.showModal()
+            break
+          break
         }
+        // if (routeIsCard.value.isCard) {
+        //   // console.log('route is card')
+        //   if (routeIsCard.value.type == 'contact') {
+        //     if(document.querySelector(contactCardDestination)) {
+        //       contactCardModal.showModal()
+        //     }
+        //   }
+        //   if (routeIsCard.value.type == 'task') {
+        //     if(document.querySelector(taskCardDestination)) {
+        //       taskCardModal.showModal()
+        //     }
+        //   }
+        //   if (document.querySelector(taskCardDestination)) {
+        //     // console.log('target loaded from handle modal')
+        //   }
+        // }
       }
 
       handleModal()

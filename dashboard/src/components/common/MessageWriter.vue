@@ -52,7 +52,10 @@ export default defineComponent({
   props: {
     message: {
       type: Object as () => Message,
-      required: true
+      // TODO
+      //  might need to do some work to get message draft to persist
+      // #TODO
+      required: false
     }
   },
   // emits: ['submit-message'],
