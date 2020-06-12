@@ -6,7 +6,6 @@
       :key="task._id"
       draggable
       @dragstart="pickupTask($event, task, taskIndex, columnIndex)"
-      @click="openCard(task)"
       @drag.stop="moveTaskOrColumn($event, tasks, columnIndex, taskIndex)"
     >
       <TaskCell :task="task" :task-name="task.name" :task-id="task._id"/>
@@ -20,9 +19,6 @@ import { defineComponent, ref, computed } from 'vue'
 import TaskCell from './TaskCell.vue'
 import { ITaskColumn } from '../../interfaces/task.column.interface'
 import { Task } from '../../interfaces/task.interface'
-import { Destination } from '../../interfaces/modal.interface'
-import { useModal } from '../../composables/useModal'
-import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'TaskColumn',
@@ -66,29 +62,7 @@ export default defineComponent({
     const tasks = computed(() => Object.values(props.tasksMap))
     // console.log(tasks.value)
 
-    //#region taskCardModal
 
-      const taskCardDestination: Destination = '#task-card-modal'
-
-      const taskCardModal = useModal(taskCardDestination)
-
-    //#endregion
-
-    //#region openCard
-      const router = useRouter()
-      const openCard = (task: Task) => {
-        console.log('task column')
-        // console.log(task)
-        console.log(task._id)
-        // console.log(task.category)
-
-        taskCardModal.showModal()
-        router.push({ name: '#task-card-modal', params: { id: task._id } })
-      }
-      const cardIsOpen = computed(() => {
-        return router.currentRoute.value.name === taskCardDestination
-      })
-    //#endregion
 
     //#region drag
       const pickupTask = (e: DragEvent, task: Task, fromTaskIndex: number, fromColumnIndex: number) => {
@@ -140,7 +114,6 @@ export default defineComponent({
 
     return {
       pickupTask,
-      openCard,
       // category,
       tasks
     }
