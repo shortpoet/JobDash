@@ -8,28 +8,26 @@
     * * $section-padding-large
   -->
 
-  <!-- <BaseModal :style="modalDisplay" :isActive="modal.visible">
-    <template #destination>
-      <div class="" id="modal-warning">
-      </div>
-    </template>
-  </BaseModal> -->
+  <ModalLayout />
 
   <section class="section section-container">
     <div class="container">
       <router-view />
     </div>
   </section>
+  <div />
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
 import { provideStore } from './store'
+import ModalLayout from './views/ModalLayout.vue'
 
 export default defineComponent({
   name: 'App',
 
   components: {
+    ModalLayout
   },
 
   setup(props, ctx) {

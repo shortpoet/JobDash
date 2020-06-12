@@ -53,7 +53,20 @@ export default defineComponent({
 
     //#region modal
       const modal = useModal(props.destination)
+
+      const cardIsOpen = computed(() => {
+        const open = router.currentRoute.value.name === props.destination
+        console.log('card is open')
+        console.log(open)
+        return open
+      })
+
     //#endregion
+
+    console.log('init contact card')
+    if (cardIsOpen) {
+      modal.showModal()
+    }
 
     //#region initValues
       const store = useStore()
@@ -108,7 +121,8 @@ export default defineComponent({
       emailEdit,
       submit,
       modal,
-      loaded
+      loaded,
+      cardIsOpen
     }
 
   }

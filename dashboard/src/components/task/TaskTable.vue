@@ -64,7 +64,7 @@
     <ModalWarning @delete-item="deleteTask" :destination="'#delete-task-modal'"/>
   </teleport>
 
-  <teleport to="#task-card-modal" v-if="taskCardModal.visible">
+  <teleport to="#task-card-modal" v-if="taskCardModal.visible && targetsLoaded">
     <TaskCard @update-tasks="updateTasks" :destination="'#task-card-modal'"/>
   </teleport>
 
@@ -131,6 +131,13 @@ export default defineComponent({
 
       const taskCardDestination: Destination = '#task-card-modal'
 
+      const targetsLoaded = computed(() => {
+        console.log('target loaded')
+        const out = !!document.querySelector(destination)
+        console.log(out)
+        return out
+      })
+
       const taskCardModal = useModal(taskCardDestination)
 
     //#endregion
@@ -147,9 +154,6 @@ export default defineComponent({
           params: { id: task._id } 
         })
       }
-      const cardIsOpen = computed(() => {
-        return router.currentRoute.value.name === taskCardDestination
-      })
     //#endregion
 
     //#region updateTasks
@@ -273,9 +277,9 @@ export default defineComponent({
       categoryEdit,
       descriptionEdit,
       modal,
+      targetsLoaded,
       taskCardModal,
       openCard,
-      cardIsOpen,
       updateTasks,
       deleteTask,
       toggleEditable,

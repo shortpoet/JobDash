@@ -49,9 +49,7 @@ export default defineComponent({
 
   async setup(props, ctx){
 
-    //#region modal
-      const modal = useModal(props.destination)
-    //#endregion
+
 
     //#region initValues
       const id = ref('')
@@ -78,6 +76,22 @@ export default defineComponent({
         taskEdit.value = {...task.value}
         loaded.value = true
       }, .1)  
+    //#endregion
+
+    //#region modal
+      const modal = useModal(props.destination)
+
+      const cardIsOpen = computed(() => {
+        const open = router.currentRoute.value.name === props.destination
+        console.log('card is open')
+        console.log(open)
+        return open
+      })
+
+      console.log('init task card')
+      if (cardIsOpen) {
+        modal.showModal()
+      }
     //#endregion
 
     //#region updateValues
@@ -107,7 +121,8 @@ export default defineComponent({
       categoryEdit,
       submit,
       modal,
-      taskEdit
+      taskEdit,
+      cardIsOpen
     }
 
   }

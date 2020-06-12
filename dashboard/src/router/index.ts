@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import { useModal } from '../composables/useModal';
 
 const routes: Array<RouteRecordRaw> = [
   {

@@ -35,7 +35,7 @@ export default defineComponent({
   components: {
     BaseModal
   },
-  async setup(props, ctx) {
+  setup(props, ctx) {
 
     
     const contactDeleteDestination: Destination = '#delete-contact-modal'

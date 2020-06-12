@@ -1,77 +1,110 @@
 <template>
 
-  <ModalLayout />
 
-  <div class="columns">
-    <div class="column is-two-fifths">
-      <CreateLayout
-        @update-contacts="onUpdateContacts"    
-        @update-tasks="onUpdateTasks"
+  <div class="main-layout" v-if="targetsLoadedRef">
+    <div class="columns">
+      <div class="column is-two-fifths">
+        <CreateLayout
+          @update-contacts="onUpdateContacts"    
+          @update-tasks="onUpdateTasks"
+        />
+        <!-- <TabsLayout @tab-change="tabChange"/> -->
+      </div>
+      <div class="column is-one-half">
+        <TableLayout
+          :contacts="allContacts"
+          @update-contacts="onUpdateContacts"
+          :tasks="allTasks"
+          @update-tasks="onUpdateTasks"
       />
-      <!-- <TabsLayout @tab-change="tabChange"/> -->
+      </div>
     </div>
-    <div class="column is-one-half">
-      <TableLayout
-        :contacts="allContacts"
-        @update-contacts="onUpdateContacts"
-        :tasks="allTasks"
-        @update-tasks="onUpdateTasks"
+
+    <TaskBoard
+      :tasks="allTasks"
     />
-    </div>
   </div>
-
-  <TaskBoard
-    :tasks="allTasks"
-  />
-
-  <!-- 
-    causes append child node error
-  <teleport to="#contact-card-modal" v-if="contactCardModal.visible">
-    <router-view/>
-    <ContactCard @save-item="editContact" :destination="'#contact-card-modal'"/>
-  </teleport> 
-  -->
-
 
   <div />
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
-
-import ModalLayout from './ModalLayout.vue'
-
-import ContactCard from './../components/contacts/ContactCard.vue'
+import { defineComponent, computed, ref, watch, nextTick } from 'vue'
 
 import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
-
 import TaskBoard from './TaskBoard.vue'
 
-import { Destination } from '../interfaces/modal.interface'
-import { useModal } from '../composables/useModal'
+import { useRouter } from 'vue-router'
 import { useStore } from '../store'
-import { Contact } from '../interfaces/contact.interface'
+
+import { useModal } from '../composables/useModal'
 import useContact from '../composables/useContact'
-import { Task } from '../interfaces/task.interface'
 import useTask from '../composables/useTask'
+
+import { Destination } from '../interfaces/modal.interface'
+import { Contact } from '../interfaces/contact.interface'
+import { Task } from '../interfaces/task.interface'
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    ModalLayout,
     CreateLayout,
     TableLayout,
-    TaskBoard,
-    ContactCard
+    TaskBoard
   },
   async setup(props, ctx) {
 
+    const router = useRouter()
+    
     const contactCardDestination: Destination = '#contact-card-modal'
-
+    const taskCardDestination: Destination = '#task-card-modal'
     const contactCardModal = useModal(contactCardDestination)
+    const taskCardModal = useModal(taskCardDestination)
 
+    //#region cardModal
+      const targetsLoadedRef = ref(false)
+      targetsLoadedRef.value = !!document.querySelector(taskCardDestination) 
+      
+      // const targetsLoaded = computed(() => {
+      //   console.log('target loaded')
+      //   const out = document.querySelector(taskCardDestination) != null
+      //   console.log(out)
+      //   return out
+      // })
+
+      const routeIsCard = computed(() => {
+        const isContact = router.currentRoute.value.name == contactCardDestination
+        const isTask = router.currentRoute.value.name == taskCardDestination
+        const isCard = isContact || isTask
+        return {
+          isCard: isCard,
+          type: isTask ? 'task' : 'contact'
+        }
+      })
+
+      const handleModal = () => {
+        if (routeIsCard.value.isCard) {
+          // console.log('route is card')
+          if (routeIsCard.value.type == 'contact') {
+            if(document.querySelector(contactCardDestination)) {
+              contactCardModal.showModal()
+            }
+          }
+          if (routeIsCard.value.type == 'task') {
+            if(document.querySelector(taskCardDestination)) {
+              taskCardModal.showModal()
+            }
+          }
+          if (document.querySelector(taskCardDestination)) {
+            // console.log('target loaded from handle modal')
+          }
+        }
+      }
+
+      handleModal()
+    //#endregion
 
     //#region contactUse
       const store = useStore()
@@ -101,12 +134,14 @@ export default defineComponent({
     //#endregion
 
 
+
     return {
       contactCardModal,
       allContacts,
       allTasks,
       onUpdateContacts,
-      onUpdateTasks
+      onUpdateTasks,
+      targetsLoadedRef
     }
 
   }
