@@ -5,7 +5,7 @@ import { Store } from "../store/store.interface"
 export const loadRecords = (store: Store<ColumnStore> , columns: ITaskColumn[], caller: string): ITaskColumn[] => {
   console.log(`load records for ${caller}`)
   if (!store.getState().records.loaded) {
-    console.log(columns)
+    // console.log(columns)
     store.addRecords(columns, 'order')
   }
   return store.getState().records.ids.reduce<any[]>((accumulator, id) => {

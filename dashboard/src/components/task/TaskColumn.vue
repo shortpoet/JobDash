@@ -30,7 +30,8 @@ export default defineComponent({
       required: true
     },
     tasksMap: {
-      type: Object as () => Record<string, Task>,
+      // type: Object as () => Record<string, Task>,
+      type: Array as () => Task[],
       required: true
     },
     column: {

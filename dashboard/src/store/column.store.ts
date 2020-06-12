@@ -37,25 +37,29 @@ export class ColumnStore extends StoreAxios<ITaskColumn> implements IStore<ITask
     // this.state = reactive(initialState)
   }
 
-  public getLastId(): ITaskColumn['order'] {
+  public getState(): ColumnStoreState {
+    return readonly<ColumnStoreState>(this.state)
+  }
+
+  public getLastId(): ITaskColumn['category'] {
     const last = this.getLast<ITaskColumn>()
-    return last ? last.order : -1
+    return last ? last.category : '-1'
   }
 
   async createRecord(column: ITaskColumn) {
-    super.createRecord(column, 'order')
+    super.createRecord(column, 'category')
     // const response = await axios.post<ColumnDTO>('http://localhost:3000/column/create', column)
   }
 
   async deleteRecord(column: ITaskColumn) {
-    super.deleteRecord(column, 'order')
+    super.deleteRecord(column, 'category')
     // const response = await axios.delete<ColumnDTO>(`http://localhost:3000/column/delete?column_id=${column._id}`)
     // return response.data.column._id
   }
 
   
   async editRecord(oldColumn: ITaskColumn, newColumn: ITaskColumn, idSymbol: (string | number)) {
-    super.editRecord(oldColumn, newColumn, 'order')
+    super.editRecord(oldColumn, newColumn, 'category')
     // console.log('writing to db')
 
     // const response = await axios.put<ColumnDTO>(

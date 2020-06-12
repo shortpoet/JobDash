@@ -23,3 +23,21 @@ export const updateRecords = async (store: Store<any>, caller: string): Promise<
     return accumulator.concat(record)
   }, [])
 }
+
+export const sortObject = (object: object): object => {
+  const orderMap = {}
+  const keys = Object.keys(object)
+  keys.map((key, i) =>{
+    const order = {}
+    order[key] = i
+    return Object.assign(orderMap, order)
+  })
+  let order = []
+  for (let key in orderMap) {
+    order.push([key, orderMap[key]])
+  }
+  order = order.sort((a, b) => a[1] - b[1])
+  const sortedObject = {}
+  order.forEach(item => sortedObject[item[0]] = item[1])
+  return sortedObject
+}
