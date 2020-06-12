@@ -2,7 +2,10 @@
 
 
   <div class="main-layout" v-if="targetsLoadedRef">
-    <div class="columns">
+    <div class="ui-collapse" @click="showUIFull = !showUIFull">
+      <BaseIcon class="ui-collapse-icon" :name="'minus'" :color="'white'"/>
+    </div>
+    <div class="columns ui-full" v-show="showUIFull">
       <div class="column is-two-fifths">
         <CreateLayout
           @update-contacts="onUpdateContacts"    
@@ -34,6 +37,7 @@ import { defineComponent, computed, ref, watch, nextTick } from 'vue'
 import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
 import TaskBoard from './TaskBoard.vue'
+import BaseIcon from '../components/common/BaseIcon.vue'
 
 import { useRouter } from 'vue-router'
 import { useStore } from '../store'
@@ -50,6 +54,7 @@ export default defineComponent({
   name: 'MainLayout',
 
   components: {
+    BaseIcon,
     CreateLayout,
     TableLayout,
     TaskBoard
@@ -58,15 +63,38 @@ export default defineComponent({
 
     const router = useRouter()
     
-    const contactCardDestination: Destination = '#contact-card-modal'
-    const taskCardDestination: Destination = '#task-card-modal'
-    const messageDestination: Destination = '#message-modal'
+    const showUIFull = ref(true)
 
-    const contactCardModal = useModal(contactCardDestination)
-    const taskCardModal = useModal(taskCardDestination)
-    const messageModal = useModal(messageDestination)
+    //#region contactUse
+      const store = useStore()
+      const contactStore = store.modules['contactStore']
+
+      const allContacts = ref<Contact[]>([])
+
+      const contactUse = await useContact(contactStore, allContacts)
+
+      const onUpdateContacts = contactUse.onUpdateContacts
+    //#endregion
+    
+    //#region taskUse
+      const taskStore = store.modules['taskStore']
+
+      const allTasks = ref<Task[]>([])
+
+      const taskUse = await useTask(taskStore, allTasks)
+
+      const onUpdateTasks = taskUse.onUpdateTasks
+    //#endregion
 
     //#region cardModal
+      const contactCardDestination: Destination = '#contact-card-modal'
+      const taskCardDestination: Destination = '#task-card-modal'
+      const messageDestination: Destination = '#message-modal'
+
+      const contactCardModal = useModal(contactCardDestination)
+      const taskCardModal = useModal(taskCardDestination)
+      const messageModal = useModal(messageDestination)
+
       const targetsLoadedRef = ref(false)
       targetsLoadedRef.value = !!document.querySelector(taskCardDestination) 
       
@@ -121,36 +149,10 @@ export default defineComponent({
       handleModal()
     //#endregion
 
-    //#region contactUse
-      const store = useStore()
-      const contactStore = store.modules['contactStore']
-
-      const allContacts = ref<Contact[]>([])
-
-      const contactUse = await useContact(contactStore, allContacts)
-
-      const onUpdateContacts = contactUse.onUpdateContacts
-    //#endregion
-    
-    //#region taskUse
-      const taskStore = store.modules['taskStore']
-
-      // const iTaskStore: ITaskStore = {
-      //   taskStore: taskStore
-      // }
-
-      const allTasks = ref<Task[]>([])
-
-      // is this correct usage of provide/inject
-      // const taskUse = await useTask(iTaskStore, allTasks)
-      const taskUse = await useTask(taskStore, allTasks)
-
-      const onUpdateTasks = taskUse.onUpdateTasks
-    //#endregion
-
 
 
     return {
+      showUIFull,
       contactCardModal,
       allContacts,
       allTasks,

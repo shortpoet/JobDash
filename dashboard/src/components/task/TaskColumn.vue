@@ -19,7 +19,6 @@ import { defineComponent, ref, computed } from 'vue'
 import TaskCell from './TaskCell.vue'
 import { ITaskColumn } from '../../interfaces/task.column.interface'
 import { Task } from '../../interfaces/task.interface'
-
 export default defineComponent({
   name: 'TaskColumn',
   components: {
@@ -46,10 +45,10 @@ export default defineComponent({
       type: Array,
       required: true
     },
-    allTasks: {
-      type: Array as () => Task[],
-      required: true
-    }
+    // allTasks: {
+    //   type: Array as () => Task[],
+    //   required: true
+    // }
   },
 
   emits: ['dragstart', 'draggable'],
@@ -60,10 +59,6 @@ export default defineComponent({
     // console.log(tasks.value)
 
     const tasks = computed(() => Object.values(props.tasksMap))
-    // console.log(tasks.value)
-
-
-
     //#region drag
       const pickupTask = (e: DragEvent, task: Task, fromTaskIndex: number, fromColumnIndex: number) => {
         console.log('pickup task')
@@ -77,10 +72,10 @@ export default defineComponent({
         e.dataTransfer.setData('type', 'task')
       }
 
-      const moveTask = (e: DragEvent, toTasks: Task[], toTaskIndex: number) => {
+      const moveTask = (e: DragEvent, toColumn: Record<string, Task>, toTaskIndex: number) => {
         const fromColumnIndex = e.dataTransfer.getData('from-column-index')
         const fromTaskCategory = props.columnNames[fromColumnIndex]
-        const fromTasks = props.allTasks.filter(task => task.category == fromTaskCategory)
+        const fromTasks = tasks
         const fromTaskIndex = e.dataTransfer.getData('from-task-index')
 
         // this.$store.commit('MOVE_TASK', {
@@ -99,11 +94,11 @@ export default defineComponent({
         // })
 
       }
-      const moveTaskOrColumn = (e: DragEvent, toTasks: Task[], toColumnIndex: number, toTaskIndex: number) => {
+      const moveTaskOrColumn = (e: DragEvent, toColumn: Record<string, Task>, toColumnIndex: number, toTaskIndex: number) => {
         const type = e.dataTransfer.getData('type')
 
         if (type === 'task') {
-          moveTask(e, toTasks, toTaskIndex !== undefined ? toTaskIndex : toTasks.length)
+          // moveTask(e, toTasks, )
         } else {
           moveColumn(e, toColumnIndex)
         }
@@ -115,7 +110,8 @@ export default defineComponent({
     return {
       pickupTask,
       // category,
-      tasks
+      tasks,
+      moveTaskOrColumn
     }
   }
 })

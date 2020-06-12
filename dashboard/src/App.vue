@@ -11,7 +11,7 @@
   <ModalLayout />
 
   <section class="section section-container">
-    <div class="container">
+    <div class="">
       <router-view />
     </div>
   </section>

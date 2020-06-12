@@ -17,10 +17,10 @@
             v-for="(column, columnIndex) in columnsComputed"
             :key="column.id"
             draggable
-            @dragstart.self="pickupColumn($event, column, columnIndex)"
+            @dragstart.self="pickupColumn($event, column)"
             @dragover.prevent
             @dragenter.prevent
-            @drop="moveTaskOrColumn($event, column.tasks, columnIndex)"
+            @drop="moveTaskOrColumn($event, column, columnIndex)"
           >
             <TaskColumn
               :column="column" 
@@ -28,7 +28,6 @@
               :tasks-map="column.tasks"
               :column-index="columnIndex"
               :column-names="columnNames"
-              :all-tasks="allTasks"
             />  
           </div>
         </div>
@@ -54,6 +53,7 @@ import { defineComponent, ref, onMounted, watch, computed } from 'vue'
 import { ITaskColumn } from './../interfaces/task.column.interface'
 import { Task } from '../interfaces/task.interface'
 import TaskColumn from './../components/task/TaskColumn.vue'
+import { useStorage } from './../composables/useStorage'
 
 export default defineComponent({
   name: 'TaskBoard',
@@ -80,6 +80,7 @@ export default defineComponent({
 
     const columnNames = ref([])
 
+    const storage = useStorage()
 
     const categories = computed<string[]>(() => {
       const catArr = []
@@ -91,23 +92,28 @@ export default defineComponent({
       return catArr
     })
 
-    // const columnsComputed = computed<ITaskColumn[]>((): ITaskColumn[] => {
-    //   const taskColumns: Record<string, Task[]> = {}
-    //   props.tasks.forEach(task => {
-    //     if (task.category in taskColumns) {
-    //       taskColumns[task.category].push(task)
-    //     } else {
-    //       taskColumns[task.category] = []
-    //       taskColumns[task.category].push(task)
-    //     }
-    //   })
-      
-    //   return Object.keys(taskColumns).map((category, i) => ({
-    //     id: i,
-    //     category: category,
-    //     tasks: taskColumns[category]
-    //   }))
-    // })
+      // init orderMap
+    const orderMap = computed(() => {
+      let orderMap = storage.get('board')
+      if (!orderMap) {
+        orderMap = {}
+        categories.value.map((category, i) => {
+          const order = {}
+          order[category] = i
+          return Object.assign(orderMap, order)
+        })
+        storage.set('board', orderMap)
+      }
+      let order = []
+      for (let category in orderMap) {
+        order.push([category, orderMap[category]])
+      }
+      order = order.sort((a, b) => a[1] - b[1])
+      const sortedCategoryColumns = {}
+      order.forEach(item => sortedCategoryColumns[item[0]] = item[1])
+      return sortedCategoryColumns
+
+    })
 
     const columnsComputed = computed<ITaskColumn[]>((): ITaskColumn[] => {
       const categoryColumns: Record<string, Record<string, Task>> = {}
@@ -123,18 +129,80 @@ export default defineComponent({
           }
         }
       })
-      
-      const out = Object.keys(categoryColumns).map((category, i) => ({
+
+      const out = Object.keys(orderMap.value).map((category, i) => ({
         id: i,
         category: category,
         tasks: categoryColumns[category]
       }))
+
+      // const out = Object.keys(categoryColumns).map((category, i) => ({
+      //   id: i,
+      //   category: category,
+      //   tasks: categoryColumns[category]
+      // }))
       // console.log(out)
       return out
     })
-
-    
   
+    //#region drag
+      const pickupColumn = (e: DragEvent, fromColumn: ITaskColumn) => {
+        console.log('pickup columns')
+        // console.log(e)
+        e.dataTransfer.effectAllowed = 'move'
+        e.dataTransfer.dropEffect = 'move'
+        
+        e.dataTransfer.setData('type', 'column')
+        e.dataTransfer.setData('from-column-category', fromColumn.category)
+        // console.log(e.dataTransfer.getData('column-category'))
+      }
+      const moveTask = (e: DragEvent, toColumn: ITaskColumn, toTaskIndex: number) => {
+        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+        const fromTasks = columns[fromColumnIndex].tasks
+        const fromTaskIndex = e.dataTransfer.getData('from-task-index')
+
+        // this.$store.commit('MOVE_TASK', {
+        //   fromTasks,
+        //   fromTaskIndex,
+        //   toTasks,
+        //   toTaskIndex
+        // })
+      }
+      const moveColumn = (e: DragEvent, toColumn: ITaskColumn) => {
+        const fromColumnCategory = e.dataTransfer.getData('from-column-category')
+
+        let orderMap = storage.get('board')
+        let fromColumnIndex = orderMap[fromColumnCategory]
+        console.log(orderMap)
+        console.log('from column index', fromColumnIndex)
+        orderMap[fromColumnCategory] = toColumn.id
+        console.log(orderMap)
+        orderMap[toColumn.category] = fromColumnIndex
+        console.log(orderMap)
+        storage.set('board', orderMap)
+        
+        // this.$store.commit('MOVE_COLUMN', {
+        //   fromColumnIndex,
+        //   toColumnIndex
+        // })
+
+      }
+      const moveTaskOrColumn = (e: DragEvent, toColumn: ITaskColumn, toColumnIndex: number, toTaskIndex: number) => {
+        console.log('move task or column - task column')
+        const type = e.dataTransfer.getData('type')
+        console.log(type)
+        console.log(e)
+        console.log(toColumn)
+        console.log(toColumnIndex)
+        console.log(toTaskIndex)
+
+        if (type === 'task') {
+          // moveTask(e, toTasks, toTaskIndex !== undefined ? toTaskIndex : toTasks.length)
+        } else {
+          moveColumn(e, toColumn)
+        }
+      }
+    //#endregion
 
     //#region setColumns
       // const setColumns = () => {
@@ -172,48 +240,23 @@ export default defineComponent({
       ]
     //#endregion
 
-    //#region drag
-      const pickupColumn = (e: DragEvent, column: ITaskColumn, fromColumnIndex: number) => {
-        console.log('pickup columns')
-        console.log(e)
-        e.dataTransfer.effectAllowed = 'move'
-        e.dataTransfer.dropEffect = 'move'
-
-        e.dataTransfer.setData('from-column-index', fromColumnIndex.toString())
-        e.dataTransfer.setData('column-category', column.category.toString())
-        console.log(e.dataTransfer.getData('column-category'))
-      }
-      const moveTask = (e: DragEvent, toTasks: Task[], toTaskIndex: number) => {
-        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
-        const fromTasks = columns[fromColumnIndex].tasks
-        const fromTaskIndex = e.dataTransfer.getData('from-task-index')
-
-        // this.$store.commit('MOVE_TASK', {
-        //   fromTasks,
-        //   fromTaskIndex,
-        //   toTasks,
-        //   toTaskIndex
-        // })
-      }
-      const moveColumn = (e: DragEvent, toColumnIndex: number) => {
-        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
-
-        // this.$store.commit('MOVE_COLUMN', {
-        //   fromColumnIndex,
-        //   toColumnIndex
-        // })
-
-      }
-      const moveTaskOrColumn = (e: DragEvent, toTasks: Task[], toColumnIndex: number, toTaskIndex: number) => {
-        const type = e.dataTransfer.getData('type')
-
-        if (type === 'task') {
-          moveTask(e, toTasks, toTaskIndex !== undefined ? toTaskIndex : toTasks.length)
-        } else {
-          moveColumn(e, toColumnIndex)
-        }
-      }
-    //#endregion
+    // const columnsComputed = computed<ITaskColumn[]>((): ITaskColumn[] => {
+    //   const taskColumns: Record<string, Task[]> = {}
+    //   props.tasks.forEach(task => {
+    //     if (task.category in taskColumns) {
+    //       taskColumns[task.category].push(task)
+    //     } else {
+    //       taskColumns[task.category] = []
+    //       taskColumns[task.category].push(task)
+    //     }
+    //   })
+      
+    //   return Object.keys(taskColumns).map((category, i) => ({
+    //     id: i,
+    //     category: category,
+    //     tasks: taskColumns[category]
+    //   }))
+    // })
 
     return {
       _columns,
@@ -222,7 +265,8 @@ export default defineComponent({
       columnNames,
       allTasks,
       columnsComputed,
-      categories
+      categories,
+      moveTaskOrColumn
     }
   }
 })
