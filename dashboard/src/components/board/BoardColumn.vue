@@ -8,7 +8,7 @@
       @dragstart="pickupTask($event, item)"
       @drag.stop="moveTaskOrColumn($event, items)"
     >
-      <BoardItem :item="item" :item-name="category + ' - ' + item.itemId" :item-id="item.itemId"/>
+      <BoardItem :item="item" :item-name="category + ' - <name> id'" :item-id="item.itemId"/>
     </div>
   </div>
   <div />

@@ -48,7 +48,6 @@ const parseBoard = (items: IBoardItem[]): IBoard => {
     itemRecord[item.itemId] = <IBoardItem>item
     if (item.category in board.columns) {
       board.columns[item.category].items[item.itemId] = item
-      counter++
     } else {
       const column: Record<string, IBoardColumn> = {} as Record<string, IBoardColumn>
       column[item.category] = <IBoardColumn>{
@@ -58,7 +57,7 @@ const parseBoard = (items: IBoardItem[]): IBoard => {
       }
       column[item.category].items[item.itemId] = item
       Object.assign(board['columns'], column)
-      counter = 0
+      counter++
     }
   })
   // console.log('end parse board')
