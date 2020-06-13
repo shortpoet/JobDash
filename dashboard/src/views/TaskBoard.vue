@@ -13,7 +13,8 @@
             must use $event as variable
             @dragstart.self so that nested pickupTask doesn't trigger this event listener
           -->
-          <!-- <div class="column board-column-container"
+
+          <div class="column board-column-container"
             v-for="(column, columnIndex) in columns"
             :key="column.id"
             draggable
@@ -24,12 +25,9 @@
           >
             <BoardColumn
               :column="column" 
-              :category="column.category"
-              :tasks-map="column.tasks"
-              :column-index="columnIndex"
-              :column-names="columnNames"
             />  
-          </div> -->
+          </div>
+          
         </div>
       </div>
     </div>
@@ -79,13 +77,20 @@ export default defineComponent({
   async setup(props) {
 
     const boardStore: BoardStore = useStore().modules['boardStore']
-    const boardUse = useBoard(boardStore, props.tasks, '_id')
+    const board = await useBoard(boardStore, props.tasks, '_id')
 
     // const boardUse = useBoard(props.tasks, '_id')
 
     // const board = boardUse.board
 
     // console.log(board)
+
+    const columns = ref<Record<string, IBoardColumn>>()
+
+    columns.value = board.storedBoard.value.columns
+
+    // console.log('columns')
+    // console.log(columns.value)
       
     const _columns = [
       {id:'1', category: 'Column 1'},
@@ -97,7 +102,7 @@ export default defineComponent({
 
     return {
       _columns,
-      // columns
+      columns
     }
   }
 })

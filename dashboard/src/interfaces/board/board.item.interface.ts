@@ -1,6 +1,5 @@
 export interface IBoardItem {
-  id: number
+  category: string
   order: number
   itemId: number
-  category: number
 }

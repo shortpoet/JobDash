@@ -2,13 +2,13 @@
   <div class="had-text-centered board-column-category">{{ category }} - Order: {{ column.order }}</div>
   <div class="board-items-container">
     <div class="board-item-container"
-      v-for="(task, taskIndex) in tasksMap"
-      :key="task._id"
+      v-for="(item, itemIndex) in items"
+      :key="itemIndex"
       draggable
-      @dragstart="pickupTask($event, task, taskIndex, columnIndex)"
-      @drag.stop="moveTaskOrColumn($event, tasks, columnIndex, taskIndex)"
+      @dragstart="pickupTask($event, item)"
+      @drag.stop="moveTaskOrColumn($event, items)"
     >
-      <BoardItem :item="task" :item-name="task.name" :item-id="task._id"/>
+      <BoardItem :item="item" :item-name="category + ' - ' + item.itemId" :item-id="item.itemId"/>
     </div>
   </div>
   <div />
@@ -28,20 +28,8 @@ export default defineComponent({
     BoardItem
   },
   props: {
-    category: {
-      type: String,
-      required: true
-    },
     column: {
       type: Object as () => IBoardColumn,
-      required: true
-    },
-    columnIndex: {
-      type: Number,
-      required: true
-    },
-    columnNames: {
-      type: Array,
       required: true
     }
   },
@@ -49,61 +37,12 @@ export default defineComponent({
   emits: ['dragstart', 'draggable'],
 
   setup(props, ctx) {
-    // const category = ref(props.column.category)
-    // const tasks = ref<Task[]>(props.column.tasks.value)
-    // console.log(tasks.value)
-
-    //#region drag
-      const pickupTask = (e: DragEvent, task: Task, fromTaskIndex: number, fromColumnIndex: number) => {
-        console.log('pickup task')
-
-        e.dataTransfer.effectAllowed = 'move'
-        e.dataTransfer.dropEffect = 'move'
-
-        e.dataTransfer.setData('task-category', task.category.toString())
-        e.dataTransfer.setData('from-column-index', fromColumnIndex.toString())
-        e.dataTransfer.setData('from-task-index', fromTaskIndex.toString())
-        e.dataTransfer.setData('type', 'task')
-      }
-
-      const moveTask = (e: DragEvent, toColumn: Record<string, Task>, toTaskIndex: number) => {
-        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
-        const fromTaskCategory = props.columnNames[fromColumnIndex]
-        const fromTaskIndex = e.dataTransfer.getData('from-task-index')
-
-        // this.$store.commit('MOVE_TASK', {
-        //   fromTasks,
-        //   fromTaskIndex,
-        //   toTasks,
-        //   toTaskIndex
-        // })
-      }
-      const moveColumn = (e: DragEvent, toColumnIndex: number) => {
-        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
-
-        // this.$store.commit('MOVE_COLUMN', {
-        //   fromColumnIndex,
-        //   toColumnIndex
-        // })
-
-      }
-      const moveTaskOrColumn = (e: DragEvent, toColumn: Record<string, Task>, toColumnIndex: number, toTaskIndex: number) => {
-        const type = e.dataTransfer.getData('type')
-
-        if (type === 'task') {
-          // moveTask(e, toTasks, )
-        } else {
-          moveColumn(e, toColumnIndex)
-        }
-      }
-
-    //#endregion
-    
+    const category = props.column.category
+    const items = props.column.items
 
     return {
-      pickupTask,
-      // category,
-      moveTaskOrColumn
+      items,
+      category
     }
   }
 })
