@@ -26,8 +26,6 @@ import useTask from '../composables/useTask'
 import { Destination } from '../interfaces/common/modal.interface'
 import { Task } from '../interfaces/task/task.interface'
 
-
-
 export default defineComponent({
   name: 'MainLayout',
 

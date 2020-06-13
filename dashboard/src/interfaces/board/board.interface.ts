@@ -1,10 +1,7 @@
-import { Moment } from "moment";
 import { IBoardColumn } from "./board.column.interface";
 
-export interface Board {
-  _id: string
+export interface IBoard {
+  id: number
   name: string
   columns: IBoardColumn[]
-  created: Moment
-  edited: Moment
 }

@@ -32,6 +32,11 @@ export default defineComponent({
       type: String,
       required: true
     },
+    tasksMap: {
+      // type: Object as () => Record<string, Task>,
+      type: Array as () => Task[],
+      required: true
+    },
     column: {
       type: Object as () => IBoardColumn,
       required: true
@@ -43,7 +48,11 @@ export default defineComponent({
     columnNames: {
       type: Array,
       required: true
-    }
+    },
+    // allTasks: {
+    //   type: Array as () => Task[],
+    //   required: true
+    // }
   },
 
   emits: ['dragstart', 'draggable'],
@@ -53,6 +62,7 @@ export default defineComponent({
     // const tasks = ref<Task[]>(props.column.tasks.value)
     // console.log(tasks.value)
 
+    const tasks = computed(() => Object.values(props.tasksMap))
     //#region drag
       const pickupTask = (e: DragEvent, task: Task, fromTaskIndex: number, fromColumnIndex: number) => {
         console.log('pickup task')
@@ -69,6 +79,7 @@ export default defineComponent({
       const moveTask = (e: DragEvent, toColumn: Record<string, Task>, toTaskIndex: number) => {
         const fromColumnIndex = e.dataTransfer.getData('from-column-index')
         const fromTaskCategory = props.columnNames[fromColumnIndex]
+        const fromTasks = tasks
         const fromTaskIndex = e.dataTransfer.getData('from-task-index')
 
         // this.$store.commit('MOVE_TASK', {
@@ -103,6 +114,7 @@ export default defineComponent({
     return {
       pickupTask,
       // category,
+      tasks,
       moveTaskOrColumn
     }
   }

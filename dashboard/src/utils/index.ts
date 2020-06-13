@@ -2,13 +2,21 @@ import { ContactStore } from '../store/contact.store'
 import { TaskStore } from '../store/task.store'
 import { Task } from '../interfaces/task/task.interface'
 import { Store } from '../store/store.interface'
+import { MessageStore } from '../store/message.store'
+import { BoardStore } from '../store/board.store'
 
 // using store interface eliminates vue warn about using inject outside of setup function
 
-export const loadRecords = async (store: (ContactStore | TaskStore), caller: string): Promise<any[]> => {
+export const loadRecords = async (
+    store: (ContactStore | TaskStore | MessageStore | BoardStore),
+    caller: string,
+    // optional arg for records that are the result of aggregation of data
+    // that requires a call to api
+    data?: any[]
+  ): Promise<any[]> => {
   console.log(`load records for ${caller}`)
   if (!store.getState().records.loaded) {
-    await store.fetchRecords()
+    await store.fetchRecords(data)
   }
   return store.getState().records.ids.reduce<any[]>((accumulator, id) => {
     const record = store.getState().records.all[id]
