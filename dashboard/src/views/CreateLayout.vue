@@ -22,7 +22,7 @@ import BaseBox from './../components/common/BaseBox.vue'
 import ContactCreate from './../components/contacts/ContactCreate.vue'
 import TaskCreate from './../components/task/TaskCreate.vue'
 
-import { Tab } from './../interfaces/tab.interface'
+import { Tab } from './../interfaces/common/tab.interface'
 
 export default defineComponent({
   name: 'CreateLayout',

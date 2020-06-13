@@ -18,17 +18,17 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch } from 'vue'
-import { useRouter, Router } from 'vue-router'
 import moment from 'moment'
+import { useRouter, Router } from 'vue-router'
+import { useStore } from './../../store'
+import { TaskStore } from '../../store/task.store'
 
 import BaseInput from './../../components/common/BaseInput.vue'
 
-import { Task } from '../../interfaces/task.interface'
+import { Task } from '../../interfaces/task/task.interface'
 
 import useTask from '../../composables/useTask'
 import { useModal } from '../../composables/useModal'
-import { useStore } from './../../store'
-import { TaskStore } from '../../store/task.store'
 import { useUpdateValues } from '../../composables/useUpdateValues'
 
 export default defineComponent({

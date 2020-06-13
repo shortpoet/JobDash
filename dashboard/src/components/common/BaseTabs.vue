@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
-import { Tab } from '../../interfaces/tab.interface'
+import { Tab } from '../../interfaces/common/tab.interface'
 
 export default defineComponent({
   name: 'BaseTabs',

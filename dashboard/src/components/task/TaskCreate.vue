@@ -14,18 +14,19 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
+import moment from 'moment'
 
+import { useStore } from '../../store'
 import { useTaskStore, ITaskStore, TaskStore } from './../../store/task.store'
 import { useContactStore, IContactStore, ContactStore } from './../../store/contact.store'
-import { Task } from '../../interfaces/task.interface'
-import { Contact } from '../../interfaces/contact.interface'
 
 import BaseInput from './../../components/common/BaseInput.vue'
 
-import moment from 'moment'
+import { Task } from '../../interfaces/task/task.interface'
+import { Contact } from '../../interfaces/contact/contact.interface'
+
 import useTask from '../../composables/useTask'
 import useContact from '../../composables/useContact'
-import { useStore } from '../../store'
 
 export default defineComponent({
   name: 'TaskCreate',

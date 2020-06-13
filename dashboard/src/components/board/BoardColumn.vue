@@ -16,9 +16,12 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
+
 import BoardItem from './BoardItem.vue'
-import { IBoardColumn } from '../../interfaces/board.column.interface'
-import { Task } from '../../interfaces/task.interface'
+
+import { IBoardColumn } from '../../interfaces/board/board.column.interface'
+import { Task } from '../../interfaces/task/task.interface'
+
 export default defineComponent({
   name: 'TaskColumn',
   components: {

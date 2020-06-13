@@ -1,4 +1,4 @@
-import { IBoardColumn } from "../interfaces/board.column.interface"
+import { IBoardColumn } from "../interfaces/board/board.column.interface"
 import { ColumnStore } from "../store/column.store"
 import { Store } from "../store/store.interface"
 

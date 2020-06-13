@@ -37,16 +37,19 @@
 
 <script lang="ts">
 import { defineComponent, ref, toRefs } from 'vue'
-import { Message } from './../../interfaces/message.interface' 
-import { useUpdateValues } from '../../composables/useUpdateValues'
-import { Destination } from '../../interfaces/modal.interface'
-import { useModal } from '../../composables/useModal'
-import  useMessage from '../../composables/useMessage'
+import moment from 'moment'
+
 import { MessageStore } from '../../store/message.store'
 import { useStore } from '../../store'
 import { ContactStore } from '../../store/contact.store'
-import { Contact } from '../../interfaces/contact.interface'
-import moment from 'moment'
+
+import { Contact } from '../../interfaces/contact/contact.interface'
+import { Message } from './../../interfaces/message/message.interface' 
+import { Destination } from '../../interfaces/common/modal.interface'
+
+import { useUpdateValues } from '../../composables/useUpdateValues'
+import { useModal } from '../../composables/useModal'
+import  useMessage from '../../composables/useMessage'
 export default defineComponent({
   name: 'MessageWriter',
   props: {

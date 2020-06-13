@@ -82,28 +82,27 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-
 import moment from 'moment'
+import { defineComponent, computed, ref, watch, onMounted } from 'vue'
+
+import { useRouter } from 'vue-router'
+import { useStore } from '../../store'
+import { ContactStore } from '../../store/contact.store'
+import { MessageStore } from '../../store/message.store'
 
 import BaseInput from './../../components/common/BaseInput.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
 import ModalWarning from './../../components/common/ModalWarning.vue'
 import MessageWriter from './../../components/common/MessageWriter.vue'
-
 import ContactCard from './ContactCard.vue'
 
-import { Contact } from '../../interfaces/contact.interface'
-import { Field } from '../../interfaces/field.interface'
-import { Destination } from '../../interfaces/modal.interface'
-import { Message } from './../../interfaces/message.interface' 
+import { Contact } from '../../interfaces/contact/contact.interface'
+import { Field } from '../../interfaces/common/field.interface'
+import { Destination } from '../../interfaces/common/modal.interface'
+import { Message } from './../../interfaces/message/message.interface' 
 
 import { useModal } from '../../composables/useModal'
 import useContact from '../../composables/useContact'
-import { useStore } from '../../store'
-import { ContactStore } from '../../store/contact.store'
-import { MessageStore } from '../../store/message.store'
 import { useUpdateValues } from '../../composables/useUpdateValues'
 
 export default defineComponent({

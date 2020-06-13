@@ -1,7 +1,7 @@
 import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
-import { Contact } from "../interfaces/contact.interface"
-import { ContactDTO } from "../interfaces/contactDTO.interface"
+import { Contact } from "../interfaces/contact/contact.interface"
+import { ContactDTO } from "../interfaces/contact/contactDTO.interface"
 import { StateMap, Store, StoreState, IStore, StoreAxios } from "./store.interface"
 
 interface ContactStateMap extends StateMap {

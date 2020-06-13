@@ -1,6 +1,6 @@
 
 import { ref, watch } from 'vue'
-import { Contact } from '../interfaces/contact.interface'
+import { Contact } from '../interfaces/contact/contact.interface'
 import { updateRecords, loadRecords } from '../utils'
 import moment from 'moment'
 

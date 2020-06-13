@@ -1,6 +1,6 @@
 import { ContactStore } from '../store/contact.store'
 import { TaskStore } from '../store/task.store'
-import { Task } from '../interfaces/task.interface'
+import { Task } from '../interfaces/task/task.interface'
 import { Store } from '../store/store.interface'
 
 // using store interface eliminates vue warn about using inject outside of setup function

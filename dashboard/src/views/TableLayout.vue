@@ -39,16 +39,15 @@
 import { defineComponent, computed, ref } from 'vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
-
 import ContactTable from './../components/contacts/ContactTable.vue'
 import TaskTable from './../components/task/TaskTable.vue'
-
 import ContactCard from './../components/contacts/ContactCard.vue'
 
 import { useModal } from '../composables/useModal'
-import { Destination } from '../interfaces/modal.interface'
 
-import { Tab } from '../interfaces/tab.interface'
+import { Destination } from '../interfaces/common/modal.interface'
+import { Tab } from '../interfaces/common/tab.interface'
+
 import { useRouter } from 'vue-router'
 
 export default defineComponent({

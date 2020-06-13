@@ -1,7 +1,7 @@
 
-import { Contact } from './contact.interface';
+import { Contact } from '../contact/contact.interface';
 import { Moment } from "moment";
-import { TableItem } from './table.item.interface';
+import { TableItem } from '../common/table.item.interface';
 
 export interface Task extends TableItem {
   _id: string;

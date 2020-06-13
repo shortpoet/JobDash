@@ -2,7 +2,7 @@ import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
 import { StateMap, Store, StoreState, IStore, StoreAxios } from "./store.interface"
 import { useStorage } from "../composables/useStorage"
-import { IBoardColumn } from "../interfaces/board.column.interface"
+import { IBoardColumn } from "../interfaces/board/board.column.interface"
 
 interface ColumnStateMap extends StateMap {
   ids: string[]

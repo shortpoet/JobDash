@@ -8,10 +8,12 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { Task } from '../../interfaces/task.interface'
-import { Destination } from '../../interfaces/modal.interface'
+
 import { useModal } from '../../composables/useModal'
 import { useRouter } from 'vue-router'
+
+import { Task } from '../../interfaces/task/task.interface'
+import { Destination } from '../../interfaces/common/modal.interface'
 
 export default defineComponent({
   name: 'BoardItem',

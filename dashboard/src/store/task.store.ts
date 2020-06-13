@@ -1,7 +1,7 @@
 import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
-import { Task } from "../interfaces/task.interface"
-import { TaskDTO } from "../interfaces/taskDTO.interface"
+import { Task } from "../interfaces/task/task.interface"
+import { TaskDTO } from "../interfaces/task/taskDTO.interface"
 import { StoreState, StateMap, IStore, StoreAxios } from "./store.interface"
 
 interface TasksStateMap extends StateMap {

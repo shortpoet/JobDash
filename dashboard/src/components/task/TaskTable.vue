@@ -74,24 +74,25 @@
 <script lang="ts">
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import moment from 'moment'
-
-import BaseInput from './../../components/common/BaseInput.vue'
-import BaseIcon from './../../components/common/BaseIcon.vue'
-import ModalWarning from './../../components/common/ModalWarning.vue'
-
-import TaskCard from './TaskCard.vue'
-
-import { Task } from '../../interfaces/task.interface'
-import { Field } from '../../interfaces/field.interface'
-import { Destination } from '../../interfaces/modal.interface'
-
-import { useModal } from '../../composables/useModal'
-import useTask from '../../composables/useTask'
 import { useStore } from '../../store'
 import { useRouter } from 'vue-router'
 import { StoreConstructor } from '../../store/store.interface'
 import { TaskStore } from '../../store/task.store'
 import { useUpdateValues } from '../../composables/useUpdateValues'
+
+import BaseInput from './../../components/common/BaseInput.vue'
+import BaseIcon from './../../components/common/BaseIcon.vue'
+import ModalWarning from './../../components/common/ModalWarning.vue'
+import TaskCard from './TaskCard.vue'
+
+
+import { Task } from '../../interfaces/task/task.interface'
+import { Field } from '../../interfaces/common/field.interface'
+import { Destination } from '../../interfaces/common/modal.interface'
+
+import { useModal } from '../../composables/useModal'
+import useTask from '../../composables/useTask'
+
 
 export default defineComponent({
   name: 'TaskTable',

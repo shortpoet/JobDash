@@ -1,7 +1,7 @@
 import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
-import { Message } from "../interfaces/message.interface"
-import { MessageDTO } from "../interfaces/messageDTO.interface"
+import { Message } from "../interfaces/message/message.interface"
+import { MessageDTO } from "../interfaces/message/messageDTO.interface"
 import { StoreState, StateMap, IStore, StoreAxios } from "./store.interface"
 
 interface MessagesStateMap extends StateMap {

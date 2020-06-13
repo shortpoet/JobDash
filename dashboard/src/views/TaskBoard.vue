@@ -50,8 +50,8 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch, computed } from 'vue'
-import { IBoardColumn } from './../interfaces/board.column.interface'
-import { Task } from '../interfaces/task.interface'
+import { IBoardColumn } from './../interfaces/board/board.column.interface'
+import { Task } from '../interfaces/task/task.interface'
 import BoardColumn from './../components/board/BoardColumn.vue'
 import { useStorage } from './../composables/useStorage'
 import useColumns from './../composables/useColumns'

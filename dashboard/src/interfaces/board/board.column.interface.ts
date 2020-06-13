@@ -1,4 +1,4 @@
-import { Task } from "./task.interface";
+import { Task } from "../task/task.interface";
 import { Ref } from "vue";
 
 // export interface ITaskColumn {

@@ -14,7 +14,6 @@
 import { defineComponent } from "vue";
 import { useModal } from "../../composables/useModal";
 
-
 export default defineComponent({
   
   name: 'ModalWarning',

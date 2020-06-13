@@ -17,20 +17,20 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import moment from 'moment'
 
-import BaseInput from './../../components/common/BaseInput.vue'
+import { useRouter } from 'vue-router'
+import { useStore } from './../../store'
+import { ContactStore } from '../../store/contact.store'
 
+import BaseInput from './../../components/common/BaseInput.vue'
 import MessageWriter from './../../components/common/MessageWriter.vue'
 
-import { Contact } from '../../interfaces/contact.interface'
+import { Contact } from '../../interfaces/contact/contact.interface'
 
 import useContact from '../../composables/useContact'
 import { useModal } from '../../composables/useModal'
 import { useUpdateValues } from '../../composables/useUpdateValues'
-import { useStore } from './../../store'
-import { ContactStore } from '../../store/contact.store'
 
 export default defineComponent({
   name: 'ContactCard',

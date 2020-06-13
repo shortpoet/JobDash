@@ -46,9 +46,9 @@ import { useModal } from '../composables/useModal'
 import useContact from '../composables/useContact'
 import useTask from '../composables/useTask'
 
-import { Destination } from '../interfaces/modal.interface'
-import { Contact } from '../interfaces/contact.interface'
-import { Task } from '../interfaces/task.interface'
+import { Destination } from '../interfaces/common/modal.interface'
+import { Contact } from '../interfaces/contact/contact.interface'
+import { Task } from '../interfaces/task/task.interface'
 
 export default defineComponent({
   name: 'MainLayout',
