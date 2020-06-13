@@ -1,10 +1,10 @@
 import { Moment } from "moment";
-import { ITaskColumn } from "./task.column.interface";
+import { IBoardColumn } from "./board.column.interface";
 
 export interface Board {
   _id: string
   name: string
-  columns: ITaskColumn[]
+  columns: IBoardColumn[]
   created: Moment
   edited: Moment
 }

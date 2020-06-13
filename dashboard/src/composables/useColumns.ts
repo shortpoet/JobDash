@@ -1,12 +1,12 @@
-import { ITaskColumn } from "../interfaces/task.column.interface"
+import { IBoardColumn } from "../interfaces/board.column.interface"
 import { ColumnStore } from "../store/column.store"
 import { Store } from "../store/store.interface"
 
-export const loadRecords = (store: Store<ColumnStore> , columns: ITaskColumn[], caller: string): ITaskColumn[] => {
+export const loadRecords = (store: Store<ColumnStore> , columns: IBoardColumn[], caller: string): IBoardColumn[] => {
   console.log(`load records for ${caller}`)
   if (!store.getState().records.loaded) {
     // console.log(columns)
-    store.addRecords(columns, 'order')
+    store.addRecords(columns, 'category')
   }
   return store.getState().records.ids.reduce<any[]>((accumulator, id) => {
     const record = store.getState().records.all[id]
@@ -14,9 +14,9 @@ export const loadRecords = (store: Store<ColumnStore> , columns: ITaskColumn[], 
   }, [])
 }
 
-export const updateRecords =  (store: Store<ColumnStore>, caller: string): ITaskColumn[] => {
+export const updateRecords =  (store: Store<ColumnStore>, caller: string): IBoardColumn[] => {
   console.log(`update records for ${caller}`)
-  return store.getState().records.ids.reduce<ITaskColumn[]>((accumulator, id) => {
+  return store.getState().records.ids.reduce<IBoardColumn[]>((accumulator, id) => {
     const record = store.getState().records.all[id]
     return accumulator.concat(record)
   }, [])

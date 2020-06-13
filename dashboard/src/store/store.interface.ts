@@ -62,6 +62,9 @@ export class Store<T> extends BaseStore<T> {
   public getRecordById<T>(id: string | number): T;
   public getRecordById(id: string | number): any {
     console.log('get by id')
+    console.log(id)
+    console.log(this.state.records)
+    console.log(this.state.records.all)
     if (this.state.records.all[id]) {
       return this.state.records.all[id]
     } else {

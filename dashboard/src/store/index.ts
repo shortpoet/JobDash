@@ -7,7 +7,7 @@ import { Contact } from '../interfaces/contact.interface'
 import { Task } from '../interfaces/task.interface'
 import { Message } from '../interfaces/message.interface'
 import { createColumnStore } from './column.store'
-import { ITaskColumn } from '../interfaces/task.column.interface'
+import { IBoardColumn } from '../interfaces/board.column.interface'
 
 const initialStateMap = () : StateMap => ({
   ids: [
@@ -43,8 +43,8 @@ export const provideStore = () => {
   provide('store', store)
 }
 
-export const useStore = (): StoreAxios<Contact|Task|Message|ITaskColumn> => {
-  const store = inject<StoreAxios<Contact|Task|Message|ITaskColumn>>('store')
+export const useStore = (): StoreAxios<Contact|Task|Message|IBoardColumn> => {
+  const store = inject<StoreAxios<Contact|Task|Message|IBoardColumn>>('store')
   return store
 }
 

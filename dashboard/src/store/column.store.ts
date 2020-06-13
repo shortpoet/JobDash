@@ -2,11 +2,11 @@ import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
 import { StateMap, Store, StoreState, IStore, StoreAxios } from "./store.interface"
 import { useStorage } from "../composables/useStorage"
-import { ITaskColumn } from "../interfaces/task.column.interface"
+import { IBoardColumn } from "../interfaces/board.column.interface"
 
 interface ColumnStateMap extends StateMap {
   ids: string[]
-  all: Record<string, ITaskColumn>
+  all: Record<string, IBoardColumn>
   loaded: boolean
 }
 
@@ -29,7 +29,7 @@ const initialColumnStoreState = () : ColumnStoreState => ({
 })
 
 
-export class ColumnStore extends StoreAxios<ITaskColumn> implements IStore<ITaskColumn> {
+export class ColumnStore extends StoreAxios<IBoardColumn> implements IStore<IBoardColumn> {
   protected state: ColumnStoreState
   constructor(initialState: ColumnStoreState) {
     super(initialState)
@@ -41,24 +41,24 @@ export class ColumnStore extends StoreAxios<ITaskColumn> implements IStore<ITask
     return readonly<ColumnStoreState>(this.state)
   }
 
-  public getLastId(): ITaskColumn['category'] {
-    const last = this.getLast<ITaskColumn>()
+  public getLastId(): IBoardColumn['category'] {
+    const last = this.getLast<IBoardColumn>()
     return last ? last.category : '-1'
   }
 
-  async createRecord(column: ITaskColumn) {
+  async createRecord(column: IBoardColumn) {
     super.createRecord(column, 'category')
     // const response = await axios.post<ColumnDTO>('http://localhost:3000/column/create', column)
   }
 
-  async deleteRecord(column: ITaskColumn) {
+  async deleteRecord(column: IBoardColumn) {
     super.deleteRecord(column, 'category')
     // const response = await axios.delete<ColumnDTO>(`http://localhost:3000/column/delete?column_id=${column._id}`)
     // return response.data.column._id
   }
 
   
-  async editRecord(oldColumn: ITaskColumn, newColumn: ITaskColumn, idSymbol: (string | number)) {
+  async editRecord(oldColumn: IBoardColumn, newColumn: IBoardColumn, idSymbol: (string | number)) {
     super.editRecord(oldColumn, newColumn, 'category')
     // console.log('writing to db')
 

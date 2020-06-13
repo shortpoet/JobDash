@@ -1,7 +1,7 @@
 <template>
-  <div class="task-cell">
-    <span @click="openCard" class="task-cell-text">
-      {{taskId}}: {{ taskName }}
+  <div class="board-item">
+    <span @click="openCard" class="board-item-text">
+      {{itemName}}: {{ itemId }}
     </span>
   </div>
 </template>
@@ -14,24 +14,24 @@ import { useModal } from '../../composables/useModal'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
-  name: 'TaskCell',
+  name: 'BoardItem',
   props: {
-    task: {
+    item: {
       type: Object as () => Task,
       required: true
     },
     // making these props makes them reactive to edit
-    taskName: {
+    itemName: {
       type: String,
       required: true
     },
-    taskId: {
+    itemId: {
       type: String,
       required: true
     },
   },
   setup(props, ctx) {
-    const task = ref<Task>(props.task)
+    const task = ref<Task>(props.item)
     // console.log(task.value)
 
     //#region taskCardModal
@@ -47,7 +47,7 @@ export default defineComponent({
       const openCard = () => {
         console.log('task cell open card')
         taskCardModal.showModal()
-        router.push({ name: '#task-card-modal', params: { id: props.taskId } })
+        router.push({ name: '#task-card-modal', params: { id: props.itemId } })
       }
     //#endregion
 

@@ -3,9 +3,9 @@
     * watch for nested section.section
     * will start nesting relative padding (I think)
   -->
-  <section class="section task-section">
+  <section class="section board-section">
 
-    <div class="container task-board">
+    <div class="container the-board">
       <div class="columns-container">
         <div class="columns is-centered">
           <!-- column class here makes column background expand past name to fill available space except padding -->
@@ -13,7 +13,7 @@
             must use $event as variable
             @dragstart.self so that nested pickupTask doesn't trigger this event listener
           -->
-          <div class="column task-column-container"
+          <div class="column board-column-container"
             v-for="(column, columnIndex) in columnsComputed"
             :key="column.id"
             draggable
@@ -22,7 +22,7 @@
             @dragenter.prevent
             @drop="moveTaskOrColumn($event, column, columnIndex)"
           >
-            <TaskColumn
+            <BoardColumn
               :column="column" 
               :category="column.category"
               :tasks-map="column.tasks"
@@ -36,7 +36,7 @@
 
     <hr />
 
-    <div class="task-board container">
+    <div class="the-board container">
       <div class="columns is-centered">
         <div class="column has-text-centered" v-for="column in _columns" :key="column.id">
           {{ column.category }}
@@ -50,9 +50,9 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch, computed } from 'vue'
-import { ITaskColumn } from './../interfaces/task.column.interface'
+import { IBoardColumn } from './../interfaces/board.column.interface'
 import { Task } from '../interfaces/task.interface'
-import TaskColumn from './../components/task/TaskColumn.vue'
+import BoardColumn from './../components/board/BoardColumn.vue'
 import { useStorage } from './../composables/useStorage'
 import useColumns from './../composables/useColumns'
 import { useStore } from '../store'
@@ -62,7 +62,7 @@ export default defineComponent({
   name: 'TaskBoard',
 
   components: {
-    TaskColumn
+    BoardColumn
   },
 
   props: {
@@ -79,7 +79,7 @@ export default defineComponent({
 
     const allTasks = ref<Task[]>(props.tasks)
     
-    const columns = ref<ITaskColumn[]>([])
+    const columns = ref<IBoardColumn[]>([])
 
     const columnNames = ref([])
 
@@ -95,43 +95,8 @@ export default defineComponent({
       return catArr
     })
 
-      // init orderMap
-    // const orderMap = computed(() => {
-    //   let orderMap = storage.get('board')
-    //   if (!orderMap) {
-    //     orderMap = {}
-    //     categories.value.map((category, i) => {
-    //       const order = {}
-    //       order[category] = i
-    //       return Object.assign(orderMap, order)
-    //     })
-    //     storage.set('board', orderMap)
-    //   }
-    //   let order = []
-    //   for (let category in orderMap) {
-    //     order.push([category, orderMap[category]])
-    //   }
-    //   order = order.sort((a, b) => a[1] - b[1])
-    //   const sortedCategoryColumns = {}
-    //   order.forEach(item => sortedCategoryColumns[item[0]] = item[1])
-    //   return sortedCategoryColumns
-
-    // })
-
-    // const orderMap = computed((categoryColumns) => {
-    //   const sortable = []
-    //   categoryColumns.forEach(column => {
-    //     sortable.push({
-    //       id: column.id,
-    //       order: column.order
-    //     })
-
-    //   })
-    //   return sortable
-    // })
-
-    const columnsComputed = computed<ITaskColumn[]>((): ITaskColumn[] => {
-      const categoryColumns: Record<string, ITaskColumn> = {}
+    const columnsComputed = computed<IBoardColumn[]>((): IBoardColumn[] => {
+      const categoryColumns: Record<string, IBoardColumn> = {}
       // console.log(categoryColumns)
       props.tasks.forEach((task, i) => {
         if (task) {
@@ -145,7 +110,7 @@ export default defineComponent({
             // console.log('category')
             // console.log(task.category)
             // console.log(categoryColumns[task.category])
-            categoryColumns[task.category] = {} as ITaskColumn
+            categoryColumns[task.category] = {} as IBoardColumn
             // console.log('debug 3')
             // console.log(categoryColumns[task.category])
             // init new id if new column
@@ -162,11 +127,16 @@ export default defineComponent({
       // console.log(categoryColumns)
       const out = []
       let orderMapping = {}
+      // if (!columnStore.getState().records.loaded) {
+      //   orderMapping = {}
+      // }
       Object.entries(categoryColumns).forEach((col, i) => {
+        console.log(col)
         const category = col[0]
         const order = col[1].category
         orderMapping[category] = order
       })
+      console.log(orderMapping)
       orderMapping = sortObject(orderMapping)
 
       // categoryColumns.forEach(column => {
@@ -191,7 +161,7 @@ export default defineComponent({
           tasks: tasks
         })
       })
-      // const out: ITaskColumn[] = Object.keys(orderMap.value).map((category, i) => ({
+      // const out: IBoardColumn[] = Object.keys(orderMap.value).map((category, i) => ({
       //   id: categoryColumns[category]['id'],
       //   order: i,
       //   category: category,
@@ -214,7 +184,7 @@ export default defineComponent({
     // console.log(columnStore.getState().records.all)
 
     //#region drag
-      const pickupColumn = (e: DragEvent, fromColumn: ITaskColumn) => {
+      const pickupColumn = (e: DragEvent, fromColumn: IBoardColumn) => {
         console.log('pickup columns')
         // console.log(e)
         e.dataTransfer.effectAllowed = 'move'
@@ -222,10 +192,14 @@ export default defineComponent({
         
         e.dataTransfer.setData('type', 'column')
         e.dataTransfer.setData('from-column-category', fromColumn.category)
+        e.dataTransfer.setData('from-column-id', fromColumn.order.toString())
+        e.dataTransfer.setData('from-column-order', fromColumn.order.toString())
         // console.log(e.dataTransfer.getData('column-category'))
       }
-      const moveTask = (e: DragEvent, toColumn: ITaskColumn, toTaskIndex: number) => {
+      const moveTask = (e: DragEvent, toColumn: IBoardColumn, toTaskIndex: number) => {
         const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+        const fromColumnId = e.dataTransfer.getData('from-column-id')
+        const fromColumnOrder = e.dataTransfer.getData('from-column-order')
         const fromTasks = columns[fromColumnIndex].tasks
         const fromTaskIndex = e.dataTransfer.getData('from-task-index')
 
@@ -236,14 +210,24 @@ export default defineComponent({
         //   toTaskIndex
         // })
       }
-      const moveColumn = (e: DragEvent, toColumn: ITaskColumn) => {
+      const moveColumn = (e: DragEvent, toColumn: IBoardColumn) => {
         const fromColumnCategory = e.dataTransfer.getData('from-column-category')
-        const fromColumn: ITaskColumn = columnStore.getRecordById(fromColumnCategory)
+        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+        const fromColumnId = e.dataTransfer.getData('from-column-id')
+        // const fromColumnOrder = e.dataTransfer.getData('from-column-order')
+
+        console.log(fromColumnCategory)
+        const fromColumn: IBoardColumn = columnStore.getRecordById(fromColumnCategory)
+        let fromColumnCopy: IBoardColumn = {...fromColumn}
+        // save the value of the old column's order to set toColumn
         const fromColumnOrder = fromColumn.order
-        fromColumn.order = toColumn.order
-        // columnStore.editRecord()
-        
-        toColumn.order = fromColumnOrder
+        // set the new value for fromColumn
+        fromColumnCopy.order = toColumn.order
+        columnStore.editRecord(fromColumn, fromColumnCopy, 'category')
+
+        let toColumnCopy: IBoardColumn = {...toColumn}
+        toColumnCopy.order = fromColumnOrder
+        columnStore.editRecord(toColumn, toColumnCopy, 'category')
 
         // let orderMap = storage.get('board')
         // // let fromColumnIndex = orderMap[fromColumnCategory]
@@ -261,7 +245,7 @@ export default defineComponent({
         // })
 
       }
-      const moveTaskOrColumn = (e: DragEvent, toColumn: ITaskColumn, toColumnIndex: number, toTaskIndex: number) => {
+      const moveTaskOrColumn = (e: DragEvent, toColumn: IBoardColumn, toColumnIndex: number, toTaskIndex: number) => {
         console.log('move task or column - task column')
         const type = e.dataTransfer.getData('type')
         console.log(type)
@@ -277,60 +261,14 @@ export default defineComponent({
         }
       }
     //#endregion
-
-    //#region setColumns
-      // const setColumns = () => {
-      //   columns.value = []
-      //   columnNames.value = []
-      //   columnNames.value = [...new Set(props.tasks.map(task => task.category))]
-      //   columnNames.value.forEach((category, i) => {
-      //     const categorized = props.tasks.filter(task => task.category == category)
-      //     // const colRef = ref(categorized)
-      //     const iTaskColumn: ITaskColumn = {
-      //       id: i,
-      //       category: category,
-      //       tasks: categorized
-      //     }
-      //     columns.value.push(iTaskColumn)
-      //   })
-      // }
-      // // setColumns()
-      // watch(
-      //   () => props.tasks.length.toString(),
-      //   (value: string, previous: string) => {
-      //     if (value != previous) {
-      //       setColumns()
-      //     }
-      //   },
-      //   {immediate: true}
-      // )
-
-      const _columns = [
-        {id:'1', category: 'Column 1'},
-        {id:'2', category: 'Column 2'},
-        {id:'3', category: 'Column 3'},
-        {id:'4', category: 'Column 4'},
-        {id:'5', category: 'Column 5'},
-      ]
-    //#endregion
-
-    // const columnsComputed = computed<ITaskColumn[]>((): ITaskColumn[] => {
-    //   const taskColumns: Record<string, Task[]> = {}
-    //   props.tasks.forEach(task => {
-    //     if (task.category in taskColumns) {
-    //       taskColumns[task.category].push(task)
-    //     } else {
-    //       taskColumns[task.category] = []
-    //       taskColumns[task.category].push(task)
-    //     }
-    //   })
-      
-    //   return Object.keys(taskColumns).map((category, i) => ({
-    //     id: i,
-    //     category: category,
-    //     tasks: taskColumns[category]
-    //   }))
-    // })
+  
+    const _columns = [
+      {id:'1', category: 'Column 1'},
+      {id:'2', category: 'Column 2'},
+      {id:'3', category: 'Column 3'},
+      {id:'4', category: 'Column 4'},
+      {id:'5', category: 'Column 5'},
+    ]
 
     return {
       _columns,

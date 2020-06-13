@@ -7,7 +7,7 @@ import { Ref } from "vue";
 //   tasks: Task[]
 // }
 
-export interface ITaskColumn {
+export interface IBoardColumn {
   order: number
   category: string
   tasks: Record<string, Task>

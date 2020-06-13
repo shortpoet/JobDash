@@ -1,14 +1,14 @@
 <template>
-  <div class="had-text-centered task-column-category">{{ category }}</div>
-  <div class="task-cells-container">
-    <div class="task-cell-container"
+  <div class="had-text-centered board-column-category">{{ category }} - Order: {{ column.order }}</div>
+  <div class="board-items-container">
+    <div class="board-item-container"
       v-for="(task, taskIndex) in tasksMap"
       :key="task._id"
       draggable
       @dragstart="pickupTask($event, task, taskIndex, columnIndex)"
       @drag.stop="moveTaskOrColumn($event, tasks, columnIndex, taskIndex)"
     >
-      <TaskCell :task="task" :task-name="task.name" :task-id="task._id"/>
+      <BoardItem :item="task" :item-name="task.name" :item-id="task._id"/>
     </div>
   </div>
   <div />
@@ -16,13 +16,13 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
-import TaskCell from './TaskCell.vue'
-import { ITaskColumn } from '../../interfaces/task.column.interface'
+import BoardItem from './BoardItem.vue'
+import { IBoardColumn } from '../../interfaces/board.column.interface'
 import { Task } from '../../interfaces/task.interface'
 export default defineComponent({
   name: 'TaskColumn',
   components: {
-    TaskCell
+    BoardItem
   },
   props: {
     category: {
@@ -35,7 +35,7 @@ export default defineComponent({
       required: true
     },
     column: {
-      type: Object as () => ITaskColumn,
+      type: Object as () => IBoardColumn,
       required: true
     },
     columnIndex: {
