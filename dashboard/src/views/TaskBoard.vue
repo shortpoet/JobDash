@@ -15,13 +15,13 @@
           -->
 
           <div class="column board-column-container"
-            v-for="(column, columnCategoryKey) in columns"
+            v-for="column in columns"
             :key="column.id"
             draggable
             @dragstart.self="pickupColumn($event, column)"
             @dragover.prevent
             @dragenter.prevent
-            @drop="moveItemOrColumn($event, column, columnCategoryKey)"
+            @drop="moveItemOrColumn($event, column.items, column.order)"
           >
             <BoardColumn
               :column="column" 
