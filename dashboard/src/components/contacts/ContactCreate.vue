@@ -50,6 +50,7 @@ export default defineComponent({
       const nextId = (parseInt(contactStore.getLastId()) + 1).toString()
       const contact: Contact = {
         _id: nextId,
+        itemId: nextId,
         name: name.value,
         company: company.value,
         email: email.value,

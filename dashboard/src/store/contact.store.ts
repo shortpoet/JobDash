@@ -96,6 +96,7 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
     this.state.records.all[oldContact._id].locked = deletable
     const newContact: Contact = {
       _id: oldContact._id,
+      itemId: oldContact._id,
       name: oldContact.name,
       company: oldContact.company,
       email: oldContact.email,

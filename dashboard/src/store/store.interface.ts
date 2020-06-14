@@ -99,7 +99,7 @@ export class Store<T> extends BaseStore<T> {
   }
 
   public addRecords(records: any[], idSymbol:(string | number)) {
-    // to avoid mutating at all costs can do 
+    // to avoid mutating at all costs can do reduce
     for (const record of records) {
       // do a check to account for duplicates
       if (!this.state.records.ids.includes(record[idSymbol])) {

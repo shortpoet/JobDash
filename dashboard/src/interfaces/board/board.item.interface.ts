@@ -1,7 +1,7 @@
 import { IBoardable } from "./boardable.interface";
 
 export interface IBoardItem extends IBoardable{
-  itemId: number
+  itemId: string
   category: string
   itemOrder: number
   columnOrder: number

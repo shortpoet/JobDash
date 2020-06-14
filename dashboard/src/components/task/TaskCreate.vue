@@ -82,6 +82,7 @@ export default defineComponent({
         const nextId = (parseInt(taskStore.getLastId()) + 1).toString()
         const task: Task = {
           _id: nextId,
+          itemId: nextId,
           name: name.value,
           category: category.value,
           description: description.value,

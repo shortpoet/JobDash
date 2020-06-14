@@ -5,6 +5,7 @@ import { TableItem } from '../common/table.item.interface';
 
 export interface Task extends TableItem {
   _id: string;
+  itemId: string;
   name: string;
   description: string;
   category: string;

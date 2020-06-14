@@ -301,6 +301,7 @@ export default defineComponent({
           if (contactTouched.value == true) {
             const newContact: Contact = {
               _id: oldContact._id,
+              itemId: oldContact._id,
               name: nameEdit.value,
               company: companyEdit.value,
               email: emailEdit.value,

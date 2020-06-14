@@ -49,7 +49,7 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
 
   public getLastId(): IBoardItem[IdSymbol] {
     const last = this.getLast<IBoardItem>()
-    return last ? last.itemId : -1
+    return last ? last.itemId : '-1'
   }
 
   public getRecordsByCategory(category: string): IBoardItem[] {
@@ -93,6 +93,7 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
     // const data = await this._fetchRecords('http://localhost:3000/contact/contacts')
 
     // console.log('fetch records at board store')
+    console.log(data)
     this.addRecords(data, ID_SYMBOL)
     this.state.records.loaded = true
   }

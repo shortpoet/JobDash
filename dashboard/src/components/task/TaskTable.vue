@@ -246,6 +246,7 @@ export default defineComponent({
           if (taskTouched.value == true) {
             const newTask: Task = {
               _id: oldTask._id,
+              itemId: oldTask._id,
               name: nameEdit.value,
               category: categoryEdit.value,
               description: descriptionEdit.value,

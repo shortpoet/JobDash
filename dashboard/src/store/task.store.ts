@@ -91,6 +91,7 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
 
     const newTask: Task = {
       _id: oldTask._id,
+      itemId: oldTask._id,
       name: oldTask.name,
       description: oldTask.description,
       category: oldTask.category,

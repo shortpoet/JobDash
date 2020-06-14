@@ -1,7 +1,7 @@
 import { IBoardColumn } from "./board.column.interface";
 
 export interface IBoard {
-  id: number
+  id: string
   name: string
   columns: Record<string, IBoardColumn>
 }

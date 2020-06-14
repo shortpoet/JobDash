@@ -9,7 +9,8 @@
       <div class="columns-container">
         <div class="columns is-centered">
           <!-- column class here makes column background expand past name to fill available space except padding -->
-          <TaskBoard :columns="columnsComputed" @update-board="onUpdateBoard" />
+          <!-- v-if here initially renders a blank green board -->
+          <TaskBoard :columns="columnsComputed" @update-board="onUpdateBoard"/>
         </div>
       </div>
     </div>
@@ -46,7 +47,7 @@ export default defineComponent({
       required: true
     },
     activeBoard: {
-      type: Number,
+      type: String,
       required: true
     }
   },
@@ -55,27 +56,39 @@ export default defineComponent({
 
   async setup(props, ctx) {
     const store = useStore()
-    const r = ref()
     //#region board
       const boardStore: BoardStore = store.modules['boardStore']
       const columns = ref<IBoardColumn[]>()
-      const taskLength = ref(props.tasks.length.toString())
+      const taskRef = ref(props.tasks)
       // console.log('$$$$ task length $$$$')
       // console.log(taskLength.value)
-      const tasksComputed = computed(() => props.tasks)
+      const tasksComputed = computed(() => taskRef.value)
       const board = await useBoard(columns, boardStore, tasksComputed.value, '_id', props.activeBoard)
       const onUpdateBoard = board.onUpdateBoard
       const columnsComputed = board.columnsComputed
     //#endregion
 
+    // this is incorrect
+    // notice additional arrow function that caused bug
+    // watch(
+    //   () => props.taskUpdate,
+    //   (value: boolean, previous: boolean) => (() => {
+    //     if (value != previous) {
+    //       console.log('#### task update from task board layout ####')
+    //       // board.onUpdateBoard()
+    //     }
+    //   }),
+    //   {immediate: true}
+    // )
+    
+    // this is correct
+
     watch(
-      () => taskLength.value,
-      (value: string, previous: string) => (() => {
-        if (value != previous) {
-          console.log('#### new task lenght ####')
-          board.onUpdateBoard()
-        }
-      }),
+      () => props.tasks.length, 
+      (value: number, previous:number) => {
+          console.log(`Watch props.tasks.lenth function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+          onUpdateBoard()
+        },
       {immediate: true}
     )
 

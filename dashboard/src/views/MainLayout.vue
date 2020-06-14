@@ -26,7 +26,7 @@
     </div>
     <TaskBoardLayout
       :tasks="allTasks"
-      :active-board="parseInt(activeBoard)"
+      :active-board="activeBoard"
     />
   </div>
 
@@ -157,7 +157,6 @@ export default defineComponent({
       handleModal()
     //#endregion
 
-
     return {
       showUIFull,
       contactCardModal,
@@ -166,7 +165,7 @@ export default defineComponent({
       onUpdateContacts,
       onUpdateTasks,
       targetsLoadedRef,
-      activeBoard
+      activeBoard,
     }
 
   }
