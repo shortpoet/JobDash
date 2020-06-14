@@ -95,10 +95,12 @@ const columnMapToArray = (columnMap: Record<string, IBoardColumn>): IBoardColumn
     const columnOrder = value.columnOrder
     const items = value.items
     // console.log(category)
+    const itemMap = {}
+    itemMap[category] = orderItems(items)
     const column: IBoardColumn = {
       category: category,
       columnOrder: columnOrder,
-      items: orderItems(items)
+      items: itemMap
     }
     // console.log(columnOrder)
     columns.push(column)
