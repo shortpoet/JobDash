@@ -39,6 +39,33 @@ const initItem = (item: any, idSymbol: string, columnOrder: number, itemOrder: n
   }
 }
 
+// const parseBoard = ((items: IBoardItem[]): IBoard => {
+//   // console.log('begin parse board')
+//   const board = <IBoard>{
+//     name: 'test board',
+//     id: '1',
+//     columns: {} as Record<string, IBoardColumn>
+//   }
+//   items.forEach((item: IBoardItem, i) => {
+//     const itemRecord: Record<number, IBoardItem> = {} as Record<number, IBoardItem>
+//     itemRecord[item.itemId] = <IBoardItem>item
+//     if (item.category in board.columns) {
+//       board.columns[item.category].items[item.itemId] = item
+//     } else {
+//       const column: Record<string, IBoardColumn> = {} as Record<string, IBoardColumn>
+//       column[item.category] = <IBoardColumn>{
+//         category: item.category,
+//         columnOrder: item.columnOrder,
+//         items: {} as Record<number, IBoardItem>
+//       }
+//       column[item.category].items[item.itemId] = item
+//       Object.assign(board['columns'], column)
+//     }
+//   })
+//   // console.log('end parse board')
+//   // console.log(board)
+//   return board
+// })
 const parseBoard = ((items: IBoardItem[]): IBoard => {
   // console.log('begin parse board')
   const board = <IBoard>{
@@ -47,18 +74,16 @@ const parseBoard = ((items: IBoardItem[]): IBoard => {
     columns: {} as Record<string, IBoardColumn>
   }
   items.forEach((item: IBoardItem, i) => {
-    const itemRecord: Record<number, IBoardItem> = {} as Record<number, IBoardItem>
-    itemRecord[item.itemId] = <IBoardItem>item
     if (item.category in board.columns) {
-      board.columns[item.category].items[item.itemId] = item
+      board.columns[item.category].items.push(item)
     } else {
       const column: Record<string, IBoardColumn> = {} as Record<string, IBoardColumn>
       column[item.category] = <IBoardColumn>{
         category: item.category,
         columnOrder: item.columnOrder,
-        items: {} as Record<number, IBoardItem>
+        items: [] as IBoardItem[]
       }
-      column[item.category].items[item.itemId] = item
+      column[item.category].items.push(item)
       Object.assign(board['columns'], column)
     }
   })
@@ -67,26 +92,25 @@ const parseBoard = ((items: IBoardItem[]): IBoard => {
   return board
 })
 
-const orderItems = (itemMap: Record<string, IBoardItem>): IBoardItem[] => {
-  // console.log('begin order items')
-  const items: IBoardItem[] = []
-  Object.entries(itemMap).forEach((entry, index) => {
-    if (entry[1].itemOrder == index) {
-      items.push(<IBoardItem>{
-        itemId: entry[1].itemId,
-        category: entry[1].category,      
-        itemOrder: entry[1].itemOrder,
-        columnOrder: entry[1].columnOrder,
-      })
-    }
-  })
-  // console.log(items)
-  return items
-}
+// const orderItems = (itemMap: Record<string, IBoardItem>): IBoardItem[] => {
+//   // console.log('begin order items')
+//   const items: IBoardItem[] = []
+//   Object.entries(itemMap).forEach((entry, index) => {
+//     if (entry[1].itemOrder == index) {
+//       items.push(<IBoardItem>{
+//         itemId: entry[1].itemId,
+//         category: entry[1].category,      
+//         itemOrder: entry[1].itemOrder,
+//         columnOrder: entry[1].columnOrder,
+//       })
+//     }
+//   })
+//   // console.log(items)
+//   return items
+// }
 
 const columnMapToArray = (columnMap: Record<string, IBoardColumn>): IBoardColumn[] => {
   // console.log('begin column map to array');
-  
   const columns: IBoardColumn[] = []
   Object.entries(columnMap).forEach((entry, index) => {
     const categoryKey = entry[0]
@@ -95,18 +119,17 @@ const columnMapToArray = (columnMap: Record<string, IBoardColumn>): IBoardColumn
     const columnOrder = value.columnOrder
     const items = value.items
     // console.log(category)
-    const itemMap = {}
-    itemMap[category] = orderItems(items)
     const column: IBoardColumn = {
       category: category,
       columnOrder: columnOrder,
-      items: itemMap
+      items: items
     }
     // console.log(columnOrder)
     columns.push(column)
   })
   return columns
 }
+
 const saveBoardToStorage = (storedBoard: IBoard, boardId: string): void => {
   const storage = useStorage()
   storage.set(`board-${boardId}`, JSON.stringify(storedBoard))
@@ -122,8 +145,25 @@ const loadBoard = (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoa
   saveBoardToStorage(storedBoard, storedBoard.id)
   const columnMap = ref<Record<string, IBoardColumn>>()
   columnMap.value = storedBoard.columns
+  
+
+  // Object.entries(columnMap.value).forEach(entry => {
+  //   entry[1].items = itemMapToArray(entry[1].items)
+  // })
+
   const columns = ref<IBoardColumn[]>()
+
   columns.value = columnMapToArray(flattenSort(columnMap.value, 'columnOrder'))
+
+  // columns.value = columns.value.forEach(column => {
+  //   const itemMap = {}
+  //   itemMap[column.category] = flattenSort(column.items, 'itemOrder')
+  //   const column: IBoardColumn =  {
+  //     category: column.category,
+  //     columnOrder: column.columnOrder,
+  //     items: flattenSort(column.items, 'itemOrder')
+  //   }
+  // })
   // console.log(columns.value)
   return columns.value
 }
