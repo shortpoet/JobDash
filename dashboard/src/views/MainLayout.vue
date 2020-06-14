@@ -24,7 +24,7 @@
     </div>
 
     <TaskBoard
-      :columns="columns"
+      :columns="columnsComputed"
       @update-board="onUpdateBoard"
     />
   </div>
@@ -158,6 +158,7 @@ export default defineComponent({
       const columns = ref<IBoardColumn[]>()
       const board = await useBoard(columns, boardStore, allTasks.value, '_id')
       const onUpdateBoard = board.onUpdateBoard
+      const columnsComputed = board.columnsComputed
     //#endregion
 
     return {
@@ -169,6 +170,7 @@ export default defineComponent({
       onUpdateTasks,
       targetsLoadedRef,
       columns,
+      columnsComputed,
       onUpdateBoard
     }
 

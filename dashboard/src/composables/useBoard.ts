@@ -99,9 +99,9 @@ const orderColumns = (columnMap: Record<number, IBoardColumn>): IBoardColumn[] =
         columnOrder: columnOrder,
         items: orderItems(items)
       }
-      console.log(columnOrder)
+      // console.log(columnOrder)
       columns.push(columns.filter(column => column.columnOrder == index)[0])
-      console.log(categorized)
+      // console.log(categorized)
       // if (columnOrder == index && !categorized.includes(category)) {
       if (columnOrder == index && !columns.includes(column)) {
         // console.log(categorized)
@@ -122,7 +122,7 @@ const columnMapToArray = (columnMap: Record<number, IBoardColumn>): IBoardColumn
     const category = value.category
     const columnOrder = value.columnOrder
     const items = value.items
-    console.log(category)
+    // console.log(category)
     const column: IBoardColumn = {
       category: category,
       columnOrder: columnOrder,
@@ -143,13 +143,13 @@ const columnMapToArray = (columnMap: Record<number, IBoardColumn>): IBoardColumn
 //   columns.value = orderColumns(columnMap.value)
 //   return columns.value
 // }
-const loadBoard = async (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoardItem[]) => {
+const loadBoard = (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoardItem[]) => {
   storedBoard = parseBoard(boardItems)
   const columnMap = ref<Record<string, IBoardColumn>>()
   columnMap.value = storedBoard.columns
   console.log('column map')
   // console.log(columnMap.value)
-  console.log(Object.keys(columnMap.value))
+  // console.log(Object.keys(columnMap.value))
   const columns = ref<IBoardColumn[]>()
 
   // columns.value = orderColumns(columnMap.value)
@@ -166,8 +166,9 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
   const boardItems: IBoardItem[] = initItems(items, idSymbol)
   const storedItems = await loadRecords(boardStore, BOARD, boardItems)
 
-  columns.value = await loadBoard(boardStore, storedBoard.value, storedItems)
+  columns.value = loadBoard(boardStore, storedBoard.value, storedItems)
 
+  const columnsComputed = computed(() => loadBoard(boardStore, storedBoard.value, storedItems))
 
   // const computedBoard = computed(() => parseBoard(storedItems))
   // const columns = computed(() => orderColumns(computedBoard.value.columns))
@@ -175,19 +176,20 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
   const onUpdateBoard = async () => {
     console.log('use board - update')
     const newItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
-    console.log(newItems)
-    console.log(newItems.map(item => item.itemId));
-    console.log(newItems.map(item => item.itemOrder));
-    console.log(newItems.map(item => item.category));
-    console.log(newItems.map(item => item.columnOrder));
+    // console.log(newItems)
+    // console.log(newItems.map(item => item.itemId));
+    // console.log(newItems.map(item => item.itemOrder));
+    // console.log(newItems.map(item => item.category));
+    // console.log(newItems.map(item => item.columnOrder));
     
-    columns.value = await loadBoard(boardStore, storedBoard.value, newItems)
+    columns.value = loadBoard(boardStore, storedBoard.value, newItems)
 
   }
 
 
   return {
     columns,
+    columnsComputed,
     onUpdateBoard
   }
 }

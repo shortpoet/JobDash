@@ -17,8 +17,8 @@ import { defineComponent, computed, ref } from 'vue'
 import moment from 'moment'
 
 import { useStore } from '../../store'
-import { useTaskStore, ITaskStore, TaskStore } from './../../store/task.store'
-import { useContactStore, IContactStore, ContactStore } from './../../store/contact.store'
+import { TaskStore } from './../../store/task.store'
+import { ContactStore } from './../../store/contact.store'
 
 import BaseInput from './../../components/common/BaseInput.vue'
 
@@ -26,7 +26,6 @@ import { Task } from '../../interfaces/task/task.interface'
 import { Contact } from '../../interfaces/contact/contact.interface'
 
 import useTask from '../../composables/useTask'
-import useContact from '../../composables/useContact'
 
 export default defineComponent({
   name: 'TaskCreate',

@@ -102,7 +102,6 @@ import { Destination } from '../../interfaces/common/modal.interface'
 import { Message } from './../../interfaces/message/message.interface' 
 
 import { useModal } from '../../composables/useModal'
-import useContact from '../../composables/useContact'
 import { useUpdateValues } from '../../composables/useUpdateValues'
 
 export default defineComponent({
@@ -148,7 +147,6 @@ export default defineComponent({
     //#region contactUse
       const contactStore: ContactStore = store.modules['contactStore']
       const allContactsRef = ref<Contact[]>()
-      const contactUse = await useContact(contactStore, allContactsRef)
       // const toggleEditable
     //#endregion
 

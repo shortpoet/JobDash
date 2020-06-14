@@ -15,13 +15,12 @@
 import { defineComponent, computed, ref } from 'vue'
 import moment from 'moment'
 
-import { useContactStore, IContactStore, ContactStore } from './../../store/contact.store'
+import { ContactStore } from './../../store/contact.store'
 
 import BaseInput from './../../components/common/BaseInput.vue'
 
 import { Contact } from '../../interfaces/contact/contact.interface'
 
-import useContact from '../../composables/useContact'
 import {useStore} from './../../store'
 
 export default defineComponent({

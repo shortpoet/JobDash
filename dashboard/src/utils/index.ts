@@ -35,7 +35,7 @@ export const updateRecords = async (store: Store<any>, caller: string): Promise<
 
 export const sortObject = (object: object): object => {
   console.log('sort object')
-  console.log(object)
+  // console.log(object)
   let order = []
 
   const orderMap = {}
@@ -53,12 +53,12 @@ export const sortObject = (object: object): object => {
   //   order.push([key, object[key]])
   // }
 
-  console.log(order)
+  // console.log(order)
   order = order.sort((a, b) => a[1] - b[1])
-  console.log(order)
+  // console.log(order)
   const sortedObject = {}
   order.forEach(item => sortedObject[item[0]] = item[1])
-  console.log(sortedObject)
+  // console.log(sortedObject)
   return sortedObject
 }
 
@@ -81,8 +81,8 @@ export const flattenSort = (objMap: Record<string, any>, sortKey: string): Recor
     Object.assign(out, nested)
   })
   Object.entries(out).forEach(entry => {
-    console.log(entry[1].category)
-    console.log(entry[1].columnOrder)
+    // console.log(entry[1].category)
+    // console.log(entry[1].columnOrder)
   })
   return out
 }

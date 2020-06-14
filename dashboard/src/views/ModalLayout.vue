@@ -20,8 +20,6 @@ import { defineComponent, computed, ref } from 'vue'
 import BaseModal from './../components/common/BaseModal.vue'
 
 import { useModal } from '../composables/useModal'
-import useContact from '../composables/useContact'
-import useTask from '../composables/useTask'
 
 import { Destination } from '../interfaces/common/modal.interface'
 import { Task } from '../interfaces/task/task.interface'
