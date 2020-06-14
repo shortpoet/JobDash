@@ -1,5 +1,5 @@
 <template>
-  <div class="had-text-centered board-column-category">{{ category }} - Order: {{ column.order }}</div>
+  <div class="had-text-centered board-column-category">{{ category }} - Order: {{ column.columnOrder }}</div>
   <div class="board-items-container">
     <div class="board-item-container"
       v-for="(item, itemIndex) in items"

@@ -4,6 +4,7 @@ import { Task } from '../interfaces/task/task.interface'
 import { Store } from '../store/store.interface'
 import { MessageStore } from '../store/message.store'
 import { BoardStore } from '../store/board.store'
+import { IBoardColumn } from '../interfaces/board/board.column.interface'
 
 // using store interface eliminates vue warn about using inject outside of setup function
 
@@ -35,18 +36,26 @@ export const updateRecords = async (store: Store<any>, caller: string): Promise<
 export const sortObject = (object: object): object => {
   console.log('sort object')
   console.log(object)
+  let order = []
+
   const orderMap = {}
   const keys = Object.keys(object)
-  keys.map((key, i) =>{
+  keys.map((key) =>{
     const order = {}
-    order[key] = i
+    order[key] = object[key]
     return Object.assign(orderMap, order)
   })
-  let order = []
   for (let key in orderMap) {
     order.push([key, orderMap[key]])
   }
+
+  // for (let key in object) {
+  //   order.push([key, object[key]])
+  // }
+
+  console.log(order)
   order = order.sort((a, b) => a[1] - b[1])
+  console.log(order)
   const sortedObject = {}
   order.forEach(item => sortedObject[item[0]] = item[1])
   console.log(sortedObject)
@@ -65,9 +74,15 @@ export const flattenSort = (objMap: Record<string, any>, sortKey: string): Recor
   const original = objMap
   const flat = flattenObject(objMap, sortKey)
   const sorted = sortObject(flat)
-  const out = {}
+  const out = <Record<string, IBoardColumn>>{}
   Object.keys(sorted).forEach(key => {
-    out[key] = original[key]
+    const nested = {}
+    nested[key] = original[key]
+    Object.assign(out, nested)
+  })
+  Object.entries(out).forEach(entry => {
+    console.log(entry[1].category)
+    console.log(entry[1].columnOrder)
   })
   return out
 }
