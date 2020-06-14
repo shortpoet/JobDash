@@ -9,7 +9,7 @@
       <div class="columns-container">
         <div class="columns is-centered">
           <!-- column class here makes column background expand past name to fill available space except padding -->
-          <TaskBoard :columns="columnsComputed" @update-board="onUpdateBoard"/>
+          <TaskBoard :columns="columnsComputed" @update-board="onUpdateBoard" />
         </div>
       </div>
     </div>
@@ -44,6 +44,10 @@ export default defineComponent({
     tasks: {
       type: Array as () => Task[],
       required: true
+    },
+    activeBoard: {
+      type: Number,
+      required: true
     }
   },
 
@@ -59,7 +63,7 @@ export default defineComponent({
       // console.log('$$$$ task length $$$$')
       // console.log(taskLength.value)
       const tasksComputed = computed(() => props.tasks)
-      const board = await useBoard(columns, boardStore, tasksComputed.value, '_id')
+      const board = await useBoard(columns, boardStore, tasksComputed.value, '_id', props.activeBoard)
       const onUpdateBoard = board.onUpdateBoard
       const columnsComputed = board.columnsComputed
     //#endregion

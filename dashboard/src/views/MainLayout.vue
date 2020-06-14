@@ -11,6 +11,8 @@
           @update-contacts="onUpdateContacts"    
           @update-tasks="onUpdateTasks"
         />
+      <BaseInput type="text" name="Board #" v-model="activeBoard" />
+      <p class="active-board-number">Active board: {{ activeBoard }}</p>
         <!-- <TabsLayout @tab-change="tabChange"/> -->
       </div>
       <div class="column is-one-half">
@@ -24,6 +26,7 @@
     </div>
     <TaskBoardLayout
       :tasks="allTasks"
+      :active-board="parseInt(activeBoard)"
     />
   </div>
 
@@ -37,6 +40,7 @@ import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
 import TaskBoardLayout from './TaskBoardLayout.vue'
 import BaseIcon from '../components/common/BaseIcon.vue'
+import BaseInput from '../components/common/BaseInput.vue'
 
 import { useRouter } from 'vue-router'
 import { useStore } from '../store'
@@ -57,6 +61,7 @@ export default defineComponent({
 
   components: {
     BaseIcon,
+    BaseInput,
     CreateLayout,
     TableLayout,
     TaskBoardLayout
@@ -65,6 +70,7 @@ export default defineComponent({
 
     const router = useRouter()
     const store = useStore()
+    const activeBoard = ref('1')
     
     const showUIFull = ref(true)
 
@@ -159,7 +165,8 @@ export default defineComponent({
       allTasks,
       onUpdateContacts,
       onUpdateTasks,
-      targetsLoadedRef
+      targetsLoadedRef,
+      activeBoard
     }
 
   }
