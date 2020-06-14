@@ -4,7 +4,7 @@ import { IBoard } from "../interfaces/board/board.interface"
 import { useStorage } from './useStorage'
 import { BoardStore } from "../store/board.store"
 import { ref, computed, Ref } from "vue"
-import { loadRecords, updateRecords } from './../utils'
+import { loadRecords, updateRecords, flattenSort } from './../utils'
 import { IBoardable } from "../interfaces/board/boardable.interface"
 
 const storage = useStorage()
@@ -85,6 +85,37 @@ const orderItems = (itemMap: Record<number, IBoardItem>): IBoardItem[] => {
 const orderColumns = (columnMap: Record<number, IBoardColumn>): IBoardColumn[] => {
   console.log('begin order columns')
   const columns: IBoardColumn[] = []
+  let categorized = []
+  const categoryCount = Object.keys(columnMap).length
+  while (columns.length < categoryCount) {
+    Object.entries(columnMap).forEach((entry, index) => {
+      const categoryKey = entry[0]
+      const value = entry[1]
+      const category = value.category
+      const columnOrder = value.columnOrder
+      const items = value.items
+      const column: IBoardColumn = {
+        category: category,
+        columnOrder: columnOrder,
+        items: orderItems(items)
+      }
+      console.log(columnOrder)
+      columns.push(columns.filter(column => column.columnOrder == index)[0])
+      console.log(categorized)
+      // if (columnOrder == index && !categorized.includes(category)) {
+      if (columnOrder == index && !columns.includes(column)) {
+        // console.log(categorized)
+        // console.log(index)
+        columns.push(column)
+        // categorized.push(category)
+      }
+    })
+  }
+  return columns
+}
+
+const columnMapToArray = (columnMap: Record<number, IBoardColumn>): IBoardColumn[] => {
+  const columns: IBoardColumn[] = []
   Object.entries(columnMap).forEach((entry, index) => {
     const categoryKey = entry[0]
     const value = entry[1]
@@ -96,9 +127,8 @@ const orderColumns = (columnMap: Record<number, IBoardColumn>): IBoardColumn[] =
       columnOrder: columnOrder,
       items: orderItems(items)
     }
-    if (columnOrder == index) {
-      columns.push(column)
-    }
+    console.log(columnOrder)
+    columns.push(column)
   })
   return columns
 }
@@ -117,7 +147,10 @@ const loadBoard = async (boardStore: BoardStore, storedBoard: IBoard, boardItems
   const columnMap = ref<Record<string, IBoardColumn>>()
   columnMap.value = storedBoard.columns
   const columns = ref<IBoardColumn[]>()
-  columns.value = orderColumns(columnMap.value)
+
+  // columns.value = orderColumns(columnMap.value)
+  columns.value = columnMapToArray(flattenSort(columnMap.value, 'category'))
+  // console.log(columns.value)
   return columns.value
 }
 
@@ -137,7 +170,13 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
 
   const onUpdateBoard = async () => {
     console.log('use board - update')
-    const newItems = await updateRecords(boardStore, BOARD)
+    const newItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
+    // console.log(newItems)
+    // console.log(newItems.map(item => item.itemId));
+    // console.log(newItems.map(item => item.itemOrder));
+    // console.log(newItems.map(item => item.category));
+    // console.log(newItems.map(item => item.columnOrder));
+    
     columns.value = await loadBoard(boardStore, storedBoard.value, newItems)
 
   }

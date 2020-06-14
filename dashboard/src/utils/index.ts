@@ -52,3 +52,22 @@ export const sortObject = (object: object): object => {
   console.log(sortedObject)
   return sortedObject
 }
+
+const flattenObject = (obj: object, sortKey: string) => {
+  const out = {}
+  Object.keys(obj).forEach(key => {
+    out[key] = obj[key][sortKey]
+  })
+  return out
+}
+
+export const flattenSort = (objMap: Record<string, any>, sortKey: string): Record<string, any> => {
+  const original = objMap
+  const flat = flattenObject(objMap, sortKey)
+  const sorted = sortObject(flat)
+  const out = {}
+  Object.keys(sorted).forEach(key => {
+    out[key] = original[key]
+  })
+  return out
+}

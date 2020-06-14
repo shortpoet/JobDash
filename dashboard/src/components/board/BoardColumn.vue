@@ -50,7 +50,8 @@ export default defineComponent({
     const move = useBoardMove(boardStore, ctx)
 
     const pickupItem = move.pickupItem
-    const moveItemOrColumn = move.moveItemOrColumn
+    // const moveItemOrColumn = move.moveItemOrColumn
+    const moveItemOrColumn = () => {}
     const onUpdateBoard = () => {
       console.log('board column - update board')
     }
