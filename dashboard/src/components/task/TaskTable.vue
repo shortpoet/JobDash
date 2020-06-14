@@ -133,9 +133,9 @@ export default defineComponent({
       const taskCardDestination: Destination = '#task-card-modal'
 
       const targetsLoaded = computed(() => {
-        console.log('target loaded')
+        // console.log('target loaded')
         const out = !!document.querySelector(destination)
-        console.log(out)
+        // console.log(out)
         return out
       })
 
@@ -146,8 +146,8 @@ export default defineComponent({
     //#region openCard
       const router = useRouter()
       const openCard = (task: Task) => {
-        console.log('task table')
-        console.log(task._id)
+        // console.log('task table')
+        // console.log(task._id)
         taskCardModal.showModal()
         router.push({
           name: '#task-card-modal',
@@ -195,7 +195,7 @@ export default defineComponent({
           if (e == destination) {
             modal.hideModal()
             const deletedId = await taskStore.deleteRecord(deleteCandidate.value)
-            console.log('delete task')
+            // console.log('delete task')
             deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
             // null check
             // console.log(deleteCandidate.value)
@@ -203,7 +203,7 @@ export default defineComponent({
           }          
         } else {
           const deletedId = await taskStore.deleteRecord(deleteCandidate.value)
-          console.log('delete task')
+          // console.log('delete task')
           deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
           // null check
           // console.log(deleteCandidate.value)

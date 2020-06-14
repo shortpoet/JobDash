@@ -163,8 +163,8 @@ export default defineComponent({
         router.push({ name: '#contact-card-modal', params: { id: contact._id } })
       }
       const cardIsOpen = computed(() => {
-        console.log(router.currentRoute.value.name)
-        console.log(contactCardDestination)
+        // console.log(router.currentRoute.value.name)
+        // console.log(contactCardDestination)
         return router.currentRoute.value.name === contactCardDestination
       })
     //#endregion
@@ -203,16 +203,16 @@ export default defineComponent({
         router.push({ name: '#message-modal', params: { id: contact._id } })
       }
       const messageIsOpen = computed(() => {
-        console.log(router.currentRoute.value.name)
-        console.log(messageDestination)
+        // console.log(router.currentRoute.value.name)
+        // console.log(messageDestination)
         return router.currentRoute.value.name === messageDestination
       })
     //#endregion
 
     //#region sendMessage
       const sendMessage = (e) => {
-        console.log(e)
-        console.log(router.currentRoute.value)
+        // console.log(e)
+        // console.log(router.currentRoute.value)
       }
     //#endregion
 
@@ -244,7 +244,7 @@ export default defineComponent({
           if (e == destination) {
             deleteContactModal.hideModal()
             const deletedId = await contactStore.deleteRecord(deleteCandidate.value)
-            console.log('delete contact')
+            // console.log('delete contact')
             // null check
             deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
             ctx.emit('update-contacts')
@@ -252,7 +252,7 @@ export default defineComponent({
         } else {
           // no event no deleteContactModal
           const deletedId = await contactStore.deleteRecord(deleteCandidate.value)
-          console.log('delete contact')
+          // console.log('delete contact')
           // null check
           deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
           ctx.emit('update-contacts')

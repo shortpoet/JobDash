@@ -10,7 +10,7 @@ import { IBoardable } from "../interfaces/board/boardable.interface"
 const storage = useStorage()
 const BOARD = 'board'
 const initItems =  (items: any[], idSymbol: string): IBoardItem[] => {
-  console.log('init board items')
+  // console.log('init board items')
   const itemsOut: IBoardItem[] = [] as IBoardItem[]
   let itemOrder
   const categories = [...new Set(items.map(item => item.category))]
@@ -38,7 +38,7 @@ const initItem = (item: any, idSymbol: string, columnOrder: number, itemOrder: n
 }
 
 const parseBoard = ((items: IBoardItem[]): IBoard => {
-  console.log('begin parse board')
+  // console.log('begin parse board')
   const board = <IBoard>{
     name: 'test board',
     id: 1,
@@ -66,7 +66,7 @@ const parseBoard = ((items: IBoardItem[]): IBoard => {
 })
 
 const orderItems = (itemMap: Record<number, IBoardItem>): IBoardItem[] => {
-  console.log('begin order items')
+  // console.log('begin order items')
   const items: IBoardItem[] = []
   Object.entries(itemMap).forEach((entry, index) => {
     if (entry[1].itemOrder == index) {
@@ -83,7 +83,7 @@ const orderItems = (itemMap: Record<number, IBoardItem>): IBoardItem[] => {
 }
 
 const orderColumns = (columnMap: Record<number, IBoardColumn>): IBoardColumn[] => {
-  console.log('begin order columns')
+  // console.log('begin order columns')
   const columns: IBoardColumn[] = []
   let categorized = []
   const categoryCount = Object.keys(columnMap).length
@@ -115,7 +115,7 @@ const orderColumns = (columnMap: Record<number, IBoardColumn>): IBoardColumn[] =
 }
 
 const columnMapToArray = (columnMap: Record<number, IBoardColumn>): IBoardColumn[] => {
-  console.log('begin column map to array');
+  // console.log('begin column map to array');
   
   const columns: IBoardColumn[] = []
   Object.entries(columnMap).forEach((entry, index) => {
@@ -146,7 +146,7 @@ const columnMapToArray = (columnMap: Record<number, IBoardColumn>): IBoardColumn
 //   return columns.value
 // }
 const loadBoard = (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoardItem[]) => {
-  console.log('begin load board')
+  // console.log('begin load board')
   storedBoard = parseBoard(boardItems)
   const columnMap = ref<Record<string, IBoardColumn>>()
   columnMap.value = storedBoard.columns
@@ -162,10 +162,10 @@ const loadBoard = (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoa
 }
 
 export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore: BoardStore, items: IBoardable[], idSymbol: string) {
-  console.log('use board')
+  // console.log('use board')
 
   const resetColumns = async () => {
-    console.log('reset columns')
+    // console.log('reset columns')
     columns.value = []
     return new Promise(resolve => resolve(true))
   }
@@ -179,7 +179,7 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
   columns.value = loadBoard(boardStore, storedBoard.value, storedItems)
 
   const columnsComputed = computed(() => {
-    console.log('$$$ computing columns');
+    // console.log('$$$ computing columns');
     // console.log(columns.value.map(item => item.category))
     // console.log(columns.value.map(item => item.columnOrder))
     // console.log(columns.value.map(item => Object.entries(item.items).map(entry => entry[1].itemId)))

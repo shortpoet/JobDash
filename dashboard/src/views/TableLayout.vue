@@ -105,13 +105,13 @@ export default defineComponent({
       activeTab.value = tabs.value[0];
 
       const tabChange = (e) => {
-        console.log(e)
+        // console.log(e)
         activeTab.value = tabs.value.filter(t => t.name == e)[0]
       }
 
       const selectedComponent = computed(() => {
-        console.log('selected component')
-        console.log(activeTab.value.component)
+        // console.log('selected component')
+        // console.log(activeTab.value.component)
         // switch(activeTab.value.component) {
         //   case 'TaskTable':
         //     return TaskTable

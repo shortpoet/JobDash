@@ -83,12 +83,12 @@ export default defineComponent({
 
       const cardIsOpen = computed(() => {
         const open = router.currentRoute.value.name === props.destination
-        console.log('card is open')
-        console.log(open)
+        // console.log('card is open')
+        // console.log(open)
         return open
       })
 
-      console.log('init task card')
+      // console.log('init task card')
       if (cardIsOpen) {
         modal.showModal()
       }

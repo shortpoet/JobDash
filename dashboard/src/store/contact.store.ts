@@ -57,7 +57,7 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
   
   async editRecord(oldContact: Contact, newContact: Contact, idSymbol: (string | number)) {
     super.editRecord(oldContact, newContact, '_id')
-    console.log('writing to db')
+    // console.log('writing to db')
 
     const response = await axios.put<ContactDTO>(
       `http://localhost:3000/contact/update?contact_id=${oldContact._id}`,
@@ -68,13 +68,13 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
   async fetchRecords() {
     // get is generic so can specify type
     const data = await this._fetchRecords('http://localhost:3000/contact/contacts')
-    console.log('fetch records')
+    // console.log('fetch records')
     this.addRecords(data, '_id')
     this.state.records.loaded = true
   }
 
   toggleEditable(contact: Contact, editable: boolean) {
-    console.log('toggle editable')
+    // console.log('toggle editable')
     // this only affects local state
     // doesn't actually have to be updated in db unless we want the edit state to persist through reload
     // even then could make use of browser storage api
@@ -91,7 +91,7 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
   }
   
   toggleDeletable(oldContact: Contact, deletable: boolean) {
-    console.log('toggle deletable')
+    // console.log('toggle deletable')
     // without this line I was getting the bug where I had to click twice
     this.state.records.all[oldContact._id].locked = deletable
     const newContact: Contact = {

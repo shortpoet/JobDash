@@ -163,7 +163,7 @@ export default defineComponent({
       
       const deleteItem = () => {
         modal.hideModal()
-        console.log('delete table item')
+        // console.log('delete table item')
         ctx.emit('delete-item', deleteCandidate.value)
         deleteCandidate.value = null
       }

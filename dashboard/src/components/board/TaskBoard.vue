@@ -50,7 +50,7 @@ export default defineComponent({
     const boardStore: BoardStore = useStore().modules['boardStore']
 
     const move = useBoardMove(boardStore, ctx)
-    console.log('### task board setup ###')
+    // console.log('### task board setup ###')
     // console.log(props.columns.map(item => Object.entries(item.items).map(entry => entry[1].itemId)))
 
     const pickupColumn = move.pickupColumn

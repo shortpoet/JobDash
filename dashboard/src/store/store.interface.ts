@@ -61,10 +61,10 @@ export class Store<T> extends BaseStore<T> {
 
   public getRecordById<T>(id: string | number): T;
   public getRecordById(id: string | number): any {
-    console.log('get by id')
-    console.log(id)
-    console.log(this.state.records)
-    console.log(this.state.records.all)
+    // console.log('get by id')
+    // console.log(id)
+    // console.log(this.state.records)
+    // console.log(this.state.records.all)
     if (this.state.records.all[id]) {
       return this.state.records.all[id]
     } else {
@@ -74,14 +74,14 @@ export class Store<T> extends BaseStore<T> {
   }
 
   public getLast<T>(): (T | null) {
-    console.log('get last')
+    // console.log('get last')
     const lastId = this.state.records.ids.slice(-1)[0]
     // if database / store are empty return null
     return lastId ? this.state.records.all[lastId] : null
   }
   
   public createRecord(record: any, idSymbol:(string | number)): void {
-    console.log('create record - interface')
+    // console.log('create record - interface')
     const id = record[idSymbol]
     this.state.records.all[id] = record
     this.state.records.ids.push(id.toString())

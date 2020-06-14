@@ -51,7 +51,7 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   
   async editRecord(oldTask: Task, newTask: Task, idSymbol: (string | number)) {
     super.editRecord(oldTask, newTask, '_id')
-    console.log('writing to db')
+    // console.log('writing to db')
     const response = await axios.put<TaskDTO>(
       `http://localhost:3000/task/update?task_id=${oldTask._id}`,
       newTask
@@ -69,7 +69,7 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   }
 
   toggleEditable(task: Task, editable: boolean) {
-    console.log('toggle editable')
+    // console.log('toggle editable')
     // this only affects local state
     // doesn't actually have to be updated in db unless we want the edit state to persist through reload
     // even then could make use of browser storage api

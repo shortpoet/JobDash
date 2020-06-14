@@ -56,8 +56,8 @@ export default defineComponent({
       const boardStore: BoardStore = store.modules['boardStore']
       const columns = ref<IBoardColumn[]>()
       const taskLength = ref(props.tasks.length.toString())
-      console.log('$$$$ task length $$$$')
-      console.log(taskLength.value)
+      // console.log('$$$$ task length $$$$')
+      // console.log(taskLength.value)
       const tasksComputed = computed(() => props.tasks)
       const board = await useBoard(columns, boardStore, tasksComputed.value, '_id')
       const onUpdateBoard = board.onUpdateBoard

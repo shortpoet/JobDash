@@ -68,8 +68,8 @@ export default defineComponent({
     const messageStore: MessageStore = store.modules['messageStore']
     const allMessagesRef = ref<Message[]>()
     const messageUse = await useMessage(messageStore, allMessagesRef)
-    console.log('messages')
-    console.log(allMessagesRef.value)
+    // console.log('messages')
+    // console.log(allMessagesRef.value)
     // const contactStore: ContactStore = store.modules['contactStore']
     // const _contact: Contact = await contactStore.getRecordById(props.message.contact._id)
 
@@ -93,11 +93,11 @@ export default defineComponent({
 
 
     const submit = async function(e: any) {
-      console.log('submit - message writer')
+      // console.log('submit - message writer')
       const nextId = (parseInt(messageStore.getLastId()) + 1).toString()
-      console.log(nextId)
+      // console.log(nextId)
       if (messageTouched.value == true) {
-        console.log('message touched')
+        // console.log('message touched')
         messageEdit.value._id = nextId
         messageEdit.value.subject = subjectEdit.value 
         messageEdit.value.body = bodyEdit.value

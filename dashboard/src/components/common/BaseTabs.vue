@@ -47,7 +47,7 @@ export default defineComponent({
 
   setup(props, ctx) {
     const activateTab = (tab: Tab) => {
-      console.log(tab.component)
+      // console.log(tab.component)
       ctx.emit('update:modelValue', tab.component)
       // can't use this here because it ends up only changing once or you update the name of the tab
       // ctx.emit('update:modelValue', tab.component)

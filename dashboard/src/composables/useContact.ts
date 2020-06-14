@@ -26,14 +26,14 @@ import moment from 'moment'
 // }
 
 export default async function useContact(contactStore, allContactsRef) {
-  console.log('use contact')
+  // console.log('use contact')
   //#region load
     allContactsRef.value = await loadRecords(contactStore, 'contacts')
   //#endregion
 
   //#region update
     const onUpdateContacts = async () => {
-      console.log('use contact - update')
+      // console.log('use contact - update')
       const newValue = await updateRecords(contactStore,'contacts')
       allContactsRef.value = newValue
     }

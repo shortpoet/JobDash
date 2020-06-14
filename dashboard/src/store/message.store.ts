@@ -38,15 +38,15 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
   }
 
   async createRecord(message: Message, idSymbol:(string | number) = '_id', pushToDb: boolean = true) {
-    console.log('create record - message')
-    console.log(message)
-    console.log(idSymbol)
-    console.log(pushToDb)
+    // console.log('create record - message')
+    // console.log(message)
+    // console.log(idSymbol)
+    // console.log(pushToDb)
     super.createRecord(message, '_id')
     if(pushToDb) {
-      console.log('writing to db')
+      // console.log('writing to db')
       const response = await axios.post<MessageDTO>('http://localhost:3000/message/create', message)
-      console.log(response)
+      // console.log(response)
       this.fetchRecords()
     }
   }
@@ -73,7 +73,7 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
   
   async editRecord(oldMessage: Message, newMessage: Message, idSymbol: (string | number)) {
     super.editRecord(oldMessage, newMessage, '_id')
-    console.log('writing to db')
+    // console.log('writing to db')
     const response = await axios.put<MessageDTO>(
       `http://localhost:3000/message/update?message_id=${oldMessage._id}`,
       newMessage
@@ -91,7 +91,7 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
   }
 
   toggleEditable(message: Message, editable: boolean) {
-    console.log('toggle editable')
+    // console.log('toggle editable')
     // this only affects local state
     // doesn't actually have to be updated in db unless we want the edit state to persist through reload
     // even then could make use of browser storage api

@@ -53,7 +53,7 @@ export default defineComponent({
     // const moveItemOrColumn = move.moveItemOrColumn
     const moveItemOrColumn = () => {}
     const onUpdateBoard = () => {
-      console.log('board column - update board')
+      // console.log('board column - update board')
     }
 
     

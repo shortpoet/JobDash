@@ -47,7 +47,7 @@ export default defineComponent({
     //#region openCard
       const router = useRouter()
       const openCard = () => {
-        console.log('task cell open card')
+        // console.log('task cell open card')
         taskCardModal.showModal()
         router.push({ name: '#task-card-modal', params: { id: props.itemId } })
       }
