@@ -12,33 +12,33 @@ const BOARD = 'board'
 
 const initItems = (items: any[], idSymbol: string): IBoardItem[] => {
   const itemsOut: IBoardItem[] = [] as IBoardItem[]
-  let counter
+  let itemOrder
   const categories = [...new Set(items.map(item => item.category))]
   categories.forEach((category, categoryIndex) => {
-    counter = 0
+    itemOrder = 0
     items.forEach((item, itemIndex) => {
       // console.log(itemIndex)
       if (item.category == category) {
         // console.log(item)
-        itemsOut.push(initItem(item, idSymbol, counter))
-        counter++
+        itemsOut.push(initItem(item, idSymbol, categoryIndex, itemOrder))
+        itemOrder++
       }
     })
   })
   return itemsOut
 }
 
-const initItem = (item: any, idSymbol: string, indexOrder: number): IBoardItem => {
+const initItem = (item: any, idSymbol: string, columnOrder: number, itemOrder: number): IBoardItem => {
   return {
+    itemId: item[idSymbol],
     category: item.category,
-    order: indexOrder,
-    itemId: item[idSymbol]
+    columnOrder: columnOrder,
+    itemOrder: itemOrder
   }
 }
 
 const parseBoard = (items: IBoardItem[]): IBoard => {
   // console.log('begin parse board')
-  let counter = 0
   const board = <IBoard>{
     name: 'test board',
     id: 1,
@@ -53,12 +53,11 @@ const parseBoard = (items: IBoardItem[]): IBoard => {
       const column: Record<string, IBoardColumn> = {} as Record<string, IBoardColumn>
       column[item.category] = <IBoardColumn>{
         category: item.category,
-        order: counter,
+        columnOrder: item.columnOrder,
         items: {} as Record<number, IBoardItem>
       }
       column[item.category].items[item.itemId] = item
       Object.assign(board['columns'], column)
-      counter++
     }
   })
   // console.log('end parse board')
@@ -70,11 +69,12 @@ const orderItems = (itemMap: Record<number, IBoardItem>): IBoardItem[] => {
   console.log('begin order items')
   const items: IBoardItem[] = []
   Object.entries(itemMap).forEach((entry, index) => {
-    if (entry[1].order == index) {
+    if (entry[1].itemOrder == index) {
       items.push(<IBoardItem>{
         itemId: entry[1].itemId,
-        order: entry[1].order,
-        category: entry[1].category        
+        category: entry[1].category,      
+        itemOrder: entry[1].itemOrder,
+        columnOrder: entry[1].columnOrder,
       })
     }
   })
@@ -89,14 +89,14 @@ const orderColumns = (columnMap: Record<number, IBoardColumn>): IBoardColumn[] =
     const categoryKey = entry[0]
     const value = entry[1]
     const category = value.category
-    const order = value.order
+    const columnOrder = value.columnOrder
     const items = value.items
     const column: IBoardColumn = {
       category: category,
-      order: order,
+      columnOrder: columnOrder,
       items: orderItems(items)
     }
-    if (order == index) {
+    if (columnOrder == index) {
       columns.push(column)
     }
   })

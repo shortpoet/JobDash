@@ -27,8 +27,8 @@ export default function useBoardMove(boardStore: BoardStore) {
     
     e.dataTransfer.setData('type', 'column')
     e.dataTransfer.setData('from-column-category', fromColumn.category)
-    e.dataTransfer.setData('from-column-id', fromColumn.order.toString())
-    e.dataTransfer.setData('from-column-order', fromColumn.order.toString())
+    e.dataTransfer.setData('from-column-id', fromColumn.columnOrder.toString())
+    e.dataTransfer.setData('from-column-order', fromColumn.columnOrder.toString())
     // console.log(e.dataTransfer.getData('from-column-category'))
     // console.log(e.dataTransfer.getData('from-column-id'))
     // console.log(e.dataTransfer.getData('from-column-order'))
