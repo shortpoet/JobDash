@@ -27,7 +27,9 @@ const initItems =  (items: any[], idSymbol: string): IBoardItem[] => {
   })
   return itemsOut
 }
-
+// TODO add logic to check if order exists so can run init all the time so reactive two-way 
+// between items and boarditems
+// otherwise maybe a watch on items but that might not account for changes to specific item properties
 const initItem = (item: any, idSymbol: string, columnOrder: number, itemOrder: number): IBoardItem => {
   return {
     itemId: item[idSymbol],

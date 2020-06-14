@@ -39,6 +39,8 @@ export default function useBoardMove(boardStore: BoardStore, ctx) {
     const newItem = {...oldItem, category: toColumnCategory, itemOrder: toItemOrder, columnOrder: toColumnOrder}
 
     boardStore.editRecord(oldItem, newItem)
+    // TODO
+    // emit update-items to update category
 
     ctx.emit('update-board')
   }
