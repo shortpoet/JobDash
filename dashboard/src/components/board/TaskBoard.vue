@@ -10,7 +10,7 @@
     @dragstart.self="pickupColumn($event, column)"
     @dragover.prevent
     @dragenter.prevent
-    @drop="moveItemOrColumn($event, column.items, column)"
+    @drop="moveItemOrColumn($event, column.category)"
     @update-board="onUpdateBoard"
   >
     <BoardColumn

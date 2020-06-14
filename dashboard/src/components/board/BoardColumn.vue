@@ -8,7 +8,7 @@
       @dragstart="pickupItem($event, item)"
       @dragover.prevent
       @dragenter.prevent
-      @drag.stop="moveItemOrColumn($event, items)"
+      @drag.stop="moveItemOrColumn($event, item.category, item.itemOrder)"
       @update-board="onUpdateBoard"
     >
       <BoardItem :item="item" :item-name="category + ' - <name> id'" :item-id="item.itemId"/>

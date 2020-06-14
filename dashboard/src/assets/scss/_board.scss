@@ -24,6 +24,7 @@
     margin: .25rem;
     padding: .25rem;
     border-radius: $task-border-radius;
+    min-height: 30rem;
     .columns {
       .board-column-container {
         cursor: grab;
@@ -31,6 +32,7 @@
         padding: 0rem .25rem .25rem .25rem;
         background-color: $royal-purple;
         border-radius: $task-border-radius;
+        min-height: 30rem;
         // cell style
         // .task-column-category {
         //   background-color: $forest-green;

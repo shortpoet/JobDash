@@ -19,6 +19,55 @@ export default function useBoardMove(boardStore: BoardStore, ctx) {
     // const newBoard = await updateBoard(items, board)
   }
 
+  const moveItemOrColumn = (e: DragEvent, toColumnCategory: string, toItemOrder: number) => {
+    console.log('move item or column - item column')
+    console.log(toItemOrder)
+    const type = e.dataTransfer.getData('type')  
+    if (type === 'item') {
+      moveItem(e, toColumnCategory, toItemOrder)
+    } else {
+      moveColumn(e, toColumnCategory)
+    }
+  }
+  
+  const pickupItem = (e: DragEvent, item: IBoardItem) => {
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.dropEffect = 'move'
+  
+    e.dataTransfer.setData('from-item-itemId', item.itemId.toString())
+    e.dataTransfer.setData('from-item-order', item.itemOrder.toString())
+    e.dataTransfer.setData('from-column-order', item.columnOrder.toString())
+    e.dataTransfer.setData('from-column-category', item.columnOrder.toString())
+    e.dataTransfer.setData('type', 'item')
+  }
+  
+  const moveItem = (e: DragEvent, toColumnCategory: string, toItemOrder: number) => {
+    console.log('move item')
+    // const fromColumnOrder = parseInt(e.dataTransfer.getData('from-column-order'))
+    const fromColumnCategory = e.dataTransfer.getData('from-column-category')
+    // const fromItemOrder = e.dataTransfer.getData('from-item-order')
+    const fromItemItemId = e.dataTransfer.getData('from-item-itemId')
+    // const fromItems = boardStore.getRecordsByCategory(fromColumnCategory)
+
+    const toItems = boardStore.getRecordsByCategory(toColumnCategory)
+    const toColumnOrder = toItems[0].columnOrder
+
+    console.log(toItemOrder)
+
+    // when dropping on empty column to item order will be undefined because there is no to item affected by event
+    if (!toItemOrder) {
+      toItemOrder = toItems.length
+    }
+
+
+    const oldItem: IBoardItem = boardStore.getRecordById(fromItemItemId)
+    const newItem = {...oldItem, category: toColumnCategory, itemOrder: toItemOrder, columnOrder: toColumnOrder}
+    console.log(newItem);
+    
+    boardStore.editRecord(oldItem, newItem)
+    ctx.emit('update-board')
+
+  }
   const pickupColumn = (e: DragEvent, fromColumn: IBoardColumn) => {
     console.log('pickup columns')
     // console.log(fromColumn)
@@ -27,88 +76,29 @@ export default function useBoardMove(boardStore: BoardStore, ctx) {
     
     e.dataTransfer.setData('type', 'column')
     e.dataTransfer.setData('from-column-category', fromColumn.category)
-    e.dataTransfer.setData('from-column-id', fromColumn.columnOrder.toString())
     e.dataTransfer.setData('from-column-order', fromColumn.columnOrder.toString())
-    // console.log(e.dataTransfer.getData('from-column-category'))
-    // console.log(e.dataTransfer.getData('from-column-id'))
-    // console.log(e.dataTransfer.getData('from-column-order'))
   }
-  const moveItemOrColumn = (e: DragEvent, toColumnItems: IBoardItem[], toColumn: IBoardColumn, toItemOrder: number) => {
-    console.log('move item or column - item column')
-    const type = e.dataTransfer.getData('type')
-    console.log(type)
-    // console.log(e)
-    // console.log(toColumnItems)
-    // console.log(toColumnOrder)
-    // console.log(toItemOrder)
-  
-    if (type === 'item') {
-      // moveItem(e, toItems, toItemIndex !== undefined ? toItemIndex : toItems.length)
-    } else {
-      moveColumn(e, toColumn)
-    }
-  }
-  const moveColumn = (e: DragEvent, toColumn: IBoardColumn) => {
+
+  const moveColumn = (e: DragEvent, toColumnCategory: string) => {
     const fromColumnCategory = e.dataTransfer.getData('from-column-category')
     const fromColumnOrder = e.dataTransfer.getData('from-column-order')
-    const fromColumnId = e.dataTransfer.getData('from-column-id')
-    // console.log(toColumn)
-    // console.log(e.dataTransfer.getData('from-column-category'))
-    // console.log(e.dataTransfer.getData('from-column-id'))
-    // console.log(e.dataTransfer.getData('from-column-order'))
     const fromItems = boardStore.getRecordsByCategory(fromColumnCategory)
-    const toItems = boardStore.getRecordsByCategory(toColumn.category)
-    // console.log(fromItems.map(item => item.columnOrder))
-    // console.log(toItems.map(item => item.columnOrder))
+    const toItems = boardStore.getRecordsByCategory(toColumnCategory)
+    const toColumnOrder = toItems[0].columnOrder
+
     fromItems.forEach(item => {
       const oldItem = item
-      // let newItem = {...item}
-      // newItem.columnOrder = toColumn.columnOrder
-      const newItem = {...item, columnOrder: toColumn.columnOrder}
+      const newItem = {...item, columnOrder: toColumnOrder}
       boardStore.editRecord(oldItem, newItem)
     })
     toItems.forEach(item => {
       const oldItem = item
-      // let newItem = {...item}
-      // newItem.columnOrder = parseInt(fromColumnOrder)
       const newItem = {...item, columnOrder: parseInt(fromColumnOrder)}
       boardStore.editRecord(oldItem, newItem)
     })
-    const newFromItems = boardStore.getRecordsByCategory(fromColumnCategory)
-    const newToItems = boardStore.getRecordsByCategory(toColumn.category)
+    ctx.emit('update-board')
+  }
 
-    // console.log(newFromItems.map(item => item.columnOrder))
-    // console.log(newToItems.map(item => item.columnOrder))
-    console.log('move columns - update board')
-    
-    ctx.emit('update-board', {test: 'test'})
-
-  }
-  
-  const pickupItem = (e, itemIndex, fromColumnIndex) => {
-    e.dataTransfer.effectAllowed = 'move'
-    e.dataTransfer.dropEffect = 'move'
-  
-    e.dataTransfer.setData('from-item-index', itemIndex)
-    e.dataTransfer.setData('from-column-index', fromColumnIndex)
-    e.dataTransfer.setData('type', 'item')
-  }
-  
-  const moveItem = (e: DragEvent, toColumn: IBoardColumn, toItemIndex: number) => {
-    const fromColumnIndex = e.dataTransfer.getData('from-column-index')
-    const fromColumnId = e.dataTransfer.getData('from-column-id')
-    const fromColumnOrder = e.dataTransfer.getData('from-column-order')
-    // const fromItems = columns[fromColumnIndex].items
-    const fromItemIndex = e.dataTransfer.getData('from-item-index')
-  
-    // this.$store.commit('MOVE_TASK', {
-    //   fromItems,
-    //   fromItemIndex,
-    //   toItems,
-    //   toItemIndex
-    // })
-  }
-  
 
   return {
     onUpdateBoard,
