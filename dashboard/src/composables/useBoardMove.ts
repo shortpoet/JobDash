@@ -11,7 +11,7 @@ const storage = useStorage()
 const BOARD = 'board'
 
 
-export default function useBoardMove(boardStore: BoardStore) {
+export default function useBoardMove(boardStore: BoardStore, ctx) {
   console.log('use board move')
   
   const onUpdateBoard = async () => {
@@ -33,7 +33,7 @@ export default function useBoardMove(boardStore: BoardStore) {
     // console.log(e.dataTransfer.getData('from-column-id'))
     // console.log(e.dataTransfer.getData('from-column-order'))
   }
-  const moveItemOrColumn = (e: DragEvent, toColumnItems: IBoardItem[], toColumnOrder: number, toItemOrder: number) => {
+  const moveItemOrColumn = (e: DragEvent, toColumnItems: IBoardItem[], toColumn: IBoardColumn, toItemOrder: number) => {
     console.log('move item or column - item column')
     const type = e.dataTransfer.getData('type')
     console.log(type)
@@ -45,19 +45,45 @@ export default function useBoardMove(boardStore: BoardStore) {
     if (type === 'item') {
       // moveItem(e, toItems, toItemIndex !== undefined ? toItemIndex : toItems.length)
     } else {
-      moveColumn(e, toColumnOrder)
+      moveColumn(e, toColumn)
     }
   }
-  const moveColumn = (e: DragEvent, toColumnOrder: number) => {
+  const moveColumn = (e: DragEvent, toColumn: IBoardColumn) => {
     const fromColumnCategory = e.dataTransfer.getData('from-column-category')
-    const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+    const fromColumnOrder = e.dataTransfer.getData('from-column-order')
     const fromColumnId = e.dataTransfer.getData('from-column-id')
-    console.log(toColumnOrder)
-    console.log(e.dataTransfer.getData('from-column-category'))
-    console.log(e.dataTransfer.getData('from-column-id'))
-    console.log(e.dataTransfer.getData('from-column-order'))
-    // boardStore.editRecord
+    // console.log(toColumn)
+    // console.log(e.dataTransfer.getData('from-column-category'))
+    // console.log(e.dataTransfer.getData('from-column-id'))
+    // console.log(e.dataTransfer.getData('from-column-order'))
+    const fromItems = boardStore.getRecordsByCategory(fromColumnCategory)
+    const toItems = boardStore.getRecordsByCategory(toColumn.category)
+    // console.log(fromItems.map(item => item.columnOrder))
+    // console.log(toItems.map(item => item.columnOrder))
+    fromItems.forEach(item => {
+      const oldItem = item
+      // let newItem = {...item}
+      // newItem.columnOrder = toColumn.columnOrder
+      const newItem = {...item, columnOrder: toColumn.columnOrder}
+      boardStore.editRecord(oldItem, newItem)
+    })
+    toItems.forEach(item => {
+      const oldItem = item
+      // let newItem = {...item}
+      // newItem.columnOrder = parseInt(fromColumnOrder)
+      const newItem = {...item, columnOrder: parseInt(fromColumnOrder)}
+      boardStore.editRecord(oldItem, newItem)
+    })
+    const newFromItems = boardStore.getRecordsByCategory(fromColumnCategory)
+    const newToItems = boardStore.getRecordsByCategory(toColumn.category)
+
+    // console.log(newFromItems.map(item => item.columnOrder))
+    // console.log(newToItems.map(item => item.columnOrder))
+    console.log('move columns - update board')
+    console.log(ctx);
     
+    ctx.emit('update-board', {test: 'test'})
+
   }
   
   const pickupItem = (e, itemIndex, fromColumnIndex) => {

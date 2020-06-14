@@ -26,7 +26,7 @@ export const loadRecords = async (
 
 export const updateRecords = async (store: Store<any>, caller: string): Promise<any[]> => {
   console.log(`update records for ${caller}`)
-  return store.getState().records.ids.reduce<Task[]>((accumulator, id) => {
+  return store.getState().records.ids.reduce<any[]>((accumulator, id) => {
     const record = store.getState().records.all[id]
     return accumulator.concat(record)
   }, [])

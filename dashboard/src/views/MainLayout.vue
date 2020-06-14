@@ -24,7 +24,8 @@
     </div>
 
     <TaskBoard
-      :tasks="allTasks"
+      :columns="columns"
+      @update-board="onUpdateBoard"
     />
   </div>
 
@@ -49,6 +50,9 @@ import useTask from '../composables/useTask'
 import { Destination } from '../interfaces/common/modal.interface'
 import { Contact } from '../interfaces/contact/contact.interface'
 import { Task } from '../interfaces/task/task.interface'
+import { BoardStore } from '../store/board.store'
+import { IBoardColumn } from '../interfaces/board/board.column.interface'
+import useBoard from '../composables/useBoard'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -149,7 +153,12 @@ export default defineComponent({
       handleModal()
     //#endregion
 
-
+    //#region board
+      const boardStore: BoardStore = store.modules['boardStore']
+      const columns = ref<IBoardColumn[]>()
+      const board = await useBoard(columns, boardStore, allTasks.value, '_id')
+      const onUpdateBoard = board.onUpdateBoard
+    //#endregion
 
     return {
       showUIFull,
@@ -158,7 +167,9 @@ export default defineComponent({
       allTasks,
       onUpdateContacts,
       onUpdateTasks,
-      targetsLoadedRef
+      targetsLoadedRef,
+      columns,
+      onUpdateBoard
     }
 
   }

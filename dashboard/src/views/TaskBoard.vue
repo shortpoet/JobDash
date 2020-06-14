@@ -21,10 +21,12 @@
             @dragstart.self="pickupColumn($event, column)"
             @dragover.prevent
             @dragenter.prevent
-            @drop="moveItemOrColumn($event, column.items, column.order)"
+            @drop="moveItemOrColumn($event, column.items, column)"
+            @update-board="onUpdateBoard"
           >
             <BoardColumn
               :column="column" 
+              @update-board="onUpdateBoard"
             />  
           </div>
           
@@ -66,20 +68,29 @@ export default defineComponent({
   },
 
   props: {
-    tasks: {
-      type: Array as () => Task[],
+    columns: {
+      type: Array as () => IBoardColumn[],
+      // type: Array as () => Task[],
       // type: Array,
       required: true
     }
   },
 
-  emits: ['dragstart', 'draggable'],
+  emits: ['dragstart', 'draggable', 'update-board'],
 
-  async setup(props) {
+  async setup(props, ctx) {
 
     const boardStore: BoardStore = useStore().modules['boardStore']
-    const board = await useBoard(boardStore, props.tasks, '_id')
-    const move = useBoardMove(boardStore)
+    // const columns = ref<IBoardColumn[]>()
+    // const board = await useBoard(columns, boardStore, props.tasks, '_id')
+    const move = useBoardMove(boardStore, ctx)
+
+    const pickupColumn = move.pickupColumn
+    const moveItemOrColumn = move.moveItemOrColumn
+    // const onUpdateBoard = () => {
+    //   console.log('task board - on update board')
+    //   board.onUpdateBoard()
+    // }
 
     // const boardUse = useBoard(props.tasks, '_id')
 
@@ -87,15 +98,20 @@ export default defineComponent({
 
     // console.log(board)
 
-    const columns = ref<Record<string, IBoardColumn>>()
 
-    columns.value = board.storedBoard.value.columns
+    // columns.value = board.columns
 
     // console.log('columns')
     // console.log(columns.value)
     
-    const pickupColumn = move.pickupColumn
-    const moveItemOrColumn = move.moveItemOrColumn
+    // const pickupColumn = move.pickupColumn
+    // const moveItemOrColumn = (e: DragEvent, toColumnItems: IBoardItem[], toColumn: IBoardColumn, toItemOrder: number) => {
+    //   console.log('local move func');
+      
+    //   move.moveItemOrColumn(e, toColumnItems, toColumn, toItemOrder)
+    //   board.onUpdateBoard()
+    //   ctx.emit('update-board')
+    // }
     const _columns = [
       {id:'1', category: 'Column 1'},
       {id:'2', category: 'Column 2'},
@@ -106,9 +122,10 @@ export default defineComponent({
 
     return {
       _columns,
-      columns,
+      // columns,
       pickupColumn,
-      moveItemOrColumn
+      moveItemOrColumn,
+      // onUpdateBoard
     }
   }
 })

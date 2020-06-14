@@ -9,7 +9,7 @@
       @dragover.prevent
       @dragenter.prevent
       @drag.stop="moveItemOrColumn($event, items)"
-
+      @update-board="onUpdateBoard"
     >
       <BoardItem :item="item" :item-name="category + ' - <name> id'" :item-id="item.itemId"/>
     </div>
@@ -41,22 +41,28 @@ export default defineComponent({
     }
   },
 
-  emits: ['dragstart', 'draggable'],
+  emits: ['dragstart', 'draggable', 'update-board'],
 
   setup(props, ctx) {
     const category = props.column.category
     const items = props.column.items
     const boardStore: BoardStore = useStore().modules['boardStore']
-    const move = useBoardMove(boardStore)
+    const move = useBoardMove(boardStore, ctx)
 
     const pickupItem = move.pickupItem
     const moveItemOrColumn = move.moveItemOrColumn
+    const onUpdateBoard = () => {
+      console.log('board column - update board')
+    }
+
+    
 
     return {
       items,
       category,
       pickupItem,
-      moveItemOrColumn
+      moveItemOrColumn,
+      onUpdateBoard
     }
   }
 })

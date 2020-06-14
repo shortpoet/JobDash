@@ -3,14 +3,14 @@ import { IBoardItem } from "../interfaces/board/board.item.interface"
 import { IBoard } from "../interfaces/board/board.interface"
 import { useStorage } from './useStorage'
 import { BoardStore } from "../store/board.store"
-import { ref } from "vue"
-import { loadRecords } from './../utils'
+import { ref, computed, Ref } from "vue"
+import { loadRecords, updateRecords } from './../utils'
 import { IBoardable } from "../interfaces/board/boardable.interface"
 
 const storage = useStorage()
 const BOARD = 'board'
-
-const initItems = (items: any[], idSymbol: string): IBoardItem[] => {
+const initItems =  (items: any[], idSymbol: string): IBoardItem[] => {
+  console.log('init board items')
   const itemsOut: IBoardItem[] = [] as IBoardItem[]
   let itemOrder
   const categories = [...new Set(items.map(item => item.category))]
@@ -37,8 +37,8 @@ const initItem = (item: any, idSymbol: string, columnOrder: number, itemOrder: n
   }
 }
 
-const parseBoard = (items: IBoardItem[]): IBoard => {
-  // console.log('begin parse board')
+const parseBoard = ((items: IBoardItem[]): IBoard => {
+  console.log('begin parse board')
   const board = <IBoard>{
     name: 'test board',
     id: 1,
@@ -63,7 +63,7 @@ const parseBoard = (items: IBoardItem[]): IBoard => {
   // console.log('end parse board')
   // console.log(board)
   return board
-}
+})
 
 const orderItems = (itemMap: Record<number, IBoardItem>): IBoardItem[] => {
   console.log('begin order items')
@@ -103,47 +103,48 @@ const orderColumns = (columnMap: Record<number, IBoardColumn>): IBoardColumn[] =
   return columns
 }
 
-export default async function useBoard(boardStore: BoardStore, items: IBoardable[], idSymbol: string) {
+// const _loadBoard = async (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoardItem[]) => {
+//   const storedItems = await loadRecords(boardStore, BOARD, boardItems)
+//   storedBoard = parseBoard(storedItems)
+//   const columnMap = ref<Record<string, IBoardColumn>>()
+//   columnMap.value = storedBoard.columns
+//   const columns = ref<IBoardColumn[]>()
+//   columns.value = orderColumns(columnMap.value)
+//   return columns.value
+// }
+const loadBoard = async (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoardItem[]) => {
+  storedBoard = parseBoard(boardItems)
+  const columnMap = ref<Record<string, IBoardColumn>>()
+  columnMap.value = storedBoard.columns
+  const columns = ref<IBoardColumn[]>()
+  columns.value = orderColumns(columnMap.value)
+  return columns.value
+}
+
+export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore: BoardStore, items: IBoardable[], idSymbol: string) {
   console.log('use board')
   
   const storedBoard = ref<IBoard>()
 
   const boardItems: IBoardItem[] = initItems(items, idSymbol)
-
   const storedItems = await loadRecords(boardStore, BOARD, boardItems)
 
-  // console.log('stored items')
-  // console.log(storedItems)
-
-  storedBoard.value = parseBoard(storedItems)
-
-  // console.log('parsed board')
-  // console.log(storedBoard.value)
-
-  const columnMap = ref<Record<string, IBoardColumn>>()
-
-  columnMap.value = storedBoard.value.columns
-
-  // console.log('column map')
-  // console.log(columnMap.value)
-
-  const columns = ref<IBoardColumn[]>()
-
-  columns.value = orderColumns(columnMap.value)
-
-  // console.log('columns')
-  // console.log(columns.value)
+  columns.value = await loadBoard(boardStore, storedBoard.value, storedItems)
 
 
+  // const computedBoard = computed(() => parseBoard(storedItems))
+  // const columns = computed(() => orderColumns(computedBoard.value.columns))
 
   const onUpdateBoard = async () => {
-    console.log('use board - update') 
-    // const newBoard = await updateBoard(items, board)
+    console.log('use board - update')
+    const newItems = await updateRecords(boardStore, BOARD)
+    columns.value = await loadBoard(boardStore, storedBoard.value, newItems)
+
   }
 
 
   return {
-    storedBoard,
+    columns,
     onUpdateBoard
   }
 }

@@ -52,6 +52,19 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
     return last ? last.itemId : -1
   }
 
+  public getRecordsByCategory(category: string): IBoardItem[] {
+    console.log('get by category')
+    // console.log(category)
+    // console.log(this.state.records)
+    // console.log(this.state.records.all)
+    return Object.entries(this.state.records.all).reduce<IBoardItem[]>((accumulator, record) => {
+      if (record[1].category == category) {
+        return accumulator.concat(record[1])  
+      }
+      return accumulator
+    }, [])
+  }
+
   async createRecord(board: IBoardItem) {
     super.createRecord(board, ID_SYMBOL)
     // const response = await axios.post<BoardDTO>('http://localhost:3000/board/create', board)
@@ -64,8 +77,10 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
   }
 
   
-  async editRecord(oldBoard: IBoardItem, newBoard: IBoardItem, idSymbol: (string | number)) {
-    super.editRecord(oldBoard, newBoard, ID_SYMBOL)
+  async editRecord(oldItem: IBoardItem, newItem: IBoardItem) {
+    // console.log(oldItem.columnOrder)
+    // console.log(newItem.columnOrder)
+    super.editRecord(oldItem, newItem, ID_SYMBOL)
     // console.log('writing to db')
 
     // const response = await axios.put<BoardDTO>(
