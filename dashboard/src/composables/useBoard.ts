@@ -136,26 +136,12 @@ const columnMapToArray = (columnMap: Record<number, IBoardColumn>): IBoardColumn
   return columns
 }
 
-// const _loadBoard = async (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoardItem[]) => {
-//   const storedItems = await loadRecords(boardStore, BOARD, boardItems)
-//   storedBoard = parseBoard(storedItems)
-//   const columnMap = ref<Record<string, IBoardColumn>>()
-//   columnMap.value = storedBoard.columns
-//   const columns = ref<IBoardColumn[]>()
-//   columns.value = orderColumns(columnMap.value)
-//   return columns.value
-// }
 const loadBoard = (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoardItem[]) => {
   // console.log('begin load board')
   storedBoard = parseBoard(boardItems)
   const columnMap = ref<Record<string, IBoardColumn>>()
   columnMap.value = storedBoard.columns
-  // console.log('column map')
-  // console.log(columnMap.value)
-  // console.log(Object.keys(columnMap.value))
   const columns = ref<IBoardColumn[]>()
-
-  // columns.value = orderColumns(columnMap.value)
   columns.value = columnMapToArray(flattenSort(columnMap.value, 'columnOrder'))
   // console.log(columns.value)
   return columns.value
@@ -169,15 +155,10 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     columns.value = []
     return new Promise(resolve => resolve(true))
   }
-
   const storedBoard = ref<IBoard>()
-
   const boardItems: IBoardItem[] = initItems(items, idSymbol)
-
   const storedItems = await loadRecords(boardStore, BOARD, boardItems)
-
   columns.value = loadBoard(boardStore, storedBoard.value, storedItems)
-
   const columnsComputed = computed(() => {
     // console.log('$$$ computing columns');
     // console.log(columns.value.map(item => item.category))
@@ -190,7 +171,7 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
   // const columns = computed(() => orderColumns(computedBoard.value.columns))
 
   const onUpdateBoard = async () => {
-    console.log('use board - update')
+    // console.log('use board - update')
     const newItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
     // console.log(newItems)
     // console.log(newItems.map(item => item.itemId));
@@ -200,9 +181,7 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     // need to wait for columns to be zeroed out so vue reactivity picks up on change in length of array
     await resetColumns()
     columns.value = loadBoard(boardStore, storedBoard.value, newItems)
-
   }
-
 
   return {
     columns,
@@ -210,43 +189,3 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     onUpdateBoard
   }
 }
-
-
-// export default function useBoard(items: any[], idSymbol: string) {
-//   console.log('use board')
-  
-//   const board: IBoard = loadBoard(items, idSymbol)
-
-//   const onUpdateBoard = async () => {
-//     console.log('use board - update') 
-//     const newBoard = await updateBoard(items, board)
-//   }
-
-
-//   return {
-//     board,
-//     onUpdateBoard
-//   }
-// }
-
-
-// export const loadBoard = (items: IBoardItem[], idSymbol:string): IBoard => {
-//   console.log(`load records for ${'board'}`)
-
-//   const boardItems: IBoardItem[] = (initItems(items, idSymbol))
-
-//   const board = <IBoard>{}
-//   if (board.columns == undefined && items.length > 0) {
-//     console.log('init empty board')
-//     // console.log(columns)
-//     // add board
-
-//   }
-//   return board
-// }
-
-// export const updateBoard = (items: IBoardItem[], board: IBoard): IBoard => {
-//   console.log(`update records for ${'board'}`)
-//   // ..update board
-//   return board
-// }

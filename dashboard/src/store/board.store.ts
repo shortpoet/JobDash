@@ -53,7 +53,7 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
   }
 
   public getRecordsByCategory(category: string): IBoardItem[] {
-    console.log('get by category')
+    // console.log('get by category')
     // console.log(category)
     // console.log(this.state.records)
     // console.log(this.state.records.all)
