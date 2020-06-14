@@ -163,31 +163,32 @@ const loadBoard = (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoa
 
 export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore: BoardStore, items: IBoardable[], idSymbol: string) {
   console.log('use board')
-  
-  const storedBoard = ref<IBoard>()
-
-  const boardItems: IBoardItem[] = initItems(items, idSymbol)
-  const storedItems = await loadRecords(boardStore, BOARD, boardItems)
-
-  columns.value = loadBoard(boardStore, storedBoard.value, storedItems)
-
-  const columnsComputed = computed(() => {
-    console.log('$$$ computing columns');
-    console.log(columns.value.map(item => item.category))
-    console.log(columns.value.map(item => item.columnOrder))
-    console.log(columns.value.map(item => Object.entries(item.items).map(entry => entry[1].itemId)))
-    
-    return columns.value
-  })
-
-  // const computedBoard = computed(() => parseBoard(storedItems))
-  // const columns = computed(() => orderColumns(computedBoard.value.columns))
 
   const resetColumns = async () => {
     console.log('reset columns')
     columns.value = []
     return new Promise(resolve => resolve(true))
   }
+
+  const storedBoard = ref<IBoard>()
+
+  const boardItems: IBoardItem[] = initItems(items, idSymbol)
+
+  const storedItems = await loadRecords(boardStore, BOARD, boardItems)
+
+  columns.value = loadBoard(boardStore, storedBoard.value, storedItems)
+
+  const columnsComputed = computed(() => {
+    console.log('$$$ computing columns');
+    // console.log(columns.value.map(item => item.category))
+    // console.log(columns.value.map(item => item.columnOrder))
+    // console.log(columns.value.map(item => Object.entries(item.items).map(entry => entry[1].itemId)))
+    return columns.value
+  })
+
+  // const computedBoard = computed(() => parseBoard(storedItems))
+  // const columns = computed(() => orderColumns(computedBoard.value.columns))
+
   const onUpdateBoard = async () => {
     console.log('use board - update')
     const newItems: IBoardItem[] = await updateRecords(boardStore, BOARD)

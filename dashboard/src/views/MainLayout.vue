@@ -22,10 +22,8 @@
       />
       </div>
     </div>
-
-    <TaskBoard
-      :columns="columnsComputed"
-      @update-board="onUpdateBoard"
+    <TaskBoardLayout
+      :tasks="allTasks"
     />
   </div>
 
@@ -37,7 +35,7 @@ import { defineComponent, computed, ref, watch, nextTick } from 'vue'
 
 import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
-import TaskBoard from './TaskBoard.vue'
+import TaskBoardLayout from './TaskBoardLayout.vue'
 import BaseIcon from '../components/common/BaseIcon.vue'
 
 import { useRouter } from 'vue-router'
@@ -61,16 +59,16 @@ export default defineComponent({
     BaseIcon,
     CreateLayout,
     TableLayout,
-    TaskBoard
+    TaskBoardLayout
   },
   async setup(props, ctx) {
 
     const router = useRouter()
+    const store = useStore()
     
     const showUIFull = ref(true)
 
     //#region contactUse
-      const store = useStore()
       const contactStore = store.modules['contactStore']
 
       const allContacts = ref<Contact[]>([])
@@ -153,13 +151,6 @@ export default defineComponent({
       handleModal()
     //#endregion
 
-    //#region board
-      const boardStore: BoardStore = store.modules['boardStore']
-      const columns = ref<IBoardColumn[]>()
-      const board = await useBoard(columns, boardStore, allTasks.value, '_id')
-      const onUpdateBoard = board.onUpdateBoard
-      const columnsComputed = board.columnsComputed
-    //#endregion
 
     return {
       showUIFull,
@@ -168,10 +159,7 @@ export default defineComponent({
       allTasks,
       onUpdateContacts,
       onUpdateTasks,
-      targetsLoadedRef,
-      columns,
-      columnsComputed,
-      onUpdateBoard
+      targetsLoadedRef
     }
 
   }
