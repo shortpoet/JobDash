@@ -15,13 +15,13 @@
           -->
 
           <div class="column board-column-container"
-            v-for="(column, columnIndex) in columns"
+            v-for="(column, columnCategoryKey) in columns"
             :key="column.id"
             draggable
             @dragstart.self="pickupColumn($event, column)"
             @dragover.prevent
             @dragenter.prevent
-            @drop="moveTaskOrColumn($event, column, columnIndex)"
+            @drop="moveItemOrColumn($event, column, columnCategoryKey)"
           >
             <BoardColumn
               :column="column" 
@@ -53,6 +53,7 @@ import { Task } from '../interfaces/task/task.interface'
 import BoardColumn from './../components/board/BoardColumn.vue'
 import { useStorage } from './../composables/useStorage'
 import useBoard from './../composables/useBoard'
+import useBoardMove from './../composables/useBoardMove'
 import { useStore } from '../store'
 import { BoardStore } from '../store/board.store'
 import { sortObject } from './../utils'
@@ -78,6 +79,7 @@ export default defineComponent({
 
     const boardStore: BoardStore = useStore().modules['boardStore']
     const board = await useBoard(boardStore, props.tasks, '_id')
+    const move = useBoardMove(boardStore)
 
     // const boardUse = useBoard(props.tasks, '_id')
 
@@ -91,7 +93,9 @@ export default defineComponent({
 
     // console.log('columns')
     // console.log(columns.value)
-      
+    
+    const pickupColumn = move.pickupColumn
+    const moveItemOrColumn = move.moveItemOrColumn
     const _columns = [
       {id:'1', category: 'Column 1'},
       {id:'2', category: 'Column 2'},
@@ -102,7 +106,9 @@ export default defineComponent({
 
     return {
       _columns,
-      columns
+      columns,
+      pickupColumn,
+      moveItemOrColumn
     }
   }
 })

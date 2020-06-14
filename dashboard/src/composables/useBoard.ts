@@ -5,6 +5,7 @@ import { useStorage } from './useStorage'
 import { BoardStore } from "../store/board.store"
 import { ref } from "vue"
 import { loadRecords } from './../utils'
+import { IBoardable } from "../interfaces/board/boardable.interface"
 
 const storage = useStorage()
 const BOARD = 'board'
@@ -102,7 +103,7 @@ const orderColumns = (columnMap: Record<number, IBoardColumn>): IBoardColumn[] =
   return columns
 }
 
-export default async function useBoard(boardStore: BoardStore, items: any[], idSymbol: string) {
+export default async function useBoard(boardStore: BoardStore, items: IBoardable[], idSymbol: string) {
   console.log('use board')
   
   const storedBoard = ref<IBoard>()
