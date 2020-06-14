@@ -84,6 +84,8 @@ export default defineComponent({
     // const columns = ref<IBoardColumn[]>()
     // const board = await useBoard(columns, boardStore, props.tasks, '_id')
     const move = useBoardMove(boardStore, ctx)
+    console.log('### task board setup ###')
+    console.log(props.columns.map(item => Object.entries(item.items).map(entry => entry[1].itemId)))
 
     const pickupColumn = move.pickupColumn
     const moveItemOrColumn = move.moveItemOrColumn

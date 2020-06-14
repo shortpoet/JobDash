@@ -92,7 +92,7 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
     // get is generic so can specify type
     // const data = await this._fetchRecords('http://localhost:3000/contact/contacts')
 
-    console.log('fetch records')
+    console.log('fetch records at board store')
     this.addRecords(data, ID_SYMBOL)
     this.state.records.loaded = true
   }

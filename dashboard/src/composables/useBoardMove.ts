@@ -80,7 +80,6 @@ export default function useBoardMove(boardStore: BoardStore, ctx) {
     // console.log(newFromItems.map(item => item.columnOrder))
     // console.log(newToItems.map(item => item.columnOrder))
     console.log('move columns - update board')
-    console.log(ctx);
     
     ctx.emit('update-board', {test: 'test'})
 
