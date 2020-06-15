@@ -9,23 +9,28 @@ export class MessageService {
   constructor(@InjectModel('Message') private readonly messageModel: Model<Message>) { }
   // fetch all messages
   async getAllMessage(): Promise<Message[]> {
-    const messages = await this.messageModel.find().populate('Contact').exec();
+    const messages: Message[] = await this.messageModel.find()
+      .populate('Contact')
+      // .populate({
+      //   path: 'contact',
+      //   populate: {
+      //     path: 'contact',
+      //     model: 'Contact'
+      //   }
+      // })
+      .exec();
     return messages;
   }
   // Get a single message
   async getMessage(messageID): Promise<Message> {
-    const message = await this.messageModel.findById(messageID).populate('Contact').exec();
+    const message = await this.messageModel.findById(messageID).populate('contact').exec();
     return message;
   }
   // post a single message
   async addMessage(createMessageDTO: CreateMessageDTO): Promise<Message> {
     const newMessage = await this.messageModel(createMessageDTO);
-    console.log('create from service')
     console.log(newMessage)
-    const savedMessage = await newMessage.save();
-    console.log('return from service')
-    console.log(savedMessage)
-    return savedMessage;
+    return newMessage.save();
   }
   // Edit message details
   async updateMessage(messageID, createMessageDTO: CreateMessageDTO): Promise<Message> {

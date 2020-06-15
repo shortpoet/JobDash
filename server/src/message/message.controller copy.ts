@@ -4,6 +4,7 @@ import { Controller, Get, Res, HttpStatus, Post, Body, Put, Query, NotFoundExcep
 import { MessageService } from './message.service';
 import { CreateMessageDTO } from './dto/create-message.dto';
 import { query } from 'express';
+var mongoose = require('mongoose')
 
 @Controller('message')
 export class MessageController {
@@ -12,9 +13,8 @@ export class MessageController {
     // add a message
     @Post('/create')
     async addMessage(@Res() res, @Body() createMessageDTO: CreateMessageDTO) {
-        console.log('create from controller')
+        console.log('create message')
         const message = await this.messageService.addMessage(createMessageDTO);
-        console.log('return from controller')
         console.log(message)
         return res.status(HttpStatus.OK).json({
             dtoLog: "Message has been created successfully",
@@ -26,15 +26,19 @@ export class MessageController {
     @Get('messages')
     async getAllMessage(@Res() res) {
         const messages = await this.messageService.getAllMessage();
+        // console.log('logging messages')
+        // console.log(messages)
+        // messages.forEach(message => {
+        //     console.log(message)
+        //     console.log(message.contact)
+        // })
         return res.status(HttpStatus.OK).json(messages);
     }
 
     // Fetch a particular message using ID
-    @Get('message/:message_id')
+    @Get('message/:messageID')
     async getMessage(@Res() res, @Param('message_id') messageID) {
-        // console.log(messageID)
         const message = await this.messageService.getMessage(messageID);
-        // console.log(messageID)
         if (!message) throw new NotFoundException('Message does not exist!');
         return res.status(HttpStatus.OK).json(message);
     }
