@@ -61,6 +61,7 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   async fetchRecords() {
     // get is generic so can specify type
     const response = await axios.get<Task[]>('http://localhost:3000/task/tasks')
+    // console.log(response)
     let tasks: Task[] = response.data.map((task: Task)=> {
       task.contact = task.contact[0]
       return task

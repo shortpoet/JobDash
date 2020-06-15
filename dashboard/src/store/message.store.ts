@@ -46,7 +46,7 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
     if(pushToDb) {
       // console.log('writing to db')
       const response = await axios.post<MessageDTO>('http://localhost:3000/message/create', message)
-      // console.log(response)
+      console.log(response)
       this.fetchRecords()
     }
   }

@@ -17,8 +17,10 @@ export const loadRecords = async (
   ): Promise<any[]> => {
   console.log(`load records for ${caller}`)
   if (!store.getState().records.loaded) {
+    console.log('fetching - not yet loaded')
     await store.fetchRecords(data)
   }
+  console.log('loading')
   return store.getState().records.ids.reduce<any[]>((accumulator, id) => {
     const record = store.getState().records.all[id]
     return accumulator.concat(record)
@@ -33,6 +35,7 @@ export const updateRecords = async (store: Store<any>, caller: string): Promise<
   }, [])
 }
 
+// https://stackoverflow.com/questions/1069666/sorting-object-property-by-values
 export const sortObject = (object: object): object => {
   // console.log('sort object')
   let order = []

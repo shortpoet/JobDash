@@ -80,6 +80,7 @@ export default defineComponent({
         //   locked: _contact.locked
         // }
         const nextId = (parseInt(taskStore.getLastId()) + 1).toString()
+        console.log(nextId)
         const task: Task = {
           _id: nextId,
           itemId: nextId,
@@ -92,6 +93,7 @@ export default defineComponent({
           editable: false,
           locked: true
         }
+        console.log(task)
         await taskStore.createRecord(task)
         ctx.emit('update-tasks')
       } else {
