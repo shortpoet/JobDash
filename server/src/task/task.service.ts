@@ -9,7 +9,7 @@ export class TaskService {
   constructor(@InjectModel('Task') private readonly taskModel: Model<Task>) { }
   // fetch all tasks
   async getAllTask(): Promise<Task[]> {
-    console.log('get tasks')
+    // console.log('get tasks')
     const tasks: Task[] = await this.taskModel.find()
       .populate('Contact')
       // .populate({

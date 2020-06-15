@@ -4,7 +4,7 @@ import { IBoard } from "../interfaces/board/board.interface"
 import { useStorage } from './useStorage'
 import { BoardStore } from "../store/board.store"
 import { ref, computed, Ref, watch } from "vue"
-import { loadRecords, updateRecords, flattenSort } from './../utils'
+import { loadRecords, updateRecords, flattenSort, colorLog } from './../utils'
 import { IBoardable } from "../interfaces/board/boardable.interface"
 
 const BOARD = 'board'
@@ -52,15 +52,8 @@ const BOARD = 'board'
 //#endregion
 
 //#region init board
-  // map board items into a board
-  // hard codes board name and id for now
-  const parseBoard = ((items: IBoardItem[]): IBoard => {
-    // console.log('begin parse board')
-    const board = <IBoard>{
-      name: 'test board',
-      id: '1',
-      columns: {} as Record<string, IBoardColumn>
-    }
+  const initColumns = (items: IBoardItem[], board: IBoard) => {
+    console.log('init columns')
     items.forEach((item: IBoardItem, i) => {
       if (item.category in board.columns) {
         board.columns[item.category].items.push(item)
@@ -75,8 +68,18 @@ const BOARD = 'board'
         Object.assign(board['columns'], column)
       }
     })
-    // console.log('end parse board')
-    // console.log(board)
+  }
+
+  // map board items into a board
+  // hard codes board name and id for now
+  const parseBoard = ((items: IBoardItem[]): IBoard => {
+    console.log('begin parse board')
+    const board = <IBoard>{
+      name: 'test board',
+      id: '1',
+      columns: {} as Record<string, IBoardColumn>
+    }
+    initColumns(items, board)
     return board
   })
 //#endregion
@@ -97,10 +100,10 @@ const BOARD = 'board'
     return columns.value
   }
   // resort and remap dictionary of <category, Column> to [Column]
-  const reloadBoard = (boardStore: BoardStore, storedBoard: IBoard) => {
+  const reloadBoard = (boardStore: BoardStore, activeBoard: IBoard) => {
     // console.log('begin reload board')
     const columnMap = ref<Record<string, IBoardColumn>>()
-    columnMap.value = storedBoard.columns
+    columnMap.value = activeBoard.columns
     const columns = ref<IBoardColumn[]>()
     columns.value = columnMapToColumnArray(flattenSort(columnMap.value, 'columnOrder'))
     // without this the moved item will sometimes jump to top
@@ -155,8 +158,13 @@ const getBoardState = (items: IBoardable[], activeBoardId: string) => {
   let storedBoardItemIds = []
   let itemIds = []
   let boardHasDiff: boolean
+  let boardHasDiffLength: boolean
+  let boardHasDiffCategory: boolean
   let boardHasNewItem: boolean
   let boardHasLessItem: boolean
+  let boardHasNewCategory: boolean
+  let boardHasLessCategory: boolean
+  let categories
   if(hasActiveBoard) {
     // flatten column object into item array
     storedBoardItems = columnMapToItemArray(activeBoard.columns)
@@ -164,22 +172,33 @@ const getBoardState = (items: IBoardable[], activeBoardId: string) => {
     itemIds = items.map(item => item.itemId)
     // get array of item ids from all current items in storage (localStorage - may want to build other persisitence layers)
     storedBoardItemIds = storedBoardItems.map(item => item.itemId)
-    boardHasDiff = storedBoardItems.length != items.length
+    boardHasDiffLength = storedBoardItems.length != items.length 
     boardHasNewItem = itemIds.length > storedBoardItemIds.length
     boardHasLessItem = storedBoardItemIds.length > itemIds.length
+    boardHasDiffCategory =  itemIds.map(item => item.category).length != storedBoardItems.map(item => item.category).length
+    boardHasNewCategory = itemIds.map(item => item.category).length > storedBoardItems.map(item => item.category).length
+    boardHasLessCategory = storedBoardItems.map(item => item.category).length > itemIds.map(item => item.category).length
+    categories = [...new Set(items.map(item => item.category))]
+    boardHasDiff = boardHasDiffLength || boardHasDiffCategory
   }
   return {
     hasActiveBoard,
     activeBoard,
+    storedBoardItemIds,
     storedBoardItems,
     itemIds,
     boardHasDiff,
+    boardHasDiffLength,
+    boardHasDiffCategory,
     boardHasNewItem,
-    boardHasLessItem
+    boardHasLessItem,
+    boardHasNewCategory,
+    boardHasLessCategory,
+    categories
   }
 }
 
-const diffBoard = async (columns: Ref<IBoardColumn[]>, boardStore: BoardStore, items: IBoardable[], activeBoardId: string, idSymbol: string, storedBoard: Ref<IBoard>) => {
+const _diffBoard = async (columns: Ref<IBoardColumn[]>, boardStore: BoardStore, items: IBoardable[], activeBoardId: string, idSymbol: string, storedBoard: Ref<IBoard>) => {
 
   const { hasActiveBoard, activeBoard, storedBoardItems, itemIds, boardHasDiff, boardHasNewItem, boardHasLessItem } = getBoardState(items, activeBoardId)
 
@@ -223,9 +242,9 @@ const diffBoard = async (columns: Ref<IBoardColumn[]>, boardStore: BoardStore, i
       // case there are more items in props
       console.log('one less item')
       // get new items from diffing the inverse list
-      const newIds = storedBoardItemIds.filter(id => !itemIds.includes(id))
-      console.log(newIds)
-      const itemsToDelete = storedBoardItems.filter(item => newIds.includes(item.itemId))
+      const extraIds = storedBoardItemIds.filter(id => !itemIds.includes(id))
+      console.log(extraIds)
+      const itemsToDelete = storedBoardItems.filter(item => extraIds.includes(item.itemId))
       console.log(itemsToDelete)
       itemsToDelete.forEach(item => {
         console.log(item)
@@ -238,7 +257,52 @@ const diffBoard = async (columns: Ref<IBoardColumn[]>, boardStore: BoardStore, i
   }
 
 }
+const diffBoard = async (columns: Ref<IBoardColumn[]>, boardStore: BoardStore, items: IBoardable[], activeBoardId: string, idSymbol: string, storedBoard: IBoard) => {
 
+  const { hasActiveBoard, activeBoard, storedBoardItems, storedBoardItemIds, itemIds, boardHasDiff, boardHasNewItem, boardHasLessItem, boardHasNewCategory, boardHasLessCategory, categories } = getBoardState(items, activeBoardId)
+
+  console.log('diff board')
+
+  // get new items from diffing
+  const newIds = itemIds.filter(id => !storedBoardItemIds.includes(id))
+  // console.log(newIds)
+  const newItemsToAdd = items.filter(item => newIds.includes(item.itemId))
+  // console.log(newItemsToAdd)
+  const allNewCategories = [...new Set(newItemsToAdd.map(item => item.category))]
+  // console.log(allNewCategories)
+  const categoriesToAdd = allNewCategories.filter(category => !categories.includes(category))
+  // console.log(categoriesToAdd)
+  const categoriesToDelete = categories.filter(category => !allNewCategories.includes(category))
+  // console.log(categoriesToAdd)
+
+  // get new items from diffing the inverse list
+  const surplusIds = storedBoardItemIds.filter(id => !itemIds.includes(id))
+  // console.log(extraIds)
+  const itemsToDelete = storedBoardItems.filter(item => surplusIds.includes(item.itemId))
+  // console.log(itemsToDelete)
+
+  return {
+    newIds,
+    newItemsToAdd,
+    surplusIds,
+    itemsToDelete,
+    categoriesToAdd,
+    categoriesToDelete
+  }
+}
+
+const initNewItems = (boardStore: BoardStore, newItems: IBoardable[], idSymbol: string, activeBoard: IBoard): IBoardItem[] => {
+  console.log('init new items')
+  const boardItems: IBoardItem[] = [] as IBoardItem[]
+  console.log(activeBoard)
+  const columnOrder = (item: IBoardable): number => activeBoard.columns[item.category] ? activeBoard.columns[item.category].columnOrder : Object.keys(activeBoard.columns).length
+  const itemOrder = (item: IBoardable, index: number): number => boardStore.getRecordsByCategory(item.category).length + index
+  const newInitItems: IBoardItem[] = newItems.map((item, index) => initItem(item, idSymbol, columnOrder(item), itemOrder(item, index)))
+  console.log(newInitItems)
+  return newInitItems
+}
+const BOOLCOLOR = 'red'
+const BOOLBACK  = 'white'
 export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore: BoardStore, items: IBoardable[], idSymbol: string, activeBoardId: string) {
   console.log('use board')
   //#region init refs
@@ -247,11 +311,11 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     // a ref to a board object
     const storedBoard = ref<IBoard>()
   //#endregion
-
-  const { hasActiveBoard, activeBoard, storedBoardItems, itemIds, boardHasDiff, boardHasNewItem, boardHasLessItem } = getBoardState(items, activeBoardId)
-
+  
+  const { hasActiveBoard, activeBoard, storedBoardItems, storedBoardItemIds, itemIds, boardHasDiff, boardHasNewItem, boardHasLessItem, boardHasNewCategory, boardHasLessCategory, categories } = getBoardState(items, activeBoardId)
+  const { newIds, newItemsToAdd, surplusIds, itemsToDelete, categoriesToAdd, categoriesToDelete } = await diffBoard(columns, boardStore, items, activeBoardId, idSymbol, activeBoard)
   const resetColumns = async () => {
-    // console.log('reset columns')
+    console.log('reset columns')
     columns.value = []
     return new Promise(resolve => resolve(true))
   }
@@ -264,20 +328,66 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
   
   if (hasActiveBoard) {
     // if active board exists in storage
-    console.log(`active board is ${activeBoardId}`)
-    storedBoard.value = activeBoard
-    // flatten column object into item array
-    const storedBoardItems = columnMapToItemArray(storedBoard.value.columns)
-    // must load items into store | or | set loaded state to true
-    const storedItems = await loadRecords(boardStore, BOARD, storedBoardItems)
-    // must load items into column.value for return of useBoard
-    columns.value = reloadBoard(boardStore, storedBoard.value)
-  } else {
+    colorLog(`has active board is ${activeBoardId}`, BOOLCOLOR, BOOLBACK)
+    const boardItems = columnMapToItemArray(activeBoard.columns)
+    const storedItems = await loadRecords(boardStore, BOARD, boardItems)
+    columns.value = loadBoard(boardStore, activeBoard, storedItems)
+    if (boardHasDiff) {
+      colorLog('board HAS diff', BOOLCOLOR, BOOLBACK)
+      if (boardHasNewCategory) {
+        colorLog('board has new category', BOOLCOLOR, BOOLBACK)
+        const newInitItems: IBoardItem[] = initNewItems(boardStore, newItemsToAdd, idSymbol, activeBoard)
+        initColumns(newInitItems, activeBoard)
+        const storedItems = await loadRecords(boardStore, BOARD, newInitItems)
+        columns.value = loadBoard(boardStore, activeBoard, storedItems)
+        saveBoardToStorage(activeBoard, activeBoard.id)
+        console.log(columns.value)
+      }
+      if (boardHasNewItem && !boardHasNewCategory) {
+        colorLog('board has NEW item', BOOLCOLOR, BOOLBACK)
+        const newInitItems = initNewItems(boardStore, newItemsToAdd, idSymbol, activeBoard)
+        const storedItems = await loadRecords(boardStore, BOARD, newInitItems)
+        columns.value = loadBoard(boardStore, activeBoard, storedItems)
+      }
+      if (boardHasLessItem && !boardHasLessCategory) {
+        colorLog('board has LESS item', BOOLCOLOR, BOOLBACK)
+        itemsToDelete.forEach(item => {
+          boardStore.deleteRecord(item)
+        })
+        saveBoardToStorage(activeBoard, activeBoard.id)
+        columns.value = reloadBoard(boardStore, activeBoard)
+        // maybe try this
+        // const newItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
+        // // need to wait for columns to be zeroed out so vue reactivity picks up on change in length of array
+        // // because only updating the order
+        // await resetColumns()
+        // saveBoardToStorage(activeBoard, activeBoard.id)
+        // columns.value = loadBoard(boardStore, activeBoard, newItems)
+      }
+    }
+    if (!boardHasDiff) {
+      colorLog('board has NO diff', BOOLCOLOR, BOOLBACK)
+      // diff is based on length of input (iboardable) and items (iboarditems)
+      // case where board move happens there is no diff
+      storedBoard.value = activeBoard
+      // flatten column object into item array
+      const storedBoardItems = columnMapToItemArray(storedBoard.value.columns)
+      // must load items into store | or | set loaded state to true
+      const storedItems = await loadRecords(boardStore, BOARD, storedBoardItems)
+      saveBoardToStorage(activeBoard, activeBoard.id)
+
+      // must load items into column.value for return of useBoard
+      columns.value = reloadBoard(boardStore, activeBoard)
+    }
+  } 
+
+  if (!hasActiveBoard) {
+    colorLog('no active board', BOOLCOLOR, BOOLBACK)
     // if no active board
     // initItems is called from initial items prop
     const boardItems: IBoardItem[] = initItems(items, idSymbol)
     const storedItems = await loadRecords(boardStore, BOARD, boardItems)
-    columns.value = loadBoard(boardStore, storedBoard.value, storedItems)
+    columns.value = loadBoard(boardStore, activeBoard, storedItems)
   }
 
   const onBoardMove = async () => {
@@ -290,13 +400,16 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     // need to wait for columns to be zeroed out so vue reactivity picks up on change in length of array
     // because only updating the order
     await resetColumns()
-    saveBoardToStorage(storedBoard.value, storedBoard.value.id)
-    columns.value = loadBoard(boardStore, storedBoard.value, newItems)
+    saveBoardToStorage(activeBoard, activeBoard.id)
+    columns.value = loadBoard(boardStore, activeBoard, newItems)
   }
 
   const onUpdateBoard = async () => {
     console.log('use board - onUpdateBoard')
-    diffBoard(columns, boardStore, items, activeBoardId, idSymbol, storedBoard)
+    _diffBoard(columns, boardStore, items, activeBoardId, idSymbol, storedBoard)
+    // const newItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
+    // saveBoardToStorage(storedBoard.value, storedBoard.value.id)
+    // columns.value = loadBoard(boardStore, storedBoard.value, newItems)
   }
 
   return {
