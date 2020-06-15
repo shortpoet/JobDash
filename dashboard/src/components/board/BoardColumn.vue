@@ -10,6 +10,7 @@
       @dragenter.prevent
       @drag.stop="moveItemOrColumn($event, item.category, item.itemOrder)"
       @update-board="onUpdateBoard"
+      @board-move="onBoardMove"
     >
       <BoardItem :item="item" :item-name="category + ' - order: ' + item.itemOrder + ' - id'" :item-id="item.itemId"/>
     </div>
@@ -41,7 +42,7 @@ export default defineComponent({
     }
   },
 
-  emits: ['dragstart', 'draggable', 'update-board'],
+  emits: ['dragstart', 'draggable', 'update-board', 'board-move'],
 
   setup(props, ctx) {
     const category = props.column.category

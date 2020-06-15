@@ -10,7 +10,11 @@
         <div class="columns is-centered">
           <!-- column class here makes column background expand past name to fill available space except padding -->
           <!-- v-if here initially renders a blank green board -->
-          <TaskBoard :columns="columnsComputed" @update-board="onUpdateBoard"/>
+          <TaskBoard
+            :columns="columnsComputed"
+            @update-board="onUpdateBoard"
+            @board-move="onBoardMove"
+          />
         </div>
       </div>
     </div>
@@ -65,6 +69,7 @@ export default defineComponent({
       const tasksComputed = computed(() => taskRef.value)
       const board = await useBoard(columns, boardStore, tasksComputed.value, '_id', props.activeBoard)
       const onUpdateBoard = board.onUpdateBoard
+      const onBoardMove = board.onBoardMove
       const columnsComputed = board.columns
     //#endregion
 
@@ -96,7 +101,8 @@ export default defineComponent({
 
     return {
       columnsComputed,
-      onUpdateBoard
+      onUpdateBoard,
+      onBoardMove
     }
   }
 })

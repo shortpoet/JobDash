@@ -93,7 +93,7 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
     // const data = await this._fetchRecords('http://localhost:3000/contact/contacts')
 
     // console.log('fetch records at board store')
-    console.log(data)
+    // console.log(data)
     this.addRecords(data, ID_SYMBOL)
     this.state.records.loaded = true
   }

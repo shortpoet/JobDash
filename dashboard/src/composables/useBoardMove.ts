@@ -26,9 +26,9 @@ export default function useBoardMove(boardStore: BoardStore, ctx) {
   const moveItem = (e: DragEvent, toColumnCategory: string, toItemOrder: number) => {
     // console.log('move item')
     const fromItemItemId = e.dataTransfer.getData('from-item-itemId')
-    console.log(toColumnCategory)
+    // console.log(toColumnCategory)
     const toItems = boardStore.getRecordsByCategory(toColumnCategory)
-    console.log(toItems)
+    // console.log(toItems)
     const toColumnOrder = toItems[0].columnOrder
 
     // when dropping on empty column to item order will be undefined because there is no to item affected by event
@@ -44,7 +44,7 @@ export default function useBoardMove(boardStore: BoardStore, ctx) {
     // TODO
     // emit update-items to update category
 
-    ctx.emit('update-board')
+    ctx.emit('board-move')
   }
   const pickupColumn = (e: DragEvent, fromColumn: IBoardColumn) => {
     // console.log('pickup columns')
@@ -74,7 +74,7 @@ export default function useBoardMove(boardStore: BoardStore, ctx) {
       boardStore.editRecord(oldItem, newItem)
     })
 
-    ctx.emit('update-board')
+    ctx.emit('board-move')
   }
 
 

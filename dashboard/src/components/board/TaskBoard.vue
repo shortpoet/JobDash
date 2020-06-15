@@ -12,10 +12,12 @@
     @dragenter.prevent
     @drop="moveItemOrColumn($event, column.category)"
     @update-board="onUpdateBoard"
+    @board-move="onBoardMove"
   >
     <BoardColumn
       :column="column" 
       @update-board="onUpdateBoard"
+      @board-move="onBoardMove"
     />  
   </div>
   <div/>
@@ -43,7 +45,7 @@ export default defineComponent({
     }
   },
 
-  emits: ['dragstart', 'draggable', 'update-board'],
+  emits: ['dragstart', 'draggable', 'update-board', 'board-move'],
 
   async setup(props, ctx) {
 
