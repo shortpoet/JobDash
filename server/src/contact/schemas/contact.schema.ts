@@ -4,6 +4,7 @@ import moment from 'moment';
 
 export const ContactSchema = new mongoose.Schema({
   _id: String,
+  itemId: String,
   name: String,
   company: String,
   email: String,

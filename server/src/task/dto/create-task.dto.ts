@@ -4,6 +4,7 @@ import { Contact } from "src/contact/interfaces/contact.interface";
 
 export class CreateTaskDTO {
   readonly _id: string;
+  readonly itemId: string;
   readonly name: string;
   readonly description: string;
   readonly category: string;

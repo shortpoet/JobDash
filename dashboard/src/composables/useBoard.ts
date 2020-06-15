@@ -39,33 +39,6 @@ const initItem = (item: any, idSymbol: string, columnOrder: number, itemOrder: n
   }
 }
 
-// const parseBoard = ((items: IBoardItem[]): IBoard => {
-//   // console.log('begin parse board')
-//   const board = <IBoard>{
-//     name: 'test board',
-//     id: '1',
-//     columns: {} as Record<string, IBoardColumn>
-//   }
-//   items.forEach((item: IBoardItem, i) => {
-//     const itemRecord: Record<number, IBoardItem> = {} as Record<number, IBoardItem>
-//     itemRecord[item.itemId] = <IBoardItem>item
-//     if (item.category in board.columns) {
-//       board.columns[item.category].items[item.itemId] = item
-//     } else {
-//       const column: Record<string, IBoardColumn> = {} as Record<string, IBoardColumn>
-//       column[item.category] = <IBoardColumn>{
-//         category: item.category,
-//         columnOrder: item.columnOrder,
-//         items: {} as Record<number, IBoardItem>
-//       }
-//       column[item.category].items[item.itemId] = item
-//       Object.assign(board['columns'], column)
-//     }
-//   })
-//   // console.log('end parse board')
-//   // console.log(board)
-//   return board
-// })
 const parseBoard = ((items: IBoardItem[]): IBoard => {
   // console.log('begin parse board')
   const board = <IBoard>{
@@ -92,22 +65,6 @@ const parseBoard = ((items: IBoardItem[]): IBoard => {
   return board
 })
 
-// const orderItems = (itemMap: Record<string, IBoardItem>): IBoardItem[] => {
-//   // console.log('begin order items')
-//   const items: IBoardItem[] = []
-//   Object.entries(itemMap).forEach((entry, index) => {
-//     if (entry[1].itemOrder == index) {
-//       items.push(<IBoardItem>{
-//         itemId: entry[1].itemId,
-//         category: entry[1].category,      
-//         itemOrder: entry[1].itemOrder,
-//         columnOrder: entry[1].columnOrder,
-//       })
-//     }
-//   })
-//   // console.log(items)
-//   return items
-// }
 
 const columnMapToArray = (columnMap: Record<string, IBoardColumn>): IBoardColumn[] => {
   // console.log('begin column map to array');
@@ -155,16 +112,10 @@ const loadBoard = (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoa
 
   columns.value = columnMapToArray(flattenSort(columnMap.value, 'columnOrder'))
 
-  // columns.value = columns.value.forEach(column => {
-  //   const itemMap = {}
-  //   itemMap[column.category] = flattenSort(column.items, 'itemOrder')
-  //   const column: IBoardColumn =  {
-  //     category: column.category,
-  //     columnOrder: column.columnOrder,
-  //     items: flattenSort(column.items, 'itemOrder')
-  //   }
-  // })
-  // console.log(columns.value)
+  columns.value.forEach(column => {
+    column.items = column.items.sort((a, b) => a.itemOrder - b.itemOrder)
+  })
+  console.log(columns.value)
   return columns.value
 }
 
@@ -252,8 +203,11 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
 
     if (storedBoardItems.length != items.length) {
       console.log('new items length from on update board')
+      console.log(items)
       const itemIds = items.map(item => item.itemId)
       const storedBoardItemIds = storedBoardItems.map(item => item.itemId)
+      console.log(itemIds)
+      console.log(storedBoardItemIds)
       const newIds = itemIds.filter(id => !storedBoardItemIds.includes(id))
       console.log(newIds)
       const newItems = []
@@ -280,3 +234,46 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     onUpdateBoard
   }
 }
+// const parseBoard = ((items: IBoardItem[]): IBoard => {
+//   // console.log('begin parse board')
+//   const board = <IBoard>{
+//     name: 'test board',
+//     id: '1',
+//     columns: {} as Record<string, IBoardColumn>
+//   }
+//   items.forEach((item: IBoardItem, i) => {
+//     const itemRecord: Record<number, IBoardItem> = {} as Record<number, IBoardItem>
+//     itemRecord[item.itemId] = <IBoardItem>item
+//     if (item.category in board.columns) {
+//       board.columns[item.category].items[item.itemId] = item
+//     } else {
+//       const column: Record<string, IBoardColumn> = {} as Record<string, IBoardColumn>
+//       column[item.category] = <IBoardColumn>{
+//         category: item.category,
+//         columnOrder: item.columnOrder,
+//         items: {} as Record<number, IBoardItem>
+//       }
+//       column[item.category].items[item.itemId] = item
+//       Object.assign(board['columns'], column)
+//     }
+//   })
+//   // console.log('end parse board')
+//   // console.log(board)
+//   return board
+// })
+// const orderItems = (itemMap: Record<string, IBoardItem>): IBoardItem[] => {
+//   // console.log('begin order items')
+//   const items: IBoardItem[] = []
+//   Object.entries(itemMap).forEach((entry, index) => {
+//     if (entry[1].itemOrder == index) {
+//       items.push(<IBoardItem>{
+//         itemId: entry[1].itemId,
+//         category: entry[1].category,      
+//         itemOrder: entry[1].itemOrder,
+//         columnOrder: entry[1].columnOrder,
+//       })
+//     }
+//   })
+//   // console.log(items)
+//   return items
+// }

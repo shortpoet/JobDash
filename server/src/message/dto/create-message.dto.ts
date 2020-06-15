@@ -4,7 +4,8 @@
 import { Contact } from "src/contact/interfaces/contact.interface"
 
 export class CreateMessageDTO {
-  readonly _id: string
+  readonly _id: string;
+  readonly itemId: string;
   readonly subject: string
   readonly body: string
   readonly category: string

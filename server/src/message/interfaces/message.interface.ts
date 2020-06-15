@@ -3,7 +3,8 @@ import { Document } from 'mongoose';
 import { Contact } from './../../../src/contact/interfaces/contact.interface';
 
 export interface Message extends Document {
-    readonly _id: string
+    readonly _id: string;
+    readonly itemId: string;
     readonly subject: string
     readonly body: string
     readonly category: string

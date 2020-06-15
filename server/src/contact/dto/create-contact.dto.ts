@@ -2,7 +2,8 @@
 // ./src/contacts/dto/create-contact.dto.ts
 
 export class CreateContactDTO {
-  readonly _id: number;
+  readonly _id: string;
+  readonly itemId: string;
   readonly name: string;
   readonly company: string;
   readonly email: string;

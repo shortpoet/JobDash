@@ -8,6 +8,7 @@ import { ContactSchema } from 'src/contact/schemas/contact.schema';
 
 export const TaskSchema = new mongoose.Schema({
   _id: String,
+  itemId: String,
   name: String,
   description: String,
   category: String,
