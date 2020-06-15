@@ -89,7 +89,9 @@ export default defineComponent({
           console.log(`Watch props.tasks.lenth function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
           onUpdateBoard()
         },
-      {immediate: true}
+      // not sure if i want this called immediately
+      // makes update function run on load
+      // {immediate: true}
     )
 
     return {

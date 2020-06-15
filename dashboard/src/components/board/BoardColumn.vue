@@ -11,7 +11,7 @@
       @drag.stop="moveItemOrColumn($event, item.category, item.itemOrder)"
       @update-board="onUpdateBoard"
     >
-      <BoardItem :item="item" :item-name="category + ' - <name> id'" :item-id="item.itemId"/>
+      <BoardItem :item="item" :item-name="category + ' - order: ' + item.itemOrder + ' - id'" :item-id="item.itemId"/>
     </div>
   </div>
   <div />
