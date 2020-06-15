@@ -65,7 +65,7 @@ export default defineComponent({
       const tasksComputed = computed(() => taskRef.value)
       const board = await useBoard(columns, boardStore, tasksComputed.value, '_id', props.activeBoard)
       const onUpdateBoard = board.onUpdateBoard
-      const columnsComputed = board.columnsComputed
+      const columnsComputed = board.columns
     //#endregion
 
     // this is incorrect
