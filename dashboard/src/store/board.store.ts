@@ -54,9 +54,9 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
 
   public getRecordsByCategory(category: string): IBoardItem[] {
     console.log('get by category')
-    console.log(category)
-    console.log(this.state.records)
-    console.log(this.state.records.all)
+    // console.log(category)
+    // console.log(this.state.records)
+    // console.log(this.state.records.all)
     return Object.entries(this.state.records.all).reduce<IBoardItem[]>((accumulator, record) => {
       if (record[1].category == category) {
         return accumulator.concat(record[1])  

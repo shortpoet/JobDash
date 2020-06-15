@@ -65,7 +65,6 @@ const parseBoard = ((items: IBoardItem[]): IBoard => {
   return board
 })
 
-
 const columnMapToArray = (columnMap: Record<string, IBoardColumn>): IBoardColumn[] => {
   // console.log('begin column map to array');
   const columns: IBoardColumn[] = []
@@ -91,6 +90,7 @@ const saveBoardToStorage = (storedBoard: IBoard, boardId: string): void => {
   const storage = useStorage()
   storage.set(`board-${boardId}`, JSON.stringify(storedBoard))
 }
+
 const getBoardFromStorage = (boardId: string): IBoard => {
   const storage = useStorage()
   return JSON.parse(storage.get(`board-${boardId}`))
@@ -102,25 +102,15 @@ const loadBoard = (boardStore: BoardStore, storedBoard: IBoard, boardItems: IBoa
   saveBoardToStorage(storedBoard, storedBoard.id)
   const columnMap = ref<Record<string, IBoardColumn>>()
   columnMap.value = storedBoard.columns
-  
-
-  // Object.entries(columnMap.value).forEach(entry => {
-  //   entry[1].items = itemMapToArray(entry[1].items)
-  // })
-
   const columns = ref<IBoardColumn[]>()
-
   columns.value = columnMapToArray(flattenSort(columnMap.value, 'columnOrder'))
-
   columns.value.forEach(column => {
     column.items = column.items.sort((a, b) => a.itemOrder - b.itemOrder)
   })
-  console.log(columns.value)
   return columns.value
 }
 
-
-const reLoadBoard = (boardStore: BoardStore, storedBoard: IBoard) => {
+const reloadBoard = (boardStore: BoardStore, storedBoard: IBoard) => {
   // console.log('begin reload board')
   const columnMap = ref<Record<string, IBoardColumn>>()
   columnMap.value = storedBoard.columns
@@ -147,7 +137,7 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     (value: string, previous: string) => {
       if(previous) {
         if (value.length != previous.length) {
-          console.log('task length change from use board')
+          console.log('allItems.value change from use board')
         }
       }
     },
@@ -158,49 +148,32 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     console.log(`active board is ${activeBoard}`)
     storedBoard.value = getBoardFromStorage(activeBoard)
     const storedBoardItems = []
+    // flatten column object into item array
     Object.entries(storedBoard.value.columns).forEach(entry => Object.entries(entry[1].items).forEach(_entry => storedBoardItems.push( _entry[1])))
-
-
-
     // must load items into store | or | set loaded state to true
     const storedItems = await loadRecords(boardStore, BOARD, storedBoardItems)
     // must load items into column.value for return of useBoard
-    columns.value = reLoadBoard(boardStore, storedBoard.value)
-  
+    columns.value = reloadBoard(boardStore, storedBoard.value)
   // if no active board
+  // initItems is called from initial items prop
   } else {
     const boardItems: IBoardItem[] = initItems(items, idSymbol)
-  
     const storedItems = await loadRecords(boardStore, BOARD, boardItems)
     columns.value = loadBoard(boardStore, storedBoard.value, storedItems)
   }
 
-  // const boardItems: IBoardItem[] = initItems(items, idSymbol)
-
-  // const storedItems = await loadRecords(boardStore, BOARD, boardItems)
-  // columns.value = loadBoard(boardStore, storedBoard.value, storedItems)
-
-
   const columnsComputed = computed(() => {
-    // console.log('$$$ computing columns');
-    // console.log(columns.value.map(item => item.category))
-    // console.log(columns.value.map(item => item.columnOrder))
-    // console.log(columns.value.map(item => Object.entries(item.items).map(entry => entry[1].itemId)))
     return columns.value
   })
 
-  // const computedBoard = computed(() => parseBoard(storedItems))
-  // const columns = computed(() => orderColumns(computedBoard.value.columns))
-
   const onUpdateBoard = async () => {
     console.log('use board - onUpdateBoard')
-
     storedBoard.value = getBoardFromStorage(activeBoard)
     const storedBoardItems = []
+    // flatten column object into item array
     Object.entries(storedBoard.value.columns).forEach(entry => Object.entries(entry[1].items).forEach(_entry => storedBoardItems.push( _entry[1])))
     console.log(items.length)
     console.log(storedBoardItems.length)
-
     if (storedBoardItems.length != items.length) {
       console.log('new items length from on update board')
       console.log(items)
@@ -208,24 +181,46 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
       const storedBoardItemIds = storedBoardItems.map(item => item.itemId)
       console.log(itemIds)
       console.log(storedBoardItemIds)
-      const newIds = itemIds.filter(id => !storedBoardItemIds.includes(id))
-      console.log(newIds)
-      const newItems = []
-      items.forEach(item => {
-      })
-      console.log(newItems)
+      if (itemIds.length > storedBoardItemIds.length) {
+        console.log('new item')
+        const newIds = itemIds.filter(id => !storedBoardItemIds.includes(id))
+        console.log(newIds)
+        const newItems = items.filter(item => newIds.includes(item.itemId))
+        console.log(newItems)
+        const boardItems: IBoardItem[] = [] as IBoardItem[]
+        const columnOrder = (item: IBoardable): number => boardStore.getRecordsByCategory(item.category)[0].columnOrder
+        const itemOrder = (item: IBoardable, index: number): number => boardStore.getRecordsByCategory(item.category).length + index
+        const newInitItems: IBoardItem[] = newItems.map((item, index) => initItem(item, idSymbol, columnOrder(item), itemOrder(item, index)))
+        console.log(newInitItems)
+        boardStore.addRecords(newInitItems, idSymbol)
+        const storedItems = await loadRecords(boardStore, BOARD, newInitItems)
+        // await resetColumns()
+        // TODO make new board
+        // saveBoardToStorage(storedBoard.value, storedBoard.value.id)
+        columns.value = loadBoard(boardStore, storedBoard.value, storedItems)
+      } else {
+        console.log('one less item')
+        const newIds = storedBoardItemIds.filter(id => !itemIds.includes(id))
+        console.log(newIds)
+        const itemsToDelete = storedBoardItems.filter(item => newIds.includes(item.itemId))
+        console.log(itemsToDelete)
+        itemsToDelete.forEach(item => {
+          console.log(item)
+          // boardStore.deleteRecord(item)
+          // when it gets deleted , the array lenghts are equal
+          // then load gets called and the item is undefined
+        })
+        // columns.value = reloadBoard(boardStore, storedBoard.value)
+      }
     }
-
-    // const newItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
-    // // console.log(newItems)
-    // // console.log(newItems.map(item => item.itemId));
-    // // console.log(newItems.map(item => item.itemOrder));
-    // // console.log(newItems.map(item => item.category));
-    // // console.log(newItems.map(item => item.columnOrder));
-    // // need to wait for columns to be zeroed out so vue reactivity picks up on change in length of array
-    // await resetColumns()
-    // saveBoardToStorage(storedBoard.value, storedBoard.value.id)
-    // columns.value = loadBoard(boardStore, storedBoard.value, newItems)
+    // store loaded needs to be set to true
+    const newItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
+    // console.log(newItems.map(item => item.columnOrder));
+    // need to wait for columns to be zeroed out so vue reactivity picks up on change in length of array
+    // because only updating the order
+    await resetColumns()
+    saveBoardToStorage(storedBoard.value, storedBoard.value.id)
+    columns.value = loadBoard(boardStore, storedBoard.value, newItems)
   }
 
   return {
@@ -234,46 +229,3 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     onUpdateBoard
   }
 }
-// const parseBoard = ((items: IBoardItem[]): IBoard => {
-//   // console.log('begin parse board')
-//   const board = <IBoard>{
-//     name: 'test board',
-//     id: '1',
-//     columns: {} as Record<string, IBoardColumn>
-//   }
-//   items.forEach((item: IBoardItem, i) => {
-//     const itemRecord: Record<number, IBoardItem> = {} as Record<number, IBoardItem>
-//     itemRecord[item.itemId] = <IBoardItem>item
-//     if (item.category in board.columns) {
-//       board.columns[item.category].items[item.itemId] = item
-//     } else {
-//       const column: Record<string, IBoardColumn> = {} as Record<string, IBoardColumn>
-//       column[item.category] = <IBoardColumn>{
-//         category: item.category,
-//         columnOrder: item.columnOrder,
-//         items: {} as Record<number, IBoardItem>
-//       }
-//       column[item.category].items[item.itemId] = item
-//       Object.assign(board['columns'], column)
-//     }
-//   })
-//   // console.log('end parse board')
-//   // console.log(board)
-//   return board
-// })
-// const orderItems = (itemMap: Record<string, IBoardItem>): IBoardItem[] => {
-//   // console.log('begin order items')
-//   const items: IBoardItem[] = []
-//   Object.entries(itemMap).forEach((entry, index) => {
-//     if (entry[1].itemOrder == index) {
-//       items.push(<IBoardItem>{
-//         itemId: entry[1].itemId,
-//         category: entry[1].category,      
-//         itemOrder: entry[1].itemOrder,
-//         columnOrder: entry[1].columnOrder,
-//       })
-//     }
-//   })
-//   // console.log(items)
-//   return items
-// }
