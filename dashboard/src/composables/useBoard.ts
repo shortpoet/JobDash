@@ -137,7 +137,7 @@ const BOARD = 'board'
     return columns.value
   }
   // resort and remap dictionary of <category, Column> to [Column]
-  const reloadBoardNoItems = (boardStore: BoardStore, activeBoard: IBoard) => {
+  const reloadBoardColumnsNoItems = (boardStore: BoardStore, activeBoard: IBoard): IBoardColumn[] => {
     // console.log('begin reload board')
     const columnMap = ref<Record<string, IBoardColumn>>()
     columnMap.value = activeBoard.columns
@@ -342,7 +342,7 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
         const itemsToLoad = storedItems.concat(newInitItems)
         await resetColumns()
         saveBoardToStorage(activeBoard, activeBoard.id)
-        columns.value = reloadBoard(boardStore, activeBoard, newInitItems)
+        columns.value = reloadBoard(boardStore, activeBoard, itemsToLoad)
       }
       if (boardHasLessCategory) {
         colorLog('board has LESS category', BOOLCOLOR, BOOLBACK)
@@ -361,8 +361,10 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
           console.log(item.itemId)
           boardStore.deleteRecord(item)
         })
+        console.log(storedItems)
+        const newStoredItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
         saveBoardToStorage(activeBoard, activeBoard.id)
-        // columns.value = reloadBoard(boardStore, activeBoard, storedItems)
+        columns.value = reloadBoard(boardStore, activeBoard, newStoredItems)
         console.log(columns.value)
         // maybe try this
         // const newItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
@@ -385,7 +387,7 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
       saveBoardToStorage(activeBoard, activeBoard.id)
 
       // must load items into column.value for return of useBoard
-      columns.value = reloadBoardNoItems(boardStore, activeBoard)
+      columns.value = reloadBoardColumnsNoItems(boardStore, activeBoard)
     }
   } 
 
