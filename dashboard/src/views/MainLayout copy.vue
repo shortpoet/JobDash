@@ -1,16 +1,15 @@
 <template>
 
   <div class="main-layout" v-if="targetsLoadedRef">
-    <BaseMinimize
-      :class-prop="'columns'"
-    >
-
+    <div class="ui-collapse" @click="showUIFull = !showUIFull">
+      <BaseIcon class="ui-collapse-icon" :name="'minus'" :color="'white'"/>
+    </div>
+    <div class="columns ui-full" v-show="showUIFull">
       <div class="column is-two-fifths">
         <CreateLayout
           @update-contacts="onUpdateContacts"    
           @update-tasks="onUpdateTasks"
         />
-
         <BaseInput type="text" name="Board #" v-model="activeBoard" />
         <!-- adding is-grouped modifier does some crazy stuff apparently negating is-pulled-right -->
         <div class="field">          
@@ -22,27 +21,21 @@
           </p>
         </div>
         <!-- <TabsLayout @tab-change="tabChange"/> -->
-
       </div>
-
       <div class="column is-one-half">
         <TableLayout
           :contacts="allContacts"
           @update-contacts="onUpdateContacts"
           :tasks="allTasks"
           @update-tasks="onUpdateTasks"
-        />
+      />
       </div>
-
-      </BaseMinimize>
-
+    </div>
     <TaskBoardLayout
       :tasks="allTasks"
       :active-board="activeBoard"
     />
   </div>
-
-
 
   <div />
 </template>
@@ -54,7 +47,6 @@ import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
 import TaskBoardLayout from './TaskBoardLayout.vue'
 import BaseIcon from '../components/common/BaseIcon.vue'
-import BaseMinimize from '../components/common/BaseMinimize.vue'
 import BaseInput from '../components/common/BaseInput.vue'
 
 import { useRouter } from 'vue-router'
@@ -76,7 +68,6 @@ export default defineComponent({
 
   components: {
     BaseIcon,
-    BaseMinimize,
     BaseInput,
     CreateLayout,
     TableLayout,
