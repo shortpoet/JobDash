@@ -118,7 +118,7 @@ export class Store<T> extends BaseStore<T> {
 export abstract class StoreAxios<T> extends Store<T> implements IStoreAxios<T> {
   async _fetchRecords(url: string): Promise<T[]> {
     // get is generic so can specify type
-    const response = await axios.get<T[]>(url)
+    const response = await axios.get<T[]>(url, {headers: {cache: 'no-store'}})
     return response.data
   }
 }

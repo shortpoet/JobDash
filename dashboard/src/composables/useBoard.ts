@@ -359,6 +359,17 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
         saveBoardToStorage(activeBoard, activeBoard.id)
         console.log(columns.value)
       }
+      // if (boardHasLessCategory) {
+      //   colorLog('board has new category', BOOLCOLOR, BOOLBACK)
+      //   const newInitItems: IBoardItem[] = initNewItems(boardStore, newItemsToAdd, idSymbol, activeBoard)
+      //   initColumns(newInitItems, activeBoard)
+      //   const storedItems = await loadRecords(boardStore, BOARD, newInitItems)
+      //   columns.value = loadBoard(boardStore, activeBoard, storedItems)
+      //   await resetColumns()
+      //   saveBoardToStorage(activeBoard, activeBoard.id)
+      //   console.log(columns.value)
+      // }
+      // consider switching to else if
       if (boardHasNewItem && !boardHasNewCategory) {
         colorLog('board has NEW item', BOOLCOLOR, BOOLBACK)
         const newInitItems = initNewItems(boardStore, newItemsToAdd, idSymbol, activeBoard)
