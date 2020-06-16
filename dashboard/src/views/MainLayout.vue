@@ -29,7 +29,7 @@
           @update-contacts="onUpdateContacts"
           :tasks="allTasks"
           @update-tasks="onUpdateTasks"
-      />
+        />
       </div>
     </div>
     <TaskBoardLayout

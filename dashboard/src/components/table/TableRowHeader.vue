@@ -3,12 +3,12 @@
     <TableCellHeaderData
       v-for="prop in dataProperties" 
       :key="prop"
-      :property-name="prop"
+      :property-name="prop.propertyName"
     />
     <TableCellHeaderControl
       v-for="control in controlTypes" 
       :key="control"
-      :control-type="control"
+      :control-name="control.controlName"
     />
   </tr>
 </template>

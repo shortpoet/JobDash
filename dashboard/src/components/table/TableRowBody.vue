@@ -6,7 +6,8 @@
     />
     <BaseTableCellControl
       v-for="item in items"
-      :key="item.id">
+      :key="item.id"
+      @handle-click="handleClick(item)"
     />
 
   <tr/>
@@ -42,6 +43,7 @@ export default defineComponent({
   async setup(props, ctx){
     
     return {
+      handleClick: () => {}
     }
 
   }

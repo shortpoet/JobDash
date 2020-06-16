@@ -13,6 +13,13 @@
           @update-tasks="onUpdateTasks"
         />
       </BaseBox>
+      <BaseBox>
+        <BaseTable 
+          :items="tasks"
+          :id-symbol="'_id'"
+          :item-type="'task'"
+        />
+      </BaseBox>
     </div>
 
     <!-- 
@@ -39,6 +46,7 @@
 import { defineComponent, computed, ref } from 'vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
+import BaseTable from './../components/table/BaseTable.vue'
 import ContactTable from './../components/contacts/ContactTable.vue'
 import TaskTable from './../components/task/TaskTable.vue'
 import ContactCard from './../components/contacts/ContactCard.vue'
@@ -64,6 +72,7 @@ export default defineComponent({
   },
   components: {
     BaseBox,
+    BaseTable,
     ContactTable,
     TaskTable,
     ContactCard
