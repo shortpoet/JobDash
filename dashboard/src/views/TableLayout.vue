@@ -96,9 +96,12 @@ export default defineComponent({
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
     
-    const minimized = ref('false')
+    const minimized = ref(false)
     const handleMinimize = (e) => {
       console.log(e)
+      minimized.value = !e.showComponent
+      console.log(minimized.value)
+
     }
 
     //#region contactCardModal
