@@ -152,8 +152,11 @@ const BOARD = 'board'
 //#endregion
 
 const getBoardState = (items: IBoardable[], activeBoardId: string) => {
+  console.log('get board state')
   const hasActiveBoard: boolean = !!getBoardFromStorage(activeBoardId)
+  console.log(hasActiveBoard)
   const activeBoard = getBoardFromStorage(activeBoardId)
+  console.log(activeBoard)
   let storedBoardItems = []
   let storedBoardItemIds = []
   let itemIds = []
@@ -167,8 +170,10 @@ const getBoardState = (items: IBoardable[], activeBoardId: string) => {
   let categories
   if(hasActiveBoard) {
     // flatten column object into item array
+    console.log(activeBoard.columns)
     storedBoardItems = columnMapToItemArray(activeBoard.columns)
     // get array of item ids from all current items in props
+    console.log(items)
     itemIds = items.map(item => item.itemId)
     // get array of item ids from all current items in storage (localStorage - may want to build other persisitence layers)
     storedBoardItemIds = storedBoardItems.map(item => item.itemId)
@@ -179,6 +184,7 @@ const getBoardState = (items: IBoardable[], activeBoardId: string) => {
     boardHasNewCategory = itemIds.map(item => item.category).length > storedBoardItems.map(item => item.category).length
     boardHasLessCategory = storedBoardItems.map(item => item.category).length > itemIds.map(item => item.category).length
     categories = [...new Set(items.map(item => item.category))]
+    console.log(categories)
     boardHasDiff = boardHasDiffLength || boardHasDiffCategory
   }
   return {
@@ -259,36 +265,48 @@ const _diffBoard = async (columns: Ref<IBoardColumn[]>, boardStore: BoardStore, 
 }
 const diffBoard = async (columns: Ref<IBoardColumn[]>, boardStore: BoardStore, items: IBoardable[], activeBoardId: string, idSymbol: string, storedBoard: IBoard) => {
 
-  const { hasActiveBoard, activeBoard, storedBoardItems, storedBoardItemIds, itemIds, boardHasDiff, boardHasNewItem, boardHasLessItem, boardHasNewCategory, boardHasLessCategory, categories } = getBoardState(items, activeBoardId)
+  // getBoardState(items, activeBoardId)
+  const { hasActiveBoard } = getBoardState(items, activeBoardId)
+  
+  let newIds = []
+  let newItemsToAdd = []
+  let allNewCategories = []
+  let categoriesToAdd = []
+  let categoriesToDelete = []
+  let surplusIds = []
+  let itemsToDelete = []
+  
+  if (hasActiveBoard) {
+    const { activeBoard, storedBoardItems, storedBoardItemIds, itemIds, boardHasDiff, boardHasNewItem, boardHasLessItem, boardHasNewCategory, boardHasLessCategory, categories } = getBoardState(items, activeBoardId)
 
-  console.log('diff board')
-
-  // get new items from diffing
-  const newIds = itemIds.filter(id => !storedBoardItemIds.includes(id))
-  // console.log(newIds)
-  const newItemsToAdd = items.filter(item => newIds.includes(item.itemId))
-  // console.log(newItemsToAdd)
-  const allNewCategories = [...new Set(newItemsToAdd.map(item => item.category))]
-  // console.log(allNewCategories)
-  const categoriesToAdd = allNewCategories.filter(category => !categories.includes(category))
-  // console.log(categoriesToAdd)
-  const categoriesToDelete = categories.filter(category => !allNewCategories.includes(category))
-  // console.log(categoriesToAdd)
-
-  // get new items from diffing the inverse list
-  const surplusIds = storedBoardItemIds.filter(id => !itemIds.includes(id))
-  // console.log(extraIds)
-  const itemsToDelete = storedBoardItems.filter(item => surplusIds.includes(item.itemId))
-  // console.log(itemsToDelete)
-
-  return {
-    newIds,
-    newItemsToAdd,
-    surplusIds,
-    itemsToDelete,
-    categoriesToAdd,
-    categoriesToDelete
+    console.log('diff board')
+    // get new items from diffing
+    newIds = itemIds.filter(id => !storedBoardItemIds.includes(id))
+    // console.log(newIds)
+    newItemsToAdd = items.filter(item => newIds.includes(item.itemId))
+    // console.log(newItemsToAdd)
+    allNewCategories = [...new Set(newItemsToAdd.map(item => item.category))]
+    // console.log(allNewCategories)
+    categoriesToAdd = allNewCategories.filter(category => !categories.includes(category))
+    // console.log(categoriesToAdd)
+    categoriesToDelete = categories.filter(category => !allNewCategories.includes(category))
+    // console.log(categoriesToAdd)
+  
+    // get new items from diffing the inverse list
+    surplusIds = storedBoardItemIds.filter(id => !itemIds.includes(id))
+    // console.log(extraIds)
+    itemsToDelete = storedBoardItems.filter(item => surplusIds.includes(item.itemId))
+    // console.log(itemsToDelete)
+    return {
+      newIds,
+      newItemsToAdd,
+      surplusIds,
+      itemsToDelete,
+      categoriesToAdd,
+      categoriesToDelete
+    }
   }
+
 }
 
 const initNewItems = (boardStore: BoardStore, newItems: IBoardable[], idSymbol: string, activeBoard: IBoard): IBoardItem[] => {
@@ -312,21 +330,23 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     const storedBoard = ref<IBoard>()
   //#endregion
   
-  const { hasActiveBoard, activeBoard, storedBoardItems, storedBoardItemIds, itemIds, boardHasDiff, boardHasNewItem, boardHasLessItem, boardHasNewCategory, boardHasLessCategory, categories } = getBoardState(items, activeBoardId)
-  const { newIds, newItemsToAdd, surplusIds, itemsToDelete, categoriesToAdd, categoriesToDelete } = await diffBoard(columns, boardStore, items, activeBoardId, idSymbol, activeBoard)
+  const { hasActiveBoard } = getBoardState(items, activeBoardId)
   const resetColumns = async () => {
     console.log('reset columns')
     columns.value = []
     return new Promise(resolve => resolve(true))
   }
   //#region experimental
-    // option to try with computed to see if that affect reactivity
-    const columnsComputed = computed(() => {
-      return columns.value
-    })
+  // option to try with computed to see if that affect reactivity
+  const columnsComputed = computed(() => {
+    return columns.value
+  })
   //#endregion
-  
+  let activeBoard
   if (hasActiveBoard) {
+    activeBoard = getBoardState(items, activeBoardId).activeBoard
+    const { hasActiveBoard, storedBoardItems, storedBoardItemIds, itemIds, boardHasDiff, boardHasNewItem, boardHasLessItem, boardHasNewCategory, boardHasLessCategory, categories } = getBoardState(items, activeBoardId)
+    const { newIds, newItemsToAdd, surplusIds, itemsToDelete, categoriesToAdd, categoriesToDelete } = await diffBoard(columns, boardStore, items, activeBoardId, idSymbol, activeBoard)
     // if active board exists in storage
     colorLog(`has active board is ${activeBoardId}`, BOOLCOLOR, BOOLBACK)
     const boardItems = columnMapToItemArray(activeBoard.columns)
@@ -392,6 +412,8 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
 
   const onBoardMove = async () => {
     console.log('on board move')
+    activeBoard = getBoardState(items, activeBoardId).activeBoard
+
     // called when order is modified
     // store loaded needs to be set to true which happens in updateRecords => addRecords
     // which is only reason to have async
