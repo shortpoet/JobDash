@@ -10,7 +10,6 @@
           @update-contacts="onUpdateContacts"    
           @update-tasks="onUpdateTasks"
         />
-        <BoardControls @active-board="handleActiveBoardChange"/>
         <!-- <TabsLayout @tab-change="tabChange"/> -->
       </div>
       <div class="column is-one-half">
@@ -21,7 +20,9 @@
           @update-tasks="onUpdateTasks"
         />
       </div>
-      </BaseMinimize>
+    </BaseMinimize>
+
+
     <TaskBoardLayout
       :tasks="allTasks"
       :active-board="activeBoard"
@@ -39,7 +40,6 @@ import TaskBoardLayout from './TaskBoardLayout.vue'
 import BaseIcon from '../components/common/BaseIcon.vue'
 import BaseMinimize from '../components/common/BaseMinimize.vue'
 import BaseInput from '../components/common/BaseInput.vue'
-import BoardControls from '../components/board/BoardControls.vue'
 
 import { useRouter } from 'vue-router'
 import { useStore } from '../store'
@@ -64,7 +64,6 @@ export default defineComponent({
     BaseInput,
     CreateLayout,
     TableLayout,
-    BoardControls,
     TaskBoardLayout
   },
   async setup(props, ctx) {

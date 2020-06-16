@@ -1,14 +1,14 @@
 <template>
   <div class="board-controls-container">
     <BaseBox class="board-controls">
-      <BaseInput type="text" name="Board #" @input="handleInput" v-model="activeBoard" />
+      <BaseInput type="text" name="Board #" @input="handleInput" v-model="activeBoard" small/>
       <!-- adding is-grouped modifier does some crazy stuff apparently negating is-pulled-right -->
-      <div class="field">          
-        <p class="active-board-number">Active board: {{ activeBoard }}</p>
-        <p class="control">
+      <div class="field is-small">          
+        <!-- <p class="active-board-number">Active board: {{ activeBoard }}</p> -->
+        <p class="control is-small">
           <!-- interestingly these render inverse to what one would expect at first but i guess its about how the node is always there or something same with v-if -->
-          <button class="button is-warning is-pulled-right" @click="showClear = !showClear">Show Clear</button>
-          <button v-show="showClear" class="button is-warning is-pulled-right" @click="clearStorage">Clear Board</button>      
+          <button class="button is-small is-warning is-pulled-right" @click="showClear = !showClear">Show</button>
+          <button v-show="showClear" class="button is-small is-warning is-pulled-right" @click="clearStorage">Clear</button>      
         </p>
       </div>
     </BaseBox>

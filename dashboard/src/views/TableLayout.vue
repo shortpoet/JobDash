@@ -98,10 +98,8 @@ export default defineComponent({
     
     const minimized = ref(false)
     const handleMinimize = (e) => {
-      console.log(e)
+      // could add boolean checks for component type to further modify behavior
       minimized.value = !e.showComponent
-      console.log(minimized.value)
-
     }
 
     //#region contactCardModal

@@ -3,18 +3,20 @@
     * watch for nested section.section
     * will start nesting relative padding (I think)
   -->
-  <section class="section board-section">
-
-    <div class="container the-board">
-      <div class="columns-container">
-        <div class="columns is-centered">
-          <!-- column class here makes column background expand past name to fill available space except padding -->
-          <!-- v-if here initially renders a blank green board -->
-          <TaskBoard
-            :columns="columns"
-            @update-board="onUpdateBoard"
-            @board-move="onBoardMove"
-          />
+  <section class=" board-section">
+    <div class="taskboard-container">
+      <BoardControls @active-board="handleActiveBoardChange"/>
+      <div class="container the-board">
+        <div class="columns-container">
+          <div class="columns is-centered">
+            <!-- column class here makes column background expand past name to fill available space except padding -->
+            <!-- v-if here initially renders a blank green board -->
+            <TaskBoard
+              :columns="columns"
+              @update-board="onUpdateBoard"
+              @board-move="onBoardMove"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -26,6 +28,7 @@
 import { defineComponent, ref, onMounted, watch, computed } from 'vue'
 
 import TaskBoard from './../components/board/TaskBoard.vue'
+import BoardControls from '../components/board/BoardControls.vue'
 
 import { IBoardColumn } from './../interfaces/board/board.column.interface'
 import { Task } from '../interfaces/task/task.interface'
@@ -42,7 +45,8 @@ export default defineComponent({
 
   components: {
     BoardColumn,
-    TaskBoard
+    TaskBoard,
+    BoardControls
   },
 
   props: {
