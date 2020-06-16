@@ -13,12 +13,12 @@ export class MessageController {
     @Post('/create')
     async addMessage(@Res() res, @Body() createMessageDTO: CreateMessageDTO) {
         console.log('create from controller')
-        const message = await this.messageService.addMessage(createMessageDTO);
+        const messageOut = await this.messageService.addMessage(createMessageDTO);
         console.log('return from controller')
-        console.log(message)
+        console.log(messageOut)
         return res.status(HttpStatus.OK).json({
             dtoLog: "Message has been created successfully",
-            message
+            messageOut
         })
     }
 

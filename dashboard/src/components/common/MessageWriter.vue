@@ -95,9 +95,10 @@ export default defineComponent({
     const submit = async function(e: any) {
       // console.log('submit - message writer')
       const nextId = (parseInt(messageStore.getLastId()) + 1).toString()
-      // console.log(nextId)
+      console.log(nextId)
       if (messageTouched.value == true) {
-        // console.log('message touched')
+        console.log('message touched')
+        console.log(messageEdit)
         messageEdit.value._id = nextId
         messageEdit.value.subject = subjectEdit.value 
         messageEdit.value.body = bodyEdit.value
@@ -108,7 +109,7 @@ export default defineComponent({
           true
         )
         // delete placeholder with '-1' _id
-        await messageStore.deleteRecord(
+        await messageStore.createRecord(
           props.message, 
         )
         messageTouched.value = false

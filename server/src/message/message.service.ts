@@ -21,11 +21,12 @@ export class MessageService {
   async addMessage(createMessageDTO: CreateMessageDTO): Promise<Message> {
     const newMessage = await this.messageModel(createMessageDTO);
     console.log('create from service')
-    console.log(newMessage)
-    const savedMessage = await newMessage.save();
-    console.log('return from service')
-    console.log(savedMessage)
-    return savedMessage;
+    // console.log(newMessage)
+    // const savedMessage = await newMessage.save();
+    // console.log('return from service')
+    // console.log(savedMessage)
+    // return savedMessage;
+    return newMessage.save();
   }
   // Edit message details
   async updateMessage(messageID, createMessageDTO: CreateMessageDTO): Promise<Message> {
