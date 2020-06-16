@@ -339,10 +339,10 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     return new Promise(resolve => resolve(true))
   }
   //#region experimental
-  // option to try with computed to see if that affect reactivity
-  const columnsComputed = computed(() => {
-    return columns.value
-  })
+    // option to try with computed to see if that affect reactivity
+    const columnsComputed = computed(() => {
+      return columns.value
+    })
   //#endregion
   let activeBoard
   if (hasActiveBoard) {
@@ -361,9 +361,10 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
         const newInitItems: IBoardItem[] = initNewItems(boardStore, newItemsToAdd, idSymbol, activeBoard)
         initColumns(newInitItems, activeBoard)
         const storedItems = await loadRecords(boardStore, BOARD, newInitItems)
-        columns.value = loadBoard(boardStore, activeBoard, storedItems)
+        const itemsToLoad = storedItems.concat(newInitItems)
         await resetColumns()
         saveBoardToStorage(activeBoard, activeBoard.id)
+        columns.value = loadBoard(boardStore, activeBoard, itemsToLoad)
         console.log(columns.value)
       }
       if (boardHasLessCategory) {
