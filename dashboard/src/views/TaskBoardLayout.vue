@@ -11,7 +11,7 @@
           <!-- column class here makes column background expand past name to fill available space except padding -->
           <!-- v-if here initially renders a blank green board -->
           <TaskBoard
-            :columns="columnsComputed"
+            :columns="columns"
             @update-board="onUpdateBoard"
             @board-move="onBoardMove"
           />
@@ -63,14 +63,9 @@ export default defineComponent({
     //#region board
       const boardStore: BoardStore = store.modules['boardStore']
       const columns = ref<IBoardColumn[]>()
-      const taskRef = ref(props.tasks)
-      // console.log('$$$$ task length $$$$')
-      // console.log(taskLength.value)
-      const tasksComputed = computed(() => taskRef.value)
-      const board = await useBoard(columns, boardStore, tasksComputed.value, '_id', props.activeBoard)
+      const board = await useBoard(columns, boardStore, props.tasks, '_id', props.activeBoard)
       const onUpdateBoard = board.onUpdateBoard
       const onBoardMove = board.onBoardMove
-      const columnsComputed = board.columns
     //#endregion
 
     // this is incorrect
@@ -92,7 +87,7 @@ export default defineComponent({
       () => props.tasks.length, 
       (value: number, previous:number) => {
           console.log(`Watch props.tasks.lenth function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
-          onUpdateBoard()
+          onUpdateBoard(props.tasks)
         },
       // not sure if i want this called immediately
       // makes update function run on load
@@ -100,7 +95,7 @@ export default defineComponent({
     )
 
     return {
-      columnsComputed,
+      columns,
       onUpdateBoard,
       onBoardMove
     }

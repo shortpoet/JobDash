@@ -41,7 +41,7 @@ export default defineComponent({
     const name = ref('name')
     const description = ref('description')
     const category = ref('category')
-    const contactId = ref('')
+    const contactId = ref('0')
     // const contact = ref<Contact>()
 
     const store = useStore()
@@ -93,7 +93,6 @@ export default defineComponent({
           editable: false,
           locked: true
         }
-        console.log(task)
         await taskStore.createRecord(task)
         ctx.emit('update-tasks')
       } else {
