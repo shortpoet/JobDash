@@ -11,6 +11,7 @@
   max-height: 50%;
 }
 
+.message-table-container,
 .contact-table-container,
 .task-table-container {
   height: 100%;
@@ -18,7 +19,7 @@
   // overflow-y: scroll;
 }
 
-
+.message-row
 .contact-row,
 .task-row {
   >td {

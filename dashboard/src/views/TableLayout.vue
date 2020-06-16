@@ -2,6 +2,22 @@
   <section class="section table-section">
     <div class="table-container" :style="minimized ? 'height: auto;' : ''">
 
+      <div class="table-minimize-container message-table-minimize-container">
+        <BaseMinimize
+          :class-prop="'message-table-container'"
+          :component-name="'Message Table'"
+          @minimize-change="handleMinimize"
+          
+        >
+          <BaseBox scrollable>
+            <MessageTable 
+              :messages="messages" 
+              @update-messages="onUpdateMessages"
+            />
+          </BaseBox>
+        </BaseMinimize>
+      </div>
+
       <div class="table-minimize-container contact-table-minimize-container">
         <BaseMinimize
           :class-prop="'contact-table-container'"
@@ -62,6 +78,7 @@ import BaseBox from './../components/common/BaseBox.vue'
 import ContactTable from './../components/contacts/ContactTable.vue'
 import TaskTable from './../components/task/TaskTable.vue'
 import ContactCard from './../components/contacts/ContactCard.vue'
+import MessageTable from '../components/message/MessageTable.vue'
 
 import { useModal } from '../composables/useModal'
 
@@ -80,6 +97,10 @@ export default defineComponent({
     tasks: {
       type: Array,
       required: true
+    },
+    messages: {
+      type: Array,
+      required: true
     }
   },
   components: {
@@ -87,9 +108,10 @@ export default defineComponent({
     BaseBox,
     ContactTable,
     TaskTable,
-    ContactCard
+    ContactCard,
+    MessageTable
   },
-  emits: ['update-contacts', 'update-tasks'],
+  emits: ['update-contacts', 'update-tasks', 'update-messages'],
   setup(props, ctx) {
     const contactDestination: Destination = '#delete-contact-modal'
     const taskDestination: Destination = '#delete-task-modal'
@@ -154,6 +176,9 @@ export default defineComponent({
     }
     const onUpdateTasks = () => {
       ctx.emit('update-tasks')
+    }
+    const onUpdateMessages = () => {
+      ctx.emit('update-messages')
     }
 
     return {

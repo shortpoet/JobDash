@@ -1,7 +1,6 @@
 <template>
 
   <div class="main-layout" v-if="targetsLoadedRef">
-    <MessageTable :messages="allMessages" />
     <BaseMinimize
       :class-prop="'columns'"
       :component-name="'Create and Tables'"
@@ -19,6 +18,8 @@
           @update-contacts="onUpdateContacts"
           :tasks="allTasks"
           @update-tasks="onUpdateTasks"
+          :messages="allMessages"
+          @update-messages="onUpdateMessages"
         />
       </div>
     </BaseMinimize>
@@ -38,7 +39,6 @@ import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
 import TaskBoardLayout from './TaskBoardLayout.vue'
 import BaseMinimize from '../components/common/BaseMinimize.vue'
-import MessageTable from '../components/message/MessageTable.vue'
 
 import { useRouter } from 'vue-router'
 import { useStore } from '../store'
@@ -59,7 +59,6 @@ export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    MessageTable,
     BaseMinimize,
     CreateLayout,
     TableLayout,
