@@ -5,27 +5,14 @@
       :class-prop="'columns'"
       :component-name="'Create and Tables'"
     >
-
       <div class="column is-two-fifths">
         <CreateLayout
           @update-contacts="onUpdateContacts"    
           @update-tasks="onUpdateTasks"
         />
-
-        <BaseInput type="text" name="Board #" v-model="activeBoard" />
-        <!-- adding is-grouped modifier does some crazy stuff apparently negating is-pulled-right -->
-        <div class="field">          
-          <p class="active-board-number">Active board: {{ activeBoard }}</p>
-          <p class="control">
-            <!-- interestingly these render inverse to what one would expect at first but i guess its about how the node is always there or something same with v-if -->
-            <button class="button is-warning is-pulled-right" @click="showClear = !showClear">Show Clear</button>
-            <button v-show="showClear" class="button is-warning is-pulled-right" @click="clearStorage">Clear Board</button>      
-          </p>
-        </div>
-        <!-- <TabsLayout @tab-change="tabChange"/> -->
-
+      <BoardControls @active-board="handleActiveBoardChange"/>
+      <!-- <TabsLayout @tab-change="tabChange"/> -->
       </div>
-
       <div class="column is-one-half">
         <TableLayout
           :contacts="allContacts"
@@ -34,17 +21,12 @@
           @update-tasks="onUpdateTasks"
         />
       </div>
-
       </BaseMinimize>
-
     <TaskBoardLayout
       :tasks="allTasks"
       :active-board="activeBoard"
     />
   </div>
-
-
-
   <div />
 </template>
 
@@ -57,6 +39,7 @@ import TaskBoardLayout from './TaskBoardLayout.vue'
 import BaseIcon from '../components/common/BaseIcon.vue'
 import BaseMinimize from '../components/common/BaseMinimize.vue'
 import BaseInput from '../components/common/BaseInput.vue'
+import BoardControls from '../components/board/BoardControls.vue'
 
 import { useRouter } from 'vue-router'
 import { useStore } from '../store'
@@ -81,6 +64,7 @@ export default defineComponent({
     BaseInput,
     CreateLayout,
     TableLayout,
+    BoardControls,
     TaskBoardLayout
   },
   async setup(props, ctx) {
@@ -88,7 +72,9 @@ export default defineComponent({
     const router = useRouter()
     const store = useStore()
     const activeBoard = ref('1')
-    
+    const handleActiveBoardChange = (e) => {
+      activeBoard.value = e
+    }
     const showUIFull = ref(true)
     const showClear = ref(false)
     //#region contactUse
@@ -184,7 +170,8 @@ export default defineComponent({
       targetsLoadedRef,
       activeBoard,
       showClear,
-      clearStorage: () => window.localStorage.clear()
+      clearStorage: () => window.localStorage.clear(),
+      handleActiveBoardChange
     }
 
   }
