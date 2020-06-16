@@ -1,6 +1,7 @@
 <template>
 
   <div class="main-layout" v-if="targetsLoadedRef">
+    <MessageTable :messages="allMessages" />
     <BaseMinimize
       :class-prop="'columns'"
       :component-name="'Create and Tables'"
@@ -22,7 +23,6 @@
       </div>
     </BaseMinimize>
 
-
     <TaskBoardLayout
       :tasks="allTasks"
       :active-board="activeBoard"
@@ -37,9 +37,8 @@ import { defineComponent, computed, ref, watch, nextTick } from 'vue'
 import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
 import TaskBoardLayout from './TaskBoardLayout.vue'
-import BaseIcon from '../components/common/BaseIcon.vue'
 import BaseMinimize from '../components/common/BaseMinimize.vue'
-import BaseInput from '../components/common/BaseInput.vue'
+import MessageTable from '../components/message/MessageTable.vue'
 
 import { useRouter } from 'vue-router'
 import { useStore } from '../store'
@@ -54,14 +53,14 @@ import { Task } from '../interfaces/task/task.interface'
 import { BoardStore } from '../store/board.store'
 import { IBoardColumn } from '../interfaces/board/board.column.interface'
 import useBoard from '../composables/useBoard'
+import useMessage from '../composables/useMessage'
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    BaseIcon,
+    MessageTable,
     BaseMinimize,
-    BaseInput,
     CreateLayout,
     TableLayout,
     TaskBoardLayout
@@ -94,6 +93,16 @@ export default defineComponent({
       const taskUse = await useTask(taskStore, allTasks)
 
       const onUpdateTasks = taskUse.onUpdateTasks
+    //#endregion
+
+    //#region messageUse
+      const messageStore = store.modules['messageStore']
+
+      const allMessages= ref<Task[]>([])
+
+      const messageUse = await useMessage(messageStore, allMessages)
+
+      const onUpdateMessages= messageUse.onUpdateMessages
     //#endregion
 
     //#region cardModal
@@ -164,8 +173,10 @@ export default defineComponent({
       contactCardModal,
       allContacts,
       allTasks,
+      allMessages,
       onUpdateContacts,
       onUpdateTasks,
+      onUpdateMessages,
       targetsLoadedRef,
       activeBoard,
       showClear,
