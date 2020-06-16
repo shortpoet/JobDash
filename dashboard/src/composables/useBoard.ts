@@ -158,6 +158,8 @@ const getBoardState = (items: IBoardable[], activeBoardId: string) => {
   let storedBoardItems = []
   let storedBoardItemIds = []
   let itemIds = []
+  let itemsCategoriesLength
+  let storedBoardCategoriesLength
   let boardHasDiff: boolean
   let boardHasDiffLength: boolean
   let boardHasDiffCategory: boolean
@@ -173,12 +175,17 @@ const getBoardState = (items: IBoardable[], activeBoardId: string) => {
     itemIds = items.map(item => item.itemId)
     // get array of item ids from all current items in storage (localStorage - may want to build other persisitence layers)
     storedBoardItemIds = storedBoardItems.map(item => item.itemId)
+    storedBoardCategoriesLength = storedBoardItems.map(item => item.category).length
+    itemsCategoriesLength = itemIds.map(item => item.category).length
+    // console.log(`item categories ${itemsCategoriesLength}`)
+    // console.log(`stored categories ${storedBoardCategoriesLength}`)
+
     boardHasDiffLength = storedBoardItems.length != items.length 
     boardHasNewItem = itemIds.length > storedBoardItemIds.length
     boardHasLessItem = storedBoardItemIds.length > itemIds.length
-    boardHasDiffCategory =  itemIds.map(item => item.category).length != storedBoardItems.map(item => item.category).length
-    boardHasNewCategory = itemIds.map(item => item.category).length > storedBoardItems.map(item => item.category).length
-    boardHasLessCategory = storedBoardItems.map(item => item.category).length > itemIds.map(item => item.category).length
+    boardHasDiffCategory =  itemsCategoriesLength != storedBoardCategoriesLength
+    boardHasNewCategory = itemsCategoriesLength > storedBoardCategoriesLength
+    boardHasLessCategory = storedBoardCategoriesLength > itemsCategoriesLength
     categories = [...new Set(items.map(item => item.category))]
     boardHasDiff = boardHasDiffLength || boardHasDiffCategory
   }
@@ -359,16 +366,9 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
         saveBoardToStorage(activeBoard, activeBoard.id)
         console.log(columns.value)
       }
-      // if (boardHasLessCategory) {
-      //   colorLog('board has new category', BOOLCOLOR, BOOLBACK)
-      //   const newInitItems: IBoardItem[] = initNewItems(boardStore, newItemsToAdd, idSymbol, activeBoard)
-      //   initColumns(newInitItems, activeBoard)
-      //   const storedItems = await loadRecords(boardStore, BOARD, newInitItems)
-      //   columns.value = loadBoard(boardStore, activeBoard, storedItems)
-      //   await resetColumns()
-      //   saveBoardToStorage(activeBoard, activeBoard.id)
-      //   console.log(columns.value)
-      // }
+      if (boardHasLessCategory) {
+        colorLog('board has LESS category', BOOLCOLOR, BOOLBACK)
+      }
       // consider switching to else if
       if (boardHasNewItem && !boardHasNewCategory) {
         colorLog('board has NEW item', BOOLCOLOR, BOOLBACK)
@@ -435,7 +435,7 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
 
   const onUpdateBoard = async () => {
     console.log('use board - onUpdateBoard')
-    _diffBoard(columns, boardStore, items, activeBoardId, idSymbol, storedBoard)
+    // _diffBoard(columns, boardStore, items, activeBoardId, idSymbol, storedBoard)
     // const newItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
     // saveBoardToStorage(storedBoard.value, storedBoard.value.id)
     // columns.value = loadBoard(boardStore, storedBoard.value, newItems)

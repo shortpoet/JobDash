@@ -67,7 +67,7 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
 
   async fetchRecords() {
     // get is generic so can specify type
-    const data = await this._fetchRecords('http://localhost:3000/contact/contacts', {headers: {cache: 'no-store'}})
+    const data = await this._fetchRecords('http://localhost:3000/contact/contacts')
     // console.log('fetch records')
     this.addRecords(data, '_id')
     this.state.records.loaded = true

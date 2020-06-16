@@ -3,7 +3,7 @@
     <label :for="name" class="label">{{name}}</label>
     <div class="control"><input
       :type="type"
-      :id="readonly ? 'disabled-input' : ''"
+      :id="readonly ? 'disabled-input' : `${name}-input`"
       :class="['input', disabled ? 'disabled-input' : '']" 
       @input="handleInput"
       :value="modelValue"
