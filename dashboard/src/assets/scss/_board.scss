@@ -1,3 +1,10 @@
+.board-controls-container {
+  padding: 0rem 1.5rem;
+  .box.my-box.board-controls {
+    padding: 1rem 1.5rem;
+    box-sizing: inherit;
+  }
+}
 
 .the-board {
   background-color: $forest-green;

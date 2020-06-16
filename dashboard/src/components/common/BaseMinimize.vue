@@ -1,5 +1,5 @@
 <template>
-  <div class="ui-collapse" @click="showComponent = !showComponent">
+  <div class="ui-collapse" @click="handleChange">
     <p>{{ componentName }}</p>
     <BaseIcon class="ui-collapse-icon" :name="'minus'" :color="'white'"/>
   </div>
@@ -28,10 +28,16 @@ export default defineComponent({
   components: {
     BaseIcon
   },
+  emits: ['minimize-change'],
   async setup(props, ctx) {
     const showComponent = ref(true)
+    const handleChange = () => {
+      showComponent.value = !showComponent.value
+      ctx.emit('minimize-change', {showComponent: showComponent.value, componentName: props.componentName})
+    }
     return {
-      showComponent
+      showComponent,
+      handleChange
     }
 
   }

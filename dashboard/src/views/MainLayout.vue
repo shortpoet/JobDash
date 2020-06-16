@@ -10,8 +10,8 @@
           @update-contacts="onUpdateContacts"    
           @update-tasks="onUpdateTasks"
         />
-      <BoardControls @active-board="handleActiveBoardChange"/>
-      <!-- <TabsLayout @tab-change="tabChange"/> -->
+        <BoardControls @active-board="handleActiveBoardChange"/>
+        <!-- <TabsLayout @tab-change="tabChange"/> -->
       </div>
       <div class="column is-one-half">
         <TableLayout

@@ -1,11 +1,12 @@
 <template>
   <section class="section table-section">
-    <div class="table-container">
+    <div class="table-container" :style="minimized ? 'height: auto;' : ''">
 
       <div class="table-minimize-container contact-table-minimize-container">
         <BaseMinimize
           :class-prop="'contact-table-container'"
           :component-name="'Contact Table'"
+          @minimize-change="handleMinimize"
         >
           <BaseBox scrollable>
             <ContactTable 
@@ -20,6 +21,7 @@
         <BaseMinimize
           :class-prop="'task-table-container'"
           :component-name="'Task Table'"
+          @minimize-change="handleMinimize"
         >
           <BaseBox scrollable>
             <TaskTable
@@ -94,6 +96,11 @@ export default defineComponent({
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
     
+    const minimized = ref('false')
+    const handleMinimize = (e) => {
+      console.log(e)
+    }
+
     //#region contactCardModal
       const contactCardDestination: Destination = '#contact-card-modal'
 
@@ -149,6 +156,8 @@ export default defineComponent({
     }
 
     return {
+      minimized,
+      handleMinimize,
       contactModal,
       taskModal,
       cardIsOpen,
