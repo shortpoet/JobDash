@@ -3,6 +3,7 @@
   <div class="main-layout" v-if="targetsLoadedRef">
     <BaseMinimize
       :class-prop="'columns'"
+      :component-name="'Create and Tables'"
     >
 
       <div class="column is-two-fifths">

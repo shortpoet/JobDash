@@ -1,18 +1,3 @@
-.main-layout {
-  .ui-collapse {
-    background-color: $royal-purple;
-    display: flex;
-    justify-content: flex-end;
-    border-radius: $task-border-radius;
-    // margin here to offset bulma columns -.75rem default
-    // so clickable area
-    margin: 0rem 0rem .75rem 0rem;
-    cursor: pointer;
-    .ui-collapse-icon {
-    }
-  }
-}
-
 
 .the-board {
   background-color: $forest-green;

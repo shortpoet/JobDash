@@ -1,18 +1,35 @@
 <template>
   <section class="section table-section">
     <div class="table-container">
-      <BaseBox class="contact-table-container">
-        <ContactTable 
-          :contacts="contacts"
-          @update-contacts="onUpdateContacts"
-      />  
-      </BaseBox>
-      <BaseBox class="task-table-container">
-        <TaskTable
-          :tasks="tasks"
-          @update-tasks="onUpdateTasks"
-        />
-      </BaseBox>
+
+      <div class="table-minimize-container contact-table-minimize-container">
+        <BaseMinimize
+          :class-prop="'contact-table-container'"
+          :component-name="'Contact Table'"
+        >
+          <BaseBox scrollable>
+            <ContactTable 
+              :contacts="contacts"
+              @update-contacts="onUpdateContacts"
+          />  
+          </BaseBox>
+        </BaseMinimize>
+      </div>
+
+      <div class="table-minimize-container task-table-minimize-container">
+        <BaseMinimize
+          :class-prop="'task-table-container'"
+          :component-name="'Task Table'"
+        >
+          <BaseBox scrollable>
+            <TaskTable
+              :tasks="tasks"
+              @update-tasks="onUpdateTasks"
+            />
+          </BaseBox>
+        </BaseMinimize>
+      </div>
+
     </div>
 
     <!-- 
@@ -37,6 +54,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
+import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
 import ContactTable from './../components/contacts/ContactTable.vue'
@@ -63,6 +81,7 @@ export default defineComponent({
     }
   },
   components: {
+    BaseMinimize,
     BaseBox,
     ContactTable,
     TaskTable,

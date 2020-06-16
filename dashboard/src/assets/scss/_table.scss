@@ -2,14 +2,20 @@
   height: 32rem;
   display: flex;
   flex-direction: column;
-  > div > table > thead > tr > th {
+  > div > div > table > thead > tr > th {
     white-space: nowrap;
   }
 }
 
+.table-minimize-container {
+  max-height: 50%;
+}
+
 .contact-table-container,
 .task-table-container {
-  max-height: 50%;
+  height: 100%;
+  // max-height: 50%;
+  // overflow-y: scroll;
 }
 
 

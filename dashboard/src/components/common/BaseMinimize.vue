@@ -3,7 +3,7 @@
     <p>{{ componentName }}</p>
     <BaseIcon class="ui-collapse-icon" :name="'minus'" :color="'white'"/>
   </div>
-  <div :class="`${classProp.concat(' ')}ui-full`"  v-show="showComponent">
+  <div :class="`${classProp}`"  v-if="showComponent">
     <slot />
   </div>
   <div/>
@@ -18,6 +18,10 @@ export default defineComponent({
   props: {
     classProp: {
       type: String,
+      default: ''
+    },
+    componentName: {
+      type: String,
       required: false
     }
   },
@@ -26,10 +30,8 @@ export default defineComponent({
   },
   async setup(props, ctx) {
     const showComponent = ref(true)
-    const componentName = ctx.attrs.name
     return {
-      showComponent,
-      componentName
+      showComponent
     }
 
   }
