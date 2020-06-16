@@ -154,9 +154,7 @@ const BOARD = 'board'
 const getBoardState = (items: IBoardable[], activeBoardId: string) => {
   console.log('get board state')
   const hasActiveBoard: boolean = !!getBoardFromStorage(activeBoardId)
-  console.log(hasActiveBoard)
   const activeBoard = getBoardFromStorage(activeBoardId)
-  console.log(activeBoard)
   let storedBoardItems = []
   let storedBoardItemIds = []
   let itemIds = []
@@ -170,10 +168,8 @@ const getBoardState = (items: IBoardable[], activeBoardId: string) => {
   let categories
   if(hasActiveBoard) {
     // flatten column object into item array
-    console.log(activeBoard.columns)
     storedBoardItems = columnMapToItemArray(activeBoard.columns)
     // get array of item ids from all current items in props
-    console.log(items)
     itemIds = items.map(item => item.itemId)
     // get array of item ids from all current items in storage (localStorage - may want to build other persisitence layers)
     storedBoardItemIds = storedBoardItems.map(item => item.itemId)
@@ -184,7 +180,6 @@ const getBoardState = (items: IBoardable[], activeBoardId: string) => {
     boardHasNewCategory = itemIds.map(item => item.category).length > storedBoardItems.map(item => item.category).length
     boardHasLessCategory = storedBoardItems.map(item => item.category).length > itemIds.map(item => item.category).length
     categories = [...new Set(items.map(item => item.category))]
-    console.log(categories)
     boardHasDiff = boardHasDiffLength || boardHasDiffCategory
   }
   return {
@@ -360,6 +355,7 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
         initColumns(newInitItems, activeBoard)
         const storedItems = await loadRecords(boardStore, BOARD, newInitItems)
         columns.value = loadBoard(boardStore, activeBoard, storedItems)
+        await resetColumns()
         saveBoardToStorage(activeBoard, activeBoard.id)
         console.log(columns.value)
       }
