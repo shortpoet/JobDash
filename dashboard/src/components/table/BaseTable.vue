@@ -1,0 +1,337 @@
+<template>
+  <table class="table is-hoverable">
+    <thead>
+      <TableRowHeader
+        :data-properties="dataProperties"
+        :control-types="controlTypes"
+      />
+    </thead>
+
+  <tbody>
+    <tr
+      v-for="item in items"
+      :key="item[idSymbol]" 
+      :class="`${itemType}-row has-text-centered`"
+    >
+    </tr>
+  </tbody>
+  </table>
+  <teleport :to="`#delete-${itemType}-modal`" v-if="deleteContactModal.visible">
+    <ModalWarning @delete-item="deleteContact" :destination="'#delete-contact-modal'"/>
+  </teleport>
+
+  <teleport :to="`#edit-${itemType}-modal`" v-if="contactCardModal.visible">
+    <!-- <router-view/> -->
+    <ContactCard @update-contacts="updateContacts" :destination="'#contact-card-modal'"/>
+  </teleport>
+
+  <div />
+</template>
+
+<script lang="ts">
+import moment from 'moment'
+import { defineComponent, computed, ref, watch, onMounted } from 'vue'
+
+import TableRowHeader from './TableRowHeader.vue'
+
+import { useRouter } from 'vue-router'
+import { useStore } from '../../store'
+import { ContactStore } from '../../store/contact.store'
+import { MessageStore } from '../../store/message.store'
+
+import ModalWarning from './../../components/common/ModalWarning.vue'
+import MessageWriter from './../../components/common/MessageWriter.vue'
+import ContactCard from './ContactCard.vue'
+
+import { Contact } from '../../interfaces/contact/contact.interface'
+import { Field } from '../../interfaces/common/field.interface'
+import { Destination } from '../../interfaces/common/modal.interface'
+import { Message } from './../../interfaces/message/message.interface' 
+
+import { useModal } from '../../composables/useModal'
+import { useUpdateValues } from '../../composables/useUpdateValues'
+
+export default defineComponent({
+  name: 'BaseTable',
+
+  props: {
+    items: {
+      type: Array,
+      required: true
+    },
+    idSymbol: {
+      type: String,
+      required: true
+    },
+    itemType: {
+      type: String,
+      required: true
+    }
+  },
+
+  components: {
+    ModalWarning,
+    ContactCard,
+    MessageWriter,
+    TableRowHeader
+  },
+
+  emits: ['update-contacts'],
+
+  async setup(props, ctx){
+    
+    
+
+
+    //#region deleteContactModal
+
+      const destination: Destination = '#delete-contact-modal'
+
+      const deleteContactModal = useModal(destination)
+
+    //#endregion
+
+    //#region contactCardModal
+
+      const contactCardDestination: Destination = '#contact-card-modal'
+
+      const contactCardModal = useModal(contactCardDestination)
+
+    //#endregion
+
+    const router = useRouter()
+    const store = useStore()
+    //#region contactUse
+      const contactStore: ContactStore = store.modules['contactStore']
+      const allContactsRef = ref<Contact[]>()
+      // const toggleEditable
+    //#endregion
+
+    //#region messageUse
+      const messageStore: MessageStore = store.modules['messageStore']
+      // const allMessagesRef = ref<Message[]>()
+      // const messageUse = await useMessage(messageStore, allMessagesRef)
+      // const toggleEditable
+    //#endregion
+
+    //#region openContactCard
+      const openContactCard = (contact: Contact) => {
+        contactCardModal.showModal()
+        router.push({ name: '#contact-card-modal', params: { id: contact._id } })
+      }
+      const cardIsOpen = computed(() => {
+        // console.log(router.currentRoute.value.name)
+        // console.log(contactCardDestination)
+        return router.currentRoute.value.name === contactCardDestination
+      })
+    //#endregion
+
+    //#region messageModal
+
+      const messageDestination: Destination = '#message-modal'
+
+      const messageModal = useModal(messageDestination)
+
+    //#endregion
+
+    //#region createMessage
+      const createMessage = (contact: Contact): Message => {
+        const message: Message = {
+          _id: '-1',
+          subject: '',
+          body: '',
+          category: '',
+          contact: contact,
+          created: moment(),
+          edited: moment(),
+          editable: false,
+          locked: true
+        }
+        return message
+      }
+    //#endregion
+
+    const message = ref<Message>()
+    //#region openMessageModal
+      const openMessageModal = (contact: Contact) => {
+        message.value = createMessage(contact)
+        messageStore.createRecord(message.value, '', false)
+        messageModal.showModal()
+        router.push({ name: '#message-modal', params: { id: contact._id } })
+      }
+      const messageIsOpen = computed(() => {
+        // console.log(router.currentRoute.value.name)
+        // console.log(messageDestination)
+        return router.currentRoute.value.name === messageDestination
+      })
+    //#endregion
+
+    //#region sendMessage
+      const sendMessage = (e) => {
+        // console.log(e)
+        // console.log(router.currentRoute.value)
+      }
+    //#endregion
+
+    //#region updateContacts
+      const updateContacts = () => ctx.emit('update-contacts')
+    //#endregion
+
+    //#region delete
+      const confirmDelete = ref(false)
+      const deleteCandidate = ref<Contact>(null)
+
+      const handleConfirmDelete = (contact: Contact) => {
+        if (contact.locked) {
+          deleteCandidate.value = contact
+          deleteContactModal.showModal()
+        } else {
+          deleteCandidate.value = contact
+          deleteContact()
+        }
+      }
+      
+      const deleteContact = async (e?) => {
+        // check for event
+        // TODO
+        // add check for foreign key"
+        // #TODO
+        if (e) {
+          // check if correct destination
+          if (e == destination) {
+            deleteContactModal.hideModal()
+            const deletedId = await contactStore.deleteRecord(deleteCandidate.value)
+            // console.log('delete contact')
+            // null check
+            deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
+            ctx.emit('update-contacts')
+          }
+        } else {
+          // no event no deleteContactModal
+          const deletedId = await contactStore.deleteRecord(deleteCandidate.value)
+          // console.log('delete contact')
+          // null check
+          deleteCandidate.value._id == deletedId ? deleteCandidate.value = null : ''
+          ctx.emit('update-contacts')
+        }
+      }
+      
+      const toggleDeletable = async (contact: Contact) => {
+        if (contact.locked == false) {
+          await contactStore.toggleDeletable(contact, true)
+          ctx.emit('update-contacts')
+        } else {
+          await contactStore.toggleDeletable(contact, false)
+          ctx.emit('update-contacts')
+        }
+      }
+    //#endregion
+
+    //#region edit
+      const nameEdit = ref() 
+      const companyEdit = ref() 
+      const emailEdit = ref()
+      
+      //#region updateValues
+        const contactTouched = ref(false)
+        useUpdateValues(contactTouched, [nameEdit, companyEdit, emailEdit])
+      //#endregion
+
+      const edits = { nameEdit, companyEdit, emailEdit, contactTouched } 
+
+      const editContact = async (oldContact: Contact, newContact: Contact) => {
+        contactStore.editRecord(
+          oldContact, 
+          newContact,
+          '_id'
+        )
+      }
+
+
+      const toggleEditable = async (oldContact: Contact) => {
+        if (oldContact.editable == false) {
+          contactStore.toggleEditable(oldContact, true)
+          nameEdit.value = oldContact.name
+          companyEdit.value = oldContact.company
+          emailEdit.value = oldContact.email
+        } else {
+          if (contactTouched.value == true) {
+            const newContact: Contact = {
+              _id: oldContact._id,
+              itemId: oldContact._id,
+              name: nameEdit.value,
+              company: companyEdit.value,
+              email: emailEdit.value,
+              created: oldContact.created,
+              edited: moment(),
+              editable: false,
+              locked: true
+            }
+            await editContact(oldContact, newContact)
+            contactTouched.value = false
+            // this closes the edit window by updating the refs after newContact editable set to false
+            // ctx.emit('update-contacts')
+            ctx.emit('update-contacts')
+          } else {
+            contactStore.toggleEditable(oldContact, false)
+          }
+        }
+      }
+
+      // const toggleEditable = async (oldContact: Contact) => {
+      //   if (oldContact.editable == false) {
+      //     contactStore.toggleEditable(oldContact, true)
+      //     nameEdit.value = oldContact.name
+      //     companyEdit.value = oldContact.company
+      //     emailEdit.value = oldContact.email
+      //   } else {
+      //     if (contactTouched.value == true) {
+      //       const newContact: Contact = {
+      //         _id: oldContact._id,
+      //         name: nameEdit.value,
+      //         company: companyEdit.value,
+      //         email: emailEdit.value,
+      //         created: oldContact.created,
+      //         edited: moment(),
+      //         editable: false,
+      //         locked: true
+      //       }
+      //       await editContact(oldContact, newContact)
+      //       contactTouched.value = false
+      //       // this closes the edit window by updating the refs after newContact editable set to false
+      //       // ctx.emit('update-contacts')
+      //       ctx.emit('update-contacts')
+      //     } else {
+      //       contactStore.toggleEditable(oldContact, false)
+      //     }
+      //   }
+      // }
+
+    //#endregion
+
+    return {
+      messageModal,
+      openMessageModal,
+      sendMessage,
+      message,
+      cardIsOpen,
+      openContactCard,
+      contactTouched,
+      nameEdit,
+      companyEdit,
+      emailEdit,
+      updateContacts,
+      deleteContactModal,
+      contactCardModal,
+      deleteContact,
+      toggleEditable,
+      toggleDeletable,
+      handleConfirmDelete
+    }
+
+  }
+})
+</script>
+
+<style lang="scss">
+</style>
