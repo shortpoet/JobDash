@@ -21,7 +21,7 @@
             <input :id="`display-property-${i}`" type="checkbox" class="is-small" @input="handleInputChosenProperties(i)" v-model="chosenProperties[i]">
             {{prop}}
           </label>
-          <button id="reset-board" class="button is-small is-warning is-pulled-right" @click="showClear = !showClear">Show</button>
+          <!-- <button id="reset-board" class="button is-small is-warning is-pulled-right" @click="showClear = !showClear">Show</button> -->
         </p>
       </div>
     </BaseBox>

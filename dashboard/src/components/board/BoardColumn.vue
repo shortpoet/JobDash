@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 
 import useBoardMove from './../../composables/useBoardMove'
 
@@ -64,9 +64,7 @@ export default defineComponent({
     // const moveItemOrColumn = () => {}
     const onUpdateBoard = () => {
       // console.log('board column - update board')
-    }
-
-    
+    } 
 
     return {
       items,

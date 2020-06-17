@@ -31,6 +31,7 @@ import { IBoardColumn } from '../../interfaces/board/board.column.interface'
 import { BoardStore } from '../../store/board.store'
 import { useStore } from '../../store'
 import useBoardMove from '../../composables/useBoardMove'
+import { colorLog } from '../../utils'
 export default defineComponent({
   name: 'TaskBoard',
 
@@ -52,7 +53,8 @@ export default defineComponent({
   emits: ['dragstart', 'draggable', 'update-board', 'board-move'],
 
   async setup(props, ctx) {
-
+    colorLog('task board', 'green', 'yellow')
+    console.log(props.displayProperties)
     const boardStore: BoardStore = useStore().modules['boardStore']
 
     const move = useBoardMove(boardStore, ctx)
@@ -63,10 +65,10 @@ export default defineComponent({
     const pickupColumn = move.pickupColumn
     const moveItemOrColumn = move.moveItemOrColumn
 
-    return {
+return {
       pickupColumn,
       moveItemOrColumn,
-      onBoardMove
+      onBoardMove,
     }
   }
 })

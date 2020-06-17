@@ -13,7 +13,7 @@
             <!-- v-if here initially renders a blank green board -->
             <TaskBoard
               :columns="columns"
-              :display-properties="chosenProperties"
+              :display-properties="displayProperties"
               @update-board="onUpdateBoard"
               @board-move="onBoardMove"
             />
@@ -81,12 +81,7 @@ export default defineComponent({
         console.log(chosenProperties.value)
       }
       const itemProperties = computed(() => Object.keys(props.items[0]))
-      // const displayProperties = computed(() => {
-      //   itemProperties.value.forEach((prop, index) => )
-      // })
-
-
-
+      const displayProperties = computed(() => chosenProperties.value)
 
       const boardStore: BoardStore = store.modules['boardStore']
       const columns = ref<IBoardColumn[]>()
@@ -126,6 +121,7 @@ export default defineComponent({
       handleChosenPropertyChange,
       itemProperties,
       chosenProperties,
+      displayProperties,
       handleBoardTypeChange,
       columns,
       onUpdateBoard,
