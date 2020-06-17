@@ -7,8 +7,7 @@ export default function useBoardMove(boardStore: BoardStore, ctx) {
   // console.log('use board move')
   
   const moveItemOrColumn = (e: DragEvent, toColumn: IBoardColumn, toItem: IBoardItem) => {
-    console.log('move item or column - item column')
-    console.log(toItem)
+    // console.log('move item or column - item column')
     const type = e.dataTransfer.getData('type')  
     if (type === 'item') {
       moveItem(e, toColumn, toItem)
@@ -28,8 +27,7 @@ export default function useBoardMove(boardStore: BoardStore, ctx) {
   }
   
   const moveItem = (e: DragEvent, toColumn: IBoardColumn, toItem: IBoardItem) => {
-    colorLog('move item', 'silver', 'purple')
-    console.log(toItem)
+    // colorLog('move item', 'silver', 'purple')
     const fromItemItemId = e.dataTransfer.getData('from-item-itemId')
     const fromItemCategory = e.dataTransfer.getData('from-item-category')
     const fromItemOrder = parseInt(e.dataTransfer.getData('from-item-order'))

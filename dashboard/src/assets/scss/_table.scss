@@ -5,13 +5,18 @@
   > div > div > table > thead > tr > th {
     white-space: nowrap;
   }
+  // margin: 0rem 0rem 25rem 0rem;
+  // to make up for hidden part
+  // so bottom border is not hidden 
+  // without messing with .table-minimize-container max-height: 
+  padding: 0rem 0rem 18rem 0rem;
 }
 
 .contact-table-minimize-container {
   // margin-top: .55rem;
 }
 .table-minimize-container {
-  max-height: 50%;
+  max-height: 100%;
 }
 
 .message-table-container,
@@ -20,6 +25,10 @@
   height: 100%;
   // max-height: 50%;
   // overflow-y: scroll;
+}
+
+.task-table-container {
+  margin: 0rem 0rem 1rem 0rem;
 }
 
 .message-row

@@ -1,6 +1,6 @@
 <template>
   <section class="section table-section">
-    <div class="table-container" :style="scrollAuto ? 'height: auto;' : ''">
+    <div class="table-container" :style="onlyTaskShown ? 'height: auto; padding: 0rem;' : ''">
 
       <div class="table-minimize-container message-table-minimize-container">
         <BaseMinimize
@@ -118,7 +118,7 @@ export default defineComponent({
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
     
-    const scrollAuto = ref(false)
+    const onlyTaskShown = ref(false)
     const minimized = reactive({
       messageTable: true,
       contactTable: false,
@@ -129,13 +129,13 @@ export default defineComponent({
       switch(e.componentName) {
         case 'Message Table':
           minimized.messageTable = e.minimized
-          if (minimized.messageTable == true && minimized.contactTable == true) scrollAuto.value = true
-          else scrollAuto.value = false
+          if (minimized.messageTable == true && minimized.contactTable == true) onlyTaskShown.value = true
+          else onlyTaskShown.value = false
           break
         case 'Contact Table':
           minimized.contactTable = e.minimized
-          if (minimized.messageTable == true && minimized.contactTable == true) scrollAuto.value = true
-          else scrollAuto.value = false
+          if (minimized.messageTable == true && minimized.contactTable == true) onlyTaskShown.value = true
+          else onlyTaskShown.value = false
           break
         case 'Task Table':
           minimized.taskTable = e.minimized
@@ -203,7 +203,7 @@ export default defineComponent({
 
     return {
       minimized,
-      scrollAuto,
+      onlyTaskShown,
       handleMinimize,
       contactModal,
       taskModal,
