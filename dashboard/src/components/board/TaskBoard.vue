@@ -10,14 +10,13 @@
     @dragstart.self="pickupColumn($event, column)"
     @dragover.prevent
     @dragenter.prevent
-    @drop="moveItemOrColumn($event, column.category)"
+    @drop="moveItemOrColumn($event, column)"
     @update-board="onUpdateBoard"
     @board-move="onBoardMove"
   >
     <BoardColumn
       :column="column" 
       @update-board="onUpdateBoard"
-      @board-move="onBoardMove"
     />  
   </div>
   <div/>
@@ -54,6 +53,7 @@ export default defineComponent({
     const move = useBoardMove(boardStore, ctx)
     // console.log('### task board setup ###')
     // console.log(props.columns.map(item => Object.entries(item.items).map(entry => entry[1].itemId)))
+    const onBoardMove = () => ctx.emit('board-move')
 
     const pickupColumn = move.pickupColumn
     const moveItemOrColumn = move.moveItemOrColumn
@@ -61,6 +61,7 @@ export default defineComponent({
     return {
       pickupColumn,
       moveItemOrColumn,
+      onBoardMove
     }
   }
 })

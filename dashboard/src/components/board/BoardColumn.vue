@@ -8,9 +8,8 @@
       @dragstart="pickupItem($event, item)"
       @dragover.prevent
       @dragenter.prevent
-      @drag.stop="moveItemOrColumn($event, item.category, item.itemOrder)"
+      @drop="moveItemOrColumn($event, column, item)"
       @update-board="onUpdateBoard"
-      @board-move="onBoardMove"
     >
       <BoardItem :item="item" :item-name="category + ' - order: ' + item.itemOrder + ' - id'" :item-id="item.itemId"/>
     </div>
@@ -31,7 +30,7 @@ import { BoardStore } from '../../store/board.store'
 import { useStore } from '../../store'
 
 export default defineComponent({
-  name: 'TaskColumn',
+  name: 'BoardColumn',
   components: {
     BoardItem
   },
@@ -49,10 +48,11 @@ export default defineComponent({
     const items = props.column.items
     const boardStore: BoardStore = useStore().modules['boardStore']
     const move = useBoardMove(boardStore, ctx)
+    const onBoardMove = () => ctx.emit('board-move')
 
     const pickupItem = move.pickupItem
-    // const moveItemOrColumn = move.moveItemOrColumn
-    const moveItemOrColumn = () => {}
+    const moveItemOrColumn = move.moveItemOrColumn
+    // const moveItemOrColumn = () => {}
     const onUpdateBoard = () => {
       // console.log('board column - update board')
     }
@@ -64,7 +64,8 @@ export default defineComponent({
       category,
       pickupItem,
       moveItemOrColumn,
-      onUpdateBoard
+      onUpdateBoard,
+      onBoardMove
     }
   }
 })
