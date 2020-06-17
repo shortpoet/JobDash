@@ -13,7 +13,7 @@
     >
       <BoardItem
         :item="item"
-        :item-name="`${category} - order: ${item.itemOrder} - id`"
+        :item-name="`${category} - order: ${item.itemOrder}`"
         :item-id="item.itemId"
         :display-properties="displayProperties"
       />

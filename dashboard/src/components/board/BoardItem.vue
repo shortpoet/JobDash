@@ -1,8 +1,23 @@
 <template>
   <div class="board-item">
-    <span @click="openCard" class="board-item-text">
-      {{itemName}}: {{ itemId }}
-    </span>
+    <BaseIcon class="task-link-icon" @click="openCard" name="external-link" color="purple">{{}}</BaseIcon>
+
+    <div class="board-item-text-column">
+      <div class="board-item-category-key">
+        itemName
+      </div>
+      <div class="board-item-text">
+      {{itemName}}
+      </div>
+    </div>
+    <div class="board-item-text-column">
+      <div class="board-item-category-key">
+        itemId
+      </div>
+      <div class="board-item-text">
+      {{itemId}}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -15,8 +30,13 @@ import { useRouter } from 'vue-router'
 import { Destination } from '../../interfaces/common/modal.interface'
 import { IBoardItem } from '../../interfaces/board/board.item.interface'
 
+import BaseIcon from './../../components/common/BaseIcon.vue'
+
 export default defineComponent({
   name: 'BoardItem',
+  components: {
+    BaseIcon
+  },
   props: {
     item: {
       type: Object as () => IBoardItem,

@@ -28,6 +28,7 @@
   }
 }
 
+
 .the-board {
   background-color: $forest-green;
   color: $white;
@@ -80,14 +81,26 @@
           display: flex;
           flex-direction: column;
           .board-item {
-            .board-item-text {
+            display: flex;
+            flex-direction: row;
+            .task-link-icon {
               cursor: pointer;
+              height: 1.5rem;
+              width: 1.5rem;
             }
+            .board-item-text-column {
+              display: flex;
+              flex-direction: column;
+              .board-item-category-key {
+                font-size: .75rem;
+              }
+              .board-item-text {
+                font-size: .75rem;
+              }
+            }            
           }
         }
       }
     }
   }
 }
-
-
