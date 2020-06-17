@@ -431,6 +431,11 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
 
   }
 
+  const mapItemToData = (items: IBoardable[], item: IBoardItem): IBoardable => {
+    const outItem: IBoardable = items.filter(_item => _item.itemId == item.itemId)[0]
+    return outItem
+  }
+
   return {
     columns,
     onUpdateBoard,
