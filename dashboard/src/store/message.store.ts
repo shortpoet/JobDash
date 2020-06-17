@@ -113,6 +113,7 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
 
     const newMessage: Message = {
       _id: oldMessage._id,
+      itemId: oldMessage._id,
       subject: oldMessage.subject,
       body: oldMessage.body,
       category: oldMessage.category,

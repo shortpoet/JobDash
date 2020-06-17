@@ -2,17 +2,27 @@
   height: 32rem;
   display: flex;
   flex-direction: column;
-  > div > table > thead > tr > th {
+  > div > div > table > thead > tr > th {
     white-space: nowrap;
   }
 }
 
-.contact-table-container,
-.task-table-container {
+.contact-table-minimize-container {
+  // margin-top: .55rem;
+}
+.table-minimize-container {
   max-height: 50%;
 }
 
+.message-table-container,
+.contact-table-container,
+.task-table-container {
+  height: 100%;
+  // max-height: 50%;
+  // overflow-y: scroll;
+}
 
+.message-row
 .contact-row,
 .task-row {
   >td {

@@ -1,26 +1,15 @@
 <template>
 
-
   <div class="main-layout" v-if="targetsLoadedRef">
-    <div class="ui-collapse" @click="showUIFull = !showUIFull">
-      <BaseIcon class="ui-collapse-icon" :name="'minus'" :color="'white'"/>
-    </div>
-    <div class="columns ui-full" v-show="showUIFull">
+    <BaseMinimize
+      :class-prop="'columns'"
+      :component-name="'Create and Tables'"
+    >
       <div class="column is-two-fifths">
         <CreateLayout
           @update-contacts="onUpdateContacts"    
           @update-tasks="onUpdateTasks"
         />
-        <BaseInput type="text" name="Board #" v-model="activeBoard" />
-        <!-- adding is-grouped modifier does some crazy stuff apparently negating is-pulled-right -->
-        <div class="field">          
-          <p class="active-board-number">Active board: {{ activeBoard }}</p>
-          <p class="control">
-            <!-- interestingly these render inverse to what one would expect at first but i guess its about how the node is always there or something same with v-if -->
-            <button class="button is-warning is-pulled-right" @click="showClear = !showClear">Show Clear</button>
-            <button v-show="showClear" class="button is-warning is-pulled-right" @click="clearStorage">Clear Board</button>      
-          </p>
-        </div>
         <!-- <TabsLayout @tab-change="tabChange"/> -->
       </div>
       <div class="column is-one-half">
@@ -29,15 +18,17 @@
           @update-contacts="onUpdateContacts"
           :tasks="allTasks"
           @update-tasks="onUpdateTasks"
-      />
+          :messages="allMessages"
+          @update-messages="onUpdateMessages"
+        />
       </div>
-    </div>
+    </BaseMinimize>
+
     <TaskBoardLayout
       :tasks="allTasks"
       :active-board="activeBoard"
     />
   </div>
-
   <div />
 </template>
 
@@ -47,8 +38,7 @@ import { defineComponent, computed, ref, watch, nextTick } from 'vue'
 import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
 import TaskBoardLayout from './TaskBoardLayout.vue'
-import BaseIcon from '../components/common/BaseIcon.vue'
-import BaseInput from '../components/common/BaseInput.vue'
+import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import { useRouter } from 'vue-router'
 import { useStore } from '../store'
@@ -63,13 +53,13 @@ import { Task } from '../interfaces/task/task.interface'
 import { BoardStore } from '../store/board.store'
 import { IBoardColumn } from '../interfaces/board/board.column.interface'
 import useBoard from '../composables/useBoard'
+import useMessage from '../composables/useMessage'
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    BaseIcon,
-    BaseInput,
+    BaseMinimize,
     CreateLayout,
     TableLayout,
     TaskBoardLayout
@@ -79,7 +69,9 @@ export default defineComponent({
     const router = useRouter()
     const store = useStore()
     const activeBoard = ref('1')
-    
+    const handleActiveBoardChange = (e) => {
+      activeBoard.value = e
+    }
     const showUIFull = ref(true)
     const showClear = ref(false)
     //#region contactUse
@@ -100,6 +92,16 @@ export default defineComponent({
       const taskUse = await useTask(taskStore, allTasks)
 
       const onUpdateTasks = taskUse.onUpdateTasks
+    //#endregion
+
+    //#region messageUse
+      const messageStore = store.modules['messageStore']
+
+      const allMessages= ref<Task[]>([])
+
+      const messageUse = await useMessage(messageStore, allMessages)
+
+      const onUpdateMessages= messageUse.onUpdateMessages
     //#endregion
 
     //#region cardModal
@@ -170,12 +172,15 @@ export default defineComponent({
       contactCardModal,
       allContacts,
       allTasks,
+      allMessages,
       onUpdateContacts,
       onUpdateTasks,
+      onUpdateMessages,
       targetsLoadedRef,
       activeBoard,
       showClear,
-      clearStorage: () => window.localStorage.clear()
+      clearStorage: () => window.localStorage.clear(),
+      handleActiveBoardChange
     }
 
   }

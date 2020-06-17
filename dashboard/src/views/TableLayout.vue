@@ -1,18 +1,53 @@
 <template>
   <section class="section table-section">
-    <div class="table-container">
-      <BaseBox class="contact-table-container">
-        <ContactTable 
-          :contacts="contacts"
-          @update-contacts="onUpdateContacts"
-      />  
-      </BaseBox>
-      <BaseBox class="task-table-container">
-        <TaskTable
-          :tasks="tasks"
-          @update-tasks="onUpdateTasks"
-        />
-      </BaseBox>
+    <div class="table-container" :style="minimized ? 'height: auto;' : ''">
+
+      <div class="table-minimize-container message-table-minimize-container">
+        <BaseMinimize
+          :class-prop="'message-table-container'"
+          :component-name="'Message Table'"
+          @minimize-change="handleMinimize"
+          
+        >
+          <BaseBox scrollable>
+            <MessageTable 
+              :messages="messages" 
+              @update-messages="onUpdateMessages"
+            />
+          </BaseBox>
+        </BaseMinimize>
+      </div>
+
+      <div class="table-minimize-container contact-table-minimize-container">
+        <BaseMinimize
+          :class-prop="'contact-table-container'"
+          :component-name="'Contact Table'"
+          @minimize-change="handleMinimize"
+        >
+          <BaseBox scrollable>
+            <ContactTable 
+              :contacts="contacts"
+              @update-contacts="onUpdateContacts"
+          />  
+          </BaseBox>
+        </BaseMinimize>
+      </div>
+
+      <div class="table-minimize-container task-table-minimize-container">
+        <BaseMinimize
+          :class-prop="'task-table-container'"
+          :component-name="'Task Table'"
+          @minimize-change="handleMinimize"
+        >
+          <BaseBox scrollable>
+            <TaskTable
+              :tasks="tasks"
+              @update-tasks="onUpdateTasks"
+            />
+          </BaseBox>
+        </BaseMinimize>
+      </div>
+
     </div>
 
     <!-- 
@@ -37,11 +72,13 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue'
+import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
 import ContactTable from './../components/contacts/ContactTable.vue'
 import TaskTable from './../components/task/TaskTable.vue'
 import ContactCard from './../components/contacts/ContactCard.vue'
+import MessageTable from '../components/message/MessageTable.vue'
 
 import { useModal } from '../composables/useModal'
 
@@ -60,21 +97,43 @@ export default defineComponent({
     tasks: {
       type: Array,
       required: true
+    },
+    messages: {
+      type: Array,
+      required: true
     }
   },
   components: {
+    BaseMinimize,
     BaseBox,
     ContactTable,
     TaskTable,
-    ContactCard
+    ContactCard,
+    MessageTable
   },
-  emits: ['update-contacts', 'update-tasks'],
+  emits: ['update-contacts', 'update-tasks', 'update-messages'],
   setup(props, ctx) {
     const contactDestination: Destination = '#delete-contact-modal'
     const taskDestination: Destination = '#delete-task-modal'
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
     
+    const minimized = ref(false)
+    const handleMinimize = (e) => {
+      // could add boolean checks for component type to further modify behavior
+      switch(e.componentName) {
+        case 'Message Table':
+          minimized.value = !e.showComponent
+          break
+        case 'Contact Table':
+          minimized.value = !e.showComponent
+          break
+        case 'Task Table':
+          break
+        break
+      }
+    }
+
     //#region contactCardModal
       const contactCardDestination: Destination = '#contact-card-modal'
 
@@ -128,8 +187,13 @@ export default defineComponent({
     const onUpdateTasks = () => {
       ctx.emit('update-tasks')
     }
+    const onUpdateMessages = () => {
+      ctx.emit('update-messages')
+    }
 
     return {
+      minimized,
+      handleMinimize,
       contactModal,
       taskModal,
       cardIsOpen,

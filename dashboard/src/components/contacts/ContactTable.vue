@@ -181,6 +181,7 @@ export default defineComponent({
       const createMessage = (contact: Contact): Message => {
         const message: Message = {
           _id: '-1',
+          itemId: '-1',
           subject: '',
           body: '',
           category: '',

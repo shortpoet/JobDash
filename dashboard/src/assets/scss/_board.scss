@@ -1,18 +1,25 @@
-.main-layout {
-  .ui-collapse {
-    background-color: $royal-purple;
+.taskboard-container{
+  display: flex;
+}
+
+.board-controls-container {
+  padding: 0rem .5rem;
+  width: 7rem;
+  .box.my-box.board-controls {
+    padding: 1rem 1rem;
+    box-sizing: inherit;
     display: flex;
-    justify-content: flex-end;
-    border-radius: $task-border-radius;
-    // margin here to offset bulma columns -.75rem default
-    // so clickable area
-    margin: 0rem 0rem .75rem 0rem;
-    cursor: pointer;
-    .ui-collapse-icon {
+    flex-direction: column;
+    // for buttons to be aligned
+    .field > .control {
+      display: flex;
+      flex-direction: column;
+      .button {
+        margin: .25rem 0rem;
+      }
     }
   }
 }
-
 
 .the-board {
   background-color: $forest-green;
