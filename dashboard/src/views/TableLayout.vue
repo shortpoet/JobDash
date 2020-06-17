@@ -121,7 +121,17 @@ export default defineComponent({
     const minimized = ref(false)
     const handleMinimize = (e) => {
       // could add boolean checks for component type to further modify behavior
-      minimized.value = !e.showComponent
+      switch(e.componentName) {
+        case 'Message Table':
+          minimized.value = !e.showComponent
+          break
+        case 'Contact Table':
+          minimized.value = !e.showComponent
+          break
+        case 'Task Table':
+          break
+        break
+      }
     }
 
     //#region contactCardModal
