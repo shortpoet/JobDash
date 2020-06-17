@@ -12,14 +12,14 @@ import { defineComponent, ref } from 'vue'
 import { useModal } from '../../composables/useModal'
 import { useRouter } from 'vue-router'
 
-import { Task } from '../../interfaces/task/task.interface'
 import { Destination } from '../../interfaces/common/modal.interface'
+import { IBoardItem } from '../../interfaces/board/board.item.interface'
 
 export default defineComponent({
   name: 'BoardItem',
   props: {
     item: {
-      type: Object as () => Task,
+      type: Object as () => IBoardItem,
       required: true
     },
     // making these props makes them reactive to edit
@@ -31,9 +31,13 @@ export default defineComponent({
       type: String,
       required: true
     },
+    displayProperties: {
+      type: Array,
+      required: true
+    }
   },
   setup(props, ctx) {
-    const task = ref<Task>(props.item)
+    // const item = ref<IBoardItem>(props.item)
     // console.log(task.value)
 
     //#region taskCardModal
@@ -54,7 +58,6 @@ export default defineComponent({
     //#endregion
 
     return {
-      task,
       openCard
     }
   }

@@ -13,6 +13,7 @@
             <!-- v-if here initially renders a blank green board -->
             <TaskBoard
               :columns="columns"
+              :display-properties="chosenProperties"
               @update-board="onUpdateBoard"
               @board-move="onBoardMove"
             />
@@ -70,23 +71,26 @@ export default defineComponent({
       const boardType = ref()
       const handleBoardTypeChange = (e) => {
         colorLog("on board type change", "orange", "purple")
-        console.log(e)
         boardType.value = e
       }
-      const chosenProperties = ref({})
+      const chosenProperties = ref([])
       const handleChosenPropertyChange = (e) => {
         colorLog("on chosen prop change", "orange", "purple")
-        console.log(e)
+        // console.log(e)
         chosenProperties.value = e
         console.log(chosenProperties.value)
       }
+      const itemProperties = computed(() => Object.keys(props.items[0]))
+      // const displayProperties = computed(() => {
+      //   itemProperties.value.forEach((prop, index) => )
+      // })
+
 
 
 
       const boardStore: BoardStore = store.modules['boardStore']
       const columns = ref<IBoardColumn[]>()
-      const itemProperties = computed(() => Object.keys(props.items[0]))
-      console.log(itemProperties)
+      // console.log(itemProperties)
       const board = await useBoard(columns, boardStore, props.items, '_id', props.activeBoard)
       const onUpdateBoard = board.onUpdateBoard
       const onBoardMove = board.onBoardMove
@@ -121,6 +125,7 @@ export default defineComponent({
     return {
       handleChosenPropertyChange,
       itemProperties,
+      chosenProperties,
       handleBoardTypeChange,
       columns,
       onUpdateBoard,

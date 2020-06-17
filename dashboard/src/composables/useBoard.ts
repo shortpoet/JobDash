@@ -46,7 +46,8 @@ const BOARD = 'board'
       itemId: item[idSymbol],
       category: item.category,
       columnOrder: columnOrder,
-      itemOrder: itemOrder
+      itemOrder: itemOrder,
+      item: item
     }
   }
 //#endregion

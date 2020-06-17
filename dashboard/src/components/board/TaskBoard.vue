@@ -17,6 +17,7 @@
     <BoardColumn
       :column="column" 
       @update-board="onUpdateBoard"
+      :display-properties="displayProperties"
     />  
   </div>
   <div/>
@@ -40,6 +41,10 @@ export default defineComponent({
   props: {
     columns: {
       type: Array as () => IBoardColumn[],
+      required: true
+    },
+    displayProperties: {
+      type: Array,
       required: true
     }
   },

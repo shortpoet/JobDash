@@ -61,12 +61,10 @@ export default defineComponent({
       clearStorage: () => {window.localStorage.clear(); window.location.reload(true)},
       handleInputActiveBoard: (event) => ctx.emit('active-board', event.target.value),
       handleInputBoardType: (event) => ctx.emit('board-type', event.target.value),
-      handleInputChosenProperties: (event) => {
-        colorLog('handle input chosen', 'yellow', 'blue')
-        console.log(event)
-        console.log(chosenProperties.value)
-        ctx.emit('chosen-properties', chosenProperties.value)
-
+      handleInputChosenProperties: (index) => {
+        // colorLog('handle input chosen', 'yellow', 'blue')
+        chosenProperties.value[index] = true
+        ctx.emit('chosen-properties', Object.keys(chosenProperties.value))
       }
     }
   }

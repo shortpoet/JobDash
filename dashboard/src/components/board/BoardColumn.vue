@@ -11,7 +11,12 @@
       @drop="moveItemOrColumn($event, column, item)"
       @update-board="onUpdateBoard"
     >
-      <BoardItem :item="item" :item-name="category + ' - order: ' + item.itemOrder + ' - id'" :item-id="item.itemId"/>
+      <BoardItem
+        :item="item"
+        :item-name="`${category} - order: ${item.itemOrder} - id`"
+        :item-id="item.itemId"
+        :display-properties="displayProperties"
+      />
     </div>
   </div>
   <div />
@@ -37,6 +42,10 @@ export default defineComponent({
   props: {
     column: {
       type: Object as () => IBoardColumn,
+      required: true
+    },
+    displayProperties: {
+      type: Array,
       required: true
     }
   },
