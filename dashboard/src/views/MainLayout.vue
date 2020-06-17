@@ -25,7 +25,7 @@
     </BaseMinimize>
 
     <TaskBoardLayout
-      :tasks="allTasks"
+      :items="allTasks"
       :active-board="activeBoard"
     />
   </div>

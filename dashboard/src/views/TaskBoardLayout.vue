@@ -5,7 +5,7 @@
   -->
   <section class=" board-section">
     <div class="taskboard-container">
-      <BoardControls @active-board="handleActiveBoardChange"/>
+      <BoardControls @active-board="handleActiveBoardChange" @board-type="handleBoardTypeChange" :display-properties="itemProperties"/>
       <div class="container the-board">
         <div class="columns-container">
           <div class="columns is-centered">
@@ -37,9 +37,10 @@ import { useStorage } from './../composables/useStorage'
 import useBoard from './../composables/useBoard'
 import useBoardMove from './../composables/useBoardMove'
 import { BoardStore } from '../store/board.store'
-import { sortObject } from './../utils'
+import { sortObject, colorLog } from './../utils'
 import { IBoardItem } from '../interfaces/board/board.item.interface'
 import { useStore } from '../store'
+import { IBoardable } from '../interfaces/board/boardable.interface'
 export default defineComponent({
   name: 'TaskBoardLayout',
 
@@ -50,8 +51,8 @@ export default defineComponent({
   },
 
   props: {
-    tasks: {
-      type: Array as () => Task[],
+    items: {
+      type: Array as () => IBoardable[],
       required: true
     },
     activeBoard: {
@@ -63,11 +64,20 @@ export default defineComponent({
   emits: ['dragstart', 'draggable', 'update-board'],
 
   async setup(props, ctx) {
+    colorLog('task board layout', 'green', 'yellow')
     const store = useStore()
     //#region board
+      const boardType = ref()
+      const handleBoardTypeChange = (e) => {
+        colorLog("on board type change", "orange", "purple")
+        console.log(e)
+        boardType.value = e
+      }
       const boardStore: BoardStore = store.modules['boardStore']
       const columns = ref<IBoardColumn[]>()
-      const board = await useBoard(columns, boardStore, props.tasks, '_id', props.activeBoard)
+      const itemProperties = computed(() => Object.keys(props.items[0]))
+      console.log(itemProperties)
+      const board = await useBoard(columns, boardStore, props.items, '_id', props.activeBoard)
       const onUpdateBoard = board.onUpdateBoard
       const onBoardMove = board.onBoardMove
     //#endregion
@@ -88,10 +98,10 @@ export default defineComponent({
     // this is correct
 
     watch(
-      () => props.tasks.length, 
+      () => props.items.length, 
       (value: number, previous:number) => {
-          console.log(`Watch props.tasks.lenth function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
-          onUpdateBoard(props.tasks)
+          console.log(`Watch props.items.lenth function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+          onUpdateBoard(props.items)
         },
       // not sure if i want this called immediately
       // makes update function run on load
@@ -99,6 +109,8 @@ export default defineComponent({
     )
 
     return {
+      itemProperties,
+      handleBoardTypeChange,
       columns,
       onUpdateBoard,
       onBoardMove
