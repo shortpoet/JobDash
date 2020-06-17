@@ -203,11 +203,14 @@ const BOARD = 'board'
     let boardHasNewCategory: boolean
     let boardHasLessCategory: boolean
     let categories
+
     if(hasActiveBoard) {
       // flatten column object into item array
       storedBoardItems = columnMapToItemArray(activeBoard.columns)
       // get array of item ids from all current items in props
       itemIds.value = items.map(item => item.itemId)
+      console.log(items.length)
+      console.log(storedBoardItems.length)
       // get array of item ids from all current items in storage (localStorage - may want to build other persisitence layers)
       storedBoardItemIds = storedBoardItems.map(item => item.itemId)
       storedBoardCategoriesLength = storedBoardItems.map(item => item.category).length

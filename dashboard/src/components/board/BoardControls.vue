@@ -34,7 +34,7 @@ export default defineComponent({
     return {
       showClear,
       activeBoard,
-      clearStorage: () => localStorage.clear,
+      clearStorage: () => {window.localStorage.clear(); window.location.reload(true)},
       handleInput: (event) => ctx.emit('active-board', event.target.value)
     }
   }

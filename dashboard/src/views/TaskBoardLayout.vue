@@ -95,7 +95,7 @@ export default defineComponent({
         },
       // not sure if i want this called immediately
       // makes update function run on load
-      // {immediate: true}
+      {immediate: true}
     )
 
     return {
