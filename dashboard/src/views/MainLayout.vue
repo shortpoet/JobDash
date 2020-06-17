@@ -24,7 +24,7 @@
       </div>
     </BaseMinimize>
 
-    <TaskBoardLayout
+    <BoardLayout
       :items="allTasks"
       :active-board="activeBoard"
     />
@@ -37,7 +37,7 @@ import { defineComponent, computed, ref, watch, nextTick } from 'vue'
 
 import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
-import TaskBoardLayout from './TaskBoardLayout.vue'
+import BoardLayout from './BoardLayout.vue'
 import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import { useRouter } from 'vue-router'
@@ -62,7 +62,7 @@ export default defineComponent({
     BaseMinimize,
     CreateLayout,
     TableLayout,
-    TaskBoardLayout
+    BoardLayout
   },
   async setup(props, ctx) {
 
