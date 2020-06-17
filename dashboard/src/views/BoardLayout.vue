@@ -5,7 +5,7 @@
   -->
   <section class=" board-section">
     <div class="taskboard-container">
-      <BoardControls @active-board="handleActiveBoardChange" @board-type="handleBoardTypeChange" :display-properties="itemProperties"/>
+      <BoardControls @active-board="handleActiveBoardChange" @board-type="handleBoardTypeChange" :display-properties="itemProperties" @chosen-properties="handleChosenPropertyChange"/>
       <div class="container the-board">
         <div class="columns-container">
           <div class="columns is-centered">
@@ -73,6 +73,16 @@ export default defineComponent({
         console.log(e)
         boardType.value = e
       }
+      const chosenProperties = ref({})
+      const handleChosenPropertyChange = (e) => {
+        colorLog("on chosen prop change", "orange", "purple")
+        console.log(e)
+        chosenProperties.value = e
+        console.log(chosenProperties.value)
+      }
+
+
+
       const boardStore: BoardStore = store.modules['boardStore']
       const columns = ref<IBoardColumn[]>()
       const itemProperties = computed(() => Object.keys(props.items[0]))
@@ -109,6 +119,7 @@ export default defineComponent({
     )
 
     return {
+      handleChosenPropertyChange,
       itemProperties,
       handleBoardTypeChange,
       columns,

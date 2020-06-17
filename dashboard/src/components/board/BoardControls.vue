@@ -11,6 +11,17 @@
           <label for="reset-board" class="label is-small">Reset</label>
           <button id="reset-board" class="button is-small is-warning is-pulled-right" @click="showClear = !showClear">Show</button>
           <button v-show="showClear" class="button is-small is-warning is-pulled-right" @click="clearStorage">Clear</button>      
+          <label
+            v-for="(prop, i) in displayProperties"
+            :key="i"
+            :for="`display-property-${i}`"
+            class="display-properties checkbox is-small"
+            
+          >
+            <input :id="`display-property-${i}`" type="checkbox" class="is-small" @input="handleInputChosenProperties(i)" v-model="chosenProperties[i]">
+            {{prop}}
+          </label>
+          <button id="reset-board" class="button is-small is-warning is-pulled-right" @click="showClear = !showClear">Show</button>
         </p>
       </div>
     </BaseBox>
@@ -22,6 +33,7 @@
 import { defineComponent, ref } from 'vue'
 import BaseBox from './../common/BaseBox.vue'
 import BaseInput from './../common/BaseInput.vue'
+import { colorLog } from '../../utils'
 
 export default defineComponent({
   name: 'BoardControls',
@@ -32,21 +44,30 @@ export default defineComponent({
   props: {
     displayProperties: {
       type: Array,
-      default: () => []
+      required: true
     }
   },
-  emits: ['clear-storage', 'active-board', 'board-type'],
+  emits: ['clear-storage', 'active-board', 'board-type', 'chosen-properties'],
   setup(props, ctx) {
     const showClear = ref(false)
     const activeBoard = ref('1')
     const boardType = ref('Task')
+    const chosenProperties = ref({})
     return {
       showClear,
       activeBoard,
       boardType,
+      chosenProperties,
       clearStorage: () => {window.localStorage.clear(); window.location.reload(true)},
       handleInputActiveBoard: (event) => ctx.emit('active-board', event.target.value),
-      handleInputBoardType: (event) => ctx.emit('board-type', event.target.value)
+      handleInputBoardType: (event) => ctx.emit('board-type', event.target.value),
+      handleInputChosenProperties: (event) => {
+        colorLog('handle input chosen', 'yellow', 'blue')
+        console.log(event)
+        console.log(chosenProperties.value)
+        ctx.emit('chosen-properties', chosenProperties.value)
+
+      }
     }
   }
 })

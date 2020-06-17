@@ -179,7 +179,6 @@ export default defineComponent({
       targetsLoadedRef,
       activeBoard,
       showClear,
-      clearStorage: () => window.localStorage.clear(),
       handleActiveBoardChange
     }
 
