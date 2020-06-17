@@ -1,6 +1,7 @@
 import { IBoardColumn } from "../interfaces/board/board.column.interface"
 import { IBoardItem } from "../interfaces/board/board.item.interface"
 import { BoardStore } from "../store/board.store"
+import { colorLog } from "../utils"
 
 export default function useBoardMove(boardStore: BoardStore, ctx) {
   // console.log('use board move')
@@ -24,17 +25,18 @@ export default function useBoardMove(boardStore: BoardStore, ctx) {
   }
   
   const moveItem = (e: DragEvent, toColumnCategory: string, toItemOrder: number) => {
-    // console.log('move item')
+    colorLog('move item', 'yellow', 'red')
     const fromItemItemId = e.dataTransfer.getData('from-item-itemId')
     // console.log(toColumnCategory)
     const toItems = boardStore.getRecordsByCategory(toColumnCategory)
     // console.log(toItems)
     const toColumnOrder = toItems[0].columnOrder
-
+    console.log(toItemOrder)
+    console.log(toColumnOrder)
     // when dropping on empty column to item order will be undefined because there is no to item affected by event
     if (!toItemOrder) {
       // when not adding exactly to end of array it doesn't work
-      toItemOrder = toItems.length
+      toItemOrder = toItems.length -1
     }
 
     const oldItem: IBoardItem = boardStore.getRecordById(fromItemItemId)

@@ -1,13 +1,13 @@
 <template>
   <section class="section table-section">
-    <div class="table-container" :style="minimized ? 'height: auto;' : ''">
+    <div class="table-container" :style="scrollAuto ? 'height: auto;' : ''">
 
       <div class="table-minimize-container message-table-minimize-container">
         <BaseMinimize
           :class-prop="'message-table-container'"
           :component-name="'Message Table'"
           @minimize-change="handleMinimize"
-          
+          minimized
         >
           <BaseBox scrollable>
             <MessageTable 
@@ -71,7 +71,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent, computed, ref, reactive } from 'vue'
 import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
@@ -118,17 +118,27 @@ export default defineComponent({
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
     
-    const minimized = ref(false)
+    const scrollAuto = ref(false)
+    const minimized = reactive({
+      messageTable: true,
+      contactTable: false,
+      taskTable: false
+    })
     const handleMinimize = (e) => {
       // could add boolean checks for component type to further modify behavior
       switch(e.componentName) {
         case 'Message Table':
-          minimized.value = !e.showComponent
+          minimized.messageTable = e.minimized
+          if (minimized.messageTable == true && minimized.contactTable == true) scrollAuto.value = true
+          else scrollAuto.value = false
           break
         case 'Contact Table':
-          minimized.value = !e.showComponent
+          minimized.contactTable = e.minimized
+          if (minimized.messageTable == true && minimized.contactTable == true) scrollAuto.value = true
+          else scrollAuto.value = false
           break
         case 'Task Table':
+          minimized.taskTable = e.minimized
           break
         break
       }
@@ -193,6 +203,7 @@ export default defineComponent({
 
     return {
       minimized,
+      scrollAuto,
       handleMinimize,
       contactModal,
       taskModal,

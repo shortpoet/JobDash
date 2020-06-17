@@ -23,6 +23,10 @@ export default defineComponent({
     componentName: {
       type: String,
       required: false
+    },
+    minimized: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -30,10 +34,10 @@ export default defineComponent({
   },
   emits: ['minimize-change'],
   async setup(props, ctx) {
-    const showComponent = ref(true)
+    const showComponent = ref(!props.minimized)
     const handleChange = () => {
       showComponent.value = !showComponent.value
-      ctx.emit('minimize-change', {showComponent: showComponent.value, componentName: props.componentName})
+      ctx.emit('minimize-change', {minimized: !showComponent.value, componentName: props.componentName})
     }
     return {
       showComponent,
