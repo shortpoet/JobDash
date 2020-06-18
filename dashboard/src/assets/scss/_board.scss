@@ -82,7 +82,7 @@
           flex-direction: column;
           .board-item {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             .task-link-icon {
               cursor: pointer;
               height: 1.5rem;

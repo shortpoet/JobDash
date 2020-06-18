@@ -4,19 +4,20 @@
     <div class="control"><input
       :type="type"
       :id="readonly ? 'disabled-input' : `${name}-input`"
-      :class="['input', disabled ? 'disabled-input' : '', small ? 'is-small' : '']" 
+      :class="[typeClass, disabled ? 'disabled-input' : '', small ? 'is-small' : '']" 
       @input="handleInput"
       :value="modelValue"
       :disabled="disabled"
       :placeholder="placeholder"
       :readonly="readonly"
+      :checked="checked"
     ></div>
     <p class="help is-danger" v-if="error">{{ error }}</p>
   </div>
 </template>
 
 <script lang="ts">
-  import {defineComponent} from 'vue'
+  import {defineComponent, computed} from 'vue'
 
   export default defineComponent({
 
@@ -36,10 +37,14 @@
         requred: true
       },
       modelValue: {
-        type: String,
+        type: String || Object,
         required: true
       },
       disabled: {
+        type: Boolean,
+        default: false
+      },
+      checked: {
         type: Boolean,
         default: false
       },
@@ -62,9 +67,14 @@
         // emitting special update event with modifier called modelValue updated the prop which is v-model
         ctx.emit('update:modelValue', event.target.value)
       }
-
+      const typeClass = computed(() => {
+        props.type == 'text' 
+          ? 'input'
+          : 'checkbox'
+      })
       return {
-        handleInput
+        handleInput,
+        typeClass
       }
 
     }

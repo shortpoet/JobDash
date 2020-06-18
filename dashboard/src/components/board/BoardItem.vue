@@ -2,7 +2,7 @@
   <div class="board-item">
     <BaseIcon class="task-link-icon" @click="openCard" name="external-link" color="purple">{{}}</BaseIcon>
 
-    <div class="board-item-text-column">
+    <!-- <div class="board-item-text-column">
       <div class="board-item-category-key">
         itemName
       </div>
@@ -18,7 +18,7 @@
       <div class="board-item-text">
       {{itemId}}
       </div>
-    </div>
+    </div> -->
 
     <div
       class="board-item-text-column"
@@ -76,7 +76,8 @@ export default defineComponent({
     console.log('board item')
     const properties = ref([])
     properties.value = Object.keys(props.item.item)
-    const displayComputed = computed(() => properties.value.filter((_, i) => props.displayProperties.includes(i.toString())))
+    // const displayComputed = computed(() => properties.value.filter((_, i) => props.displayProperties.includes(i.toString())))
+    const displayComputed = computed(() => properties.value.filter((prop, i) => props.displayProperties.includes(prop.toString())))
 
     //#region taskCardModal
 

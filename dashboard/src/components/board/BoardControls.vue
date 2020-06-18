@@ -10,15 +10,29 @@
           <!-- interestingly these render inverse to what one would expect at first but i guess its about how the node is always there or something same with v-if -->
           <label for="reset-board" class="label is-small">Reset</label>
           <button id="reset-board" class="button is-small is-warning is-pulled-right" @click="showClear = !showClear">Show</button>
-          <button v-show="showClear" class="button is-small is-warning is-pulled-right" @click="clearStorage">Clear</button>      
+          <button v-show="showClear" class="button is-small is-warning is-pulled-right" @click="clearStorage">Clear</button>  
+
+          <!-- <BaseInput
+            v-for="(prop, i) in displayProperties"
+            :key="i"
+            class="display-properties checkbox is-small"
+            type="checkbox"
+            :name="prop"
+            @input="handleInputChosenProperties(i)"
+            v-model="chosenProperties[i]"
+            small
+          />
+ -->
           <label
             v-for="(prop, i) in displayProperties"
             :key="i"
             :for="`display-property-${i}`"
             class="display-properties checkbox is-small"
             
-          >
-            <input :id="`display-property-${i}`" type="checkbox" class="is-small" @input="handleInputChosenProperties(i)" v-model="chosenProperties[i]">
+          >      
+          
+
+            <input :id="`display-property-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperties(prop)" v-model="chosenProperties[prop]">
             {{prop}}
           </label>
           <!-- <button id="reset-board" class="button is-small is-warning is-pulled-right" @click="showClear = !showClear">Show</button> -->
@@ -30,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, nextTick, watch } from 'vue'
 import BaseBox from './../common/BaseBox.vue'
 import BaseInput from './../common/BaseInput.vue'
 import { colorLog } from '../../utils'
@@ -43,17 +57,70 @@ export default defineComponent({
   },
   props: {
     displayProperties: {
-      type: Array,
+      type: Array as () => string[],
       required: true
     }
   },
   emits: ['clear-storage', 'active-board', 'board-type', 'chosen-properties'],
   setup(props, ctx) {
+    colorLog('board controls', 'yellow', 'purple')
+
     const showClear = ref(false)
     const activeBoard = ref('1')
     const boardType = ref('Task')
     const chosenProperties = ref({})
+
+    props.displayProperties.forEach(prop => {
+      const dict = {}
+      dict[prop] = false
+      Object.assign(chosenProperties.value, dict)
+    })
+
+    console.log(chosenProperties.value)
+    const s = ref('')
+
+    const handleInputChosenProperties = (prop) => {
+      colorLog('handle input chosen', 'yellow', 'blue')
+      const key = prop.toString()
+      console.log(key)
+      
+      console.log(chosenProperties.value[key])
+      chosenProperties.value[prop] = !chosenProperties.value[prop]
+      console.log(chosenProperties.value[key])
+
+
+      const chosenPropertyArray = []
+      Object.entries(chosenProperties.value).forEach((entry, i) => {
+        // console.log(entry)
+        // console.log(entry[1])
+        if (entry[1] == true)
+        chosenPropertyArray.push(entry[0])
+        if (entry[1] == false)
+        chosenPropertyArray.splice(i)
+      })
+      colorLog('chosen properties', 'orange', 'purple')
+      console.log(chosenPropertyArray)
+      ctx.emit('chosen-properties', chosenPropertyArray)
+      // nextTick(() => {
+      //   console.log(chosenProperties.value[key])
+
+      // })
+      // console.log(chosenIndices.length)
+    }
+    // Object.keys(chosenProperties.value).forEach((property) => {
+    //   watch(
+    //     () => chosenProperties[property].value,
+    //     (value, previous) => {
+    //       console.log('watch')
+    //       console.log(value)
+    //       console.log(previous)
+    //     },
+    //     {immediate: true}
+    //   )
+    // })
+
     return {
+      s,
       showClear,
       activeBoard,
       boardType,
@@ -61,11 +128,7 @@ export default defineComponent({
       clearStorage: () => {window.localStorage.clear(); window.location.reload(true)},
       handleInputActiveBoard: (event) => ctx.emit('active-board', event.target.value),
       handleInputBoardType: (event) => ctx.emit('board-type', event.target.value),
-      handleInputChosenProperties: (index) => {
-        // colorLog('handle input chosen', 'yellow', 'blue')
-        chosenProperties.value[index] = true
-        ctx.emit('chosen-properties', Object.keys(chosenProperties.value))
-      }
+      handleInputChosenProperties
     }
   }
 })
