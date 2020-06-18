@@ -29,7 +29,7 @@
         {{prop}}
       </div>
       <div class="board-item-text">
-      {{i}}
+      {{item.item[prop]}}
       </div>
     </div>
 

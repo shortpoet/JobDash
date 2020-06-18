@@ -53,15 +53,10 @@ export default defineComponent({
   emits: ['dragstart', 'draggable', 'update-board', 'board-move'],
 
   async setup(props, ctx) {
-    colorLog('task board', 'green', 'yellow')
-    console.log(props.displayProperties)
+    // colorLog('task board', 'green', 'yellow')
     const boardStore: BoardStore = useStore().modules['boardStore']
-
     const move = useBoardMove(boardStore, ctx)
-    // console.log('### task board setup ###')
-    // console.log(props.columns.map(item => Object.entries(item.items).map(entry => entry[1].itemId)))
     const onBoardMove = () => ctx.emit('board-move')
-
     const pickupColumn = move.pickupColumn
     const moveItemOrColumn = move.moveItemOrColumn
 

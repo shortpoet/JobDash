@@ -28,7 +28,9 @@
 }
 
 .task-table-container {
-  margin: 0rem 0rem 1rem 0rem;
+  // keep bottom border visible
+  padding: 0rem 0rem 1.2rem 0rem;
+  margin: 0rem 0rem 0rem 0rem;
 }
 
 .message-row

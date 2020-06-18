@@ -70,15 +70,13 @@ export default defineComponent({
     //#region board
       const boardType = ref()
       const handleBoardTypeChange = (e) => {
-        colorLog("on board type change", "orange", "purple")
+        // colorLog("on board type change", "orange", "purple")
         boardType.value = e
       }
       const chosenProperties = ref([])
       const handleChosenPropertyChange = (e) => {
-        colorLog("on chosen prop change", "orange", "purple")
-        // console.log(e)
+        // colorLog("on chosen prop change", "orange", "purple")
         chosenProperties.value = e
-        console.log(chosenProperties.value)
       }
       const itemProperties = computed(() => Object.keys(props.items[0]))
       const displayProperties = computed(() => chosenProperties.value)

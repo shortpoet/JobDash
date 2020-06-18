@@ -61,17 +61,12 @@ export default defineComponent({
 
     const pickupItem = move.pickupItem
     const moveItemOrColumn = move.moveItemOrColumn
-    // const moveItemOrColumn = () => {}
-    const onUpdateBoard = () => {
-      // console.log('board column - update board')
-    } 
 
     return {
       items,
       category,
       pickupItem,
       moveItemOrColumn,
-      onUpdateBoard,
       onBoardMove
     }
   }
