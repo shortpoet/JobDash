@@ -2,15 +2,16 @@
   <div :class="['base-modal', 'modal', modal.visible ? 'is-active' : '']">
     <div class="modal-background"></div>
     <div class="modal-content">
-      <slot name="destination" :close="modal.hideModal"/>
+      <slot name="destination" :close="handleModalClose"/>
     </div>
-    <button class="modal-close is-large" aria-label="close" @click="modal.hideModal"></button>
+    <button class="modal-close is-large" aria-label="close" @click="handleModalClose"></button>
   </div>
 </template>
 
 <script lang="ts">
 import {defineComponent} from 'vue'
 import { useModal } from '../../composables/useModal'
+import { useRouter } from 'vue-router'
 
   export default defineComponent({
 
@@ -33,9 +34,10 @@ import { useModal } from '../../composables/useModal'
 
     setup(props, ctx) {
       const modal = useModal(props.destination)
-
+      const router = useRouter()
       return {
-        modal
+        modal,
+        handleModalClose: () => {modal.hideModal(); router.push('/')}
       }
 
     }
