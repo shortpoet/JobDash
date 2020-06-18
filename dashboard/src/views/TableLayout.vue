@@ -1,25 +1,53 @@
 <template>
   <section class="section table-section">
-    <div class="table-container">
-      <BaseBox class="contact-table-container">
-        <ContactTable 
-          :contacts="contacts"
-          @update-contacts="onUpdateContacts"
-      />  
-      </BaseBox>
-      <BaseBox class="task-table-container">
-        <TaskTable
-          :tasks="tasks"
-          @update-tasks="onUpdateTasks"
-        />
-      </BaseBox>
-      <BaseBox>
-        <BaseTable 
-          :items="tasks"
-          :id-symbol="'_id'"
-          :item-type="'task'"
-        />
-      </BaseBox>
+    <div class="table-container" :style="onlyTaskShown ? 'height: auto; padding: 0rem;' : ''">
+
+      <div class="table-minimize-container message-table-minimize-container">
+        <BaseMinimize
+          :class-prop="'message-table-container'"
+          :component-name="'Message Table'"
+          @minimize-change="handleMinimize"
+          minimized
+        >
+          <BaseBox scrollable>
+            <MessageTable 
+              :messages="messages" 
+              @update-messages="onUpdateMessages"
+            />
+          </BaseBox>
+        </BaseMinimize>
+      </div>
+
+      <div class="table-minimize-container contact-table-minimize-container">
+        <BaseMinimize
+          :class-prop="'contact-table-container'"
+          :component-name="'Contact Table'"
+          @minimize-change="handleMinimize"
+        >
+          <BaseBox scrollable>
+            <ContactTable 
+              :contacts="contacts"
+              @update-contacts="onUpdateContacts"
+          />  
+          </BaseBox>
+        </BaseMinimize>
+      </div>
+
+      <div class="table-minimize-container task-table-minimize-container">
+        <BaseMinimize
+          :class-prop="'task-table-container'"
+          :component-name="'Task Table'"
+          @minimize-change="handleMinimize"
+        >
+          <BaseBox scrollable>
+            <TaskTable
+              :tasks="tasks"
+              @update-tasks="onUpdateTasks"
+            />
+          </BaseBox>
+        </BaseMinimize>
+      </div>
+
     </div>
 
     <!-- 
@@ -43,13 +71,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent, computed, ref, reactive } from 'vue'
+import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
 import BaseTable from './../components/table/BaseTable.vue'
 import ContactTable from './../components/contacts/ContactTable.vue'
 import TaskTable from './../components/task/TaskTable.vue'
 import ContactCard from './../components/contacts/ContactCard.vue'
+import MessageTable from '../components/message/MessageTable.vue'
 
 import { useModal } from '../composables/useModal'
 
@@ -68,22 +98,54 @@ export default defineComponent({
     tasks: {
       type: Array,
       required: true
+    },
+    messages: {
+      type: Array,
+      required: true
     }
   },
   components: {
+    BaseMinimize,
     BaseBox,
     BaseTable,
     ContactTable,
     TaskTable,
-    ContactCard
+    ContactCard,
+    MessageTable
   },
-  emits: ['update-contacts', 'update-tasks'],
+  emits: ['update-contacts', 'update-tasks', 'update-messages'],
   setup(props, ctx) {
     const contactDestination: Destination = '#delete-contact-modal'
     const taskDestination: Destination = '#delete-task-modal'
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
     
+    const onlyTaskShown = ref(false)
+    const minimized = reactive({
+      messageTable: true,
+      contactTable: false,
+      taskTable: false
+    })
+    const handleMinimize = (e) => {
+      // could add boolean checks for component type to further modify behavior
+      switch(e.componentName) {
+        case 'Message Table':
+          minimized.messageTable = e.minimized
+          if (minimized.messageTable == true && minimized.contactTable == true) onlyTaskShown.value = true
+          else onlyTaskShown.value = false
+          break
+        case 'Contact Table':
+          minimized.contactTable = e.minimized
+          if (minimized.messageTable == true && minimized.contactTable == true) onlyTaskShown.value = true
+          else onlyTaskShown.value = false
+          break
+        case 'Task Table':
+          minimized.taskTable = e.minimized
+          break
+        break
+      }
+    }
+
     //#region contactCardModal
       const contactCardDestination: Destination = '#contact-card-modal'
 
@@ -137,8 +199,14 @@ export default defineComponent({
     const onUpdateTasks = () => {
       ctx.emit('update-tasks')
     }
+    const onUpdateMessages = () => {
+      ctx.emit('update-messages')
+    }
 
     return {
+      minimized,
+      onlyTaskShown,
+      handleMinimize,
       contactModal,
       taskModal,
       cardIsOpen,

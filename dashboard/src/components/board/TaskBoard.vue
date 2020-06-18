@@ -10,14 +10,14 @@
     @dragstart.self="pickupColumn($event, column)"
     @dragover.prevent
     @dragenter.prevent
-    @drop="moveItemOrColumn($event, column.category)"
+    @drop="moveItemOrColumn($event, column)"
     @update-board="onUpdateBoard"
     @board-move="onBoardMove"
   >
     <BoardColumn
       :column="column" 
       @update-board="onUpdateBoard"
-      @board-move="onBoardMove"
+      :display-properties="displayProperties"
     />  
   </div>
   <div/>
@@ -31,6 +31,7 @@ import { IBoardColumn } from '../../interfaces/board/board.column.interface'
 import { BoardStore } from '../../store/board.store'
 import { useStore } from '../../store'
 import useBoardMove from '../../composables/useBoardMove'
+import { colorLog } from '../../utils'
 export default defineComponent({
   name: 'TaskBoard',
 
@@ -42,25 +43,27 @@ export default defineComponent({
     columns: {
       type: Array as () => IBoardColumn[],
       required: true
+    },
+    displayProperties: {
+      type: Array,
+      required: true
     }
   },
 
   emits: ['dragstart', 'draggable', 'update-board', 'board-move'],
 
   async setup(props, ctx) {
-
+    // colorLog('task board', 'green', 'yellow')
     const boardStore: BoardStore = useStore().modules['boardStore']
-
     const move = useBoardMove(boardStore, ctx)
-    // console.log('### task board setup ###')
-    // console.log(props.columns.map(item => Object.entries(item.items).map(entry => entry[1].itemId)))
-
+    const onBoardMove = () => ctx.emit('board-move')
     const pickupColumn = move.pickupColumn
     const moveItemOrColumn = move.moveItemOrColumn
 
-    return {
+return {
       pickupColumn,
       moveItemOrColumn,
+      onBoardMove,
     }
   }
 })

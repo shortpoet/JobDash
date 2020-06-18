@@ -46,7 +46,8 @@ const BOARD = 'board'
       itemId: item[idSymbol],
       category: item.category,
       columnOrder: columnOrder,
-      itemOrder: itemOrder
+      itemOrder: itemOrder,
+      item: item
     }
   }
 //#endregion
@@ -203,6 +204,7 @@ const BOARD = 'board'
     let boardHasNewCategory: boolean
     let boardHasLessCategory: boolean
     let categories
+
     if(hasActiveBoard) {
       // flatten column object into item array
       storedBoardItems = columnMapToItemArray(activeBoard.columns)
@@ -370,7 +372,7 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
       handleDiff(activeBoard, columns, boardStore, items, idSymbol, activeBoardId)
     }
 
-    if (!boardHasDiff) {
+    else if (!boardHasDiff) {
       colorLog('board has NO diff', BOOLCOLOR, BOOLBACK)
       // diff is based on length of input (iboardable) and items (iboarditems)
       // case where board move happens there is no diff
@@ -386,7 +388,7 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     }
   } 
 
-  if (!hasActiveBoard) {
+  else if (!hasActiveBoard) {
     colorLog('no active board', BOOLCOLOR, BOOLBACK)
     // if no active board
     // initItems is called from initial items prop
@@ -428,6 +430,11 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
       }
     }
 
+  }
+
+  const mapItemToData = (items: IBoardable[], item: IBoardItem): IBoardable => {
+    const outItem: IBoardable = items.filter(_item => _item.itemId == item.itemId)[0]
+    return outItem
   }
 
   return {

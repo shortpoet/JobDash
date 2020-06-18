@@ -2,7 +2,7 @@
   <div class="card task-card form-container" v-if="loaded">
     <div class="task-card-header">
       <h5 class="form-heading">Task</h5>
-      <button class="delete is-pulled-right" @click="modal.hideModal"></button>
+      <button class="delete is-pulled-right" @click="handleModalClose"></button>
     </div>
     <hr class="form-hr"/>
     <form action="submit" @submit.prevent="submit">
@@ -81,6 +81,8 @@ export default defineComponent({
     //#region modal
       const modal = useModal(props.destination)
 
+      const handleModalClose = () => {modal.hideModal(); router.push('/')}
+
       const cardIsOpen = computed(() => {
         const open = router.currentRoute.value.name === props.destination
         // console.log('card is open')
@@ -110,7 +112,7 @@ export default defineComponent({
           taskTouched.value = false
           ctx.emit('update-tasks')
         }
-        modal.hideModal()
+        handleModalClose()
       }
     //#endregion
 
@@ -122,7 +124,8 @@ export default defineComponent({
       submit,
       modal,
       taskEdit,
-      cardIsOpen
+      cardIsOpen,
+      handleModalClose
     }
 
   }

@@ -2,7 +2,7 @@
   <div class="card contact-card form-container" v-if="loaded">
     <div class="contact-card-header">
       <h5 class="form-heading">Contact</h5>
-      <button class="delete is-pulled-right" @click="modal.hideModal"></button>
+      <button class="delete is-pulled-right" @click="handleModalClose"></button>
     </div>
     <hr class="form-hr"/>
     <form action="submit" @submit.prevent="submit">
@@ -83,6 +83,7 @@ export default defineComponent({
       const companyEdit = ref() 
       const emailEdit = ref()
       const contactTouched = ref(false)
+      const handleModalClose = () => {modal.hideModal(); router.push('/')}
 
       setTimeout(() => {
         id.value = typeof(router.currentRoute.value.params.id) == 'string' ? router.currentRoute.value.params.id : router.currentRoute.value.params.id[0]
@@ -110,7 +111,7 @@ export default defineComponent({
           contactTouched.value = false
           ctx.emit('update-contacts')
         }
-        modal.hideModal()
+        handleModalClose()
       }
     //#endregion
 
@@ -122,7 +123,8 @@ export default defineComponent({
       submit,
       modal,
       loaded,
-      cardIsOpen
+      cardIsOpen,
+      handleModalClose
     }
 
   }

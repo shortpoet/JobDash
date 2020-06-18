@@ -8,18 +8,22 @@
       @dragstart="pickupItem($event, item)"
       @dragover.prevent
       @dragenter.prevent
-      @drag.stop="moveItemOrColumn($event, item.category, item.itemOrder)"
+      @drop="moveItemOrColumn($event, column, item)"
       @update-board="onUpdateBoard"
-      @board-move="onBoardMove"
     >
-      <BoardItem :item="item" :item-name="category + ' - order: ' + item.itemOrder + ' - id'" :item-id="item.itemId"/>
+      <BoardItem
+        :item="item"
+        :item-name="`${category} - order: ${item.itemOrder}`"
+        :item-id="item.itemId"
+        :display-properties="displayProperties"
+      />
     </div>
   </div>
   <div />
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 
 import useBoardMove from './../../composables/useBoardMove'
 
@@ -31,13 +35,17 @@ import { BoardStore } from '../../store/board.store'
 import { useStore } from '../../store'
 
 export default defineComponent({
-  name: 'TaskColumn',
+  name: 'BoardColumn',
   components: {
     BoardItem
   },
   props: {
     column: {
       type: Object as () => IBoardColumn,
+      required: true
+    },
+    displayProperties: {
+      type: Array,
       required: true
     }
   },
@@ -49,22 +57,17 @@ export default defineComponent({
     const items = props.column.items
     const boardStore: BoardStore = useStore().modules['boardStore']
     const move = useBoardMove(boardStore, ctx)
+    const onBoardMove = () => ctx.emit('board-move')
 
     const pickupItem = move.pickupItem
-    // const moveItemOrColumn = move.moveItemOrColumn
-    const moveItemOrColumn = () => {}
-    const onUpdateBoard = () => {
-      // console.log('board column - update board')
-    }
-
-    
+    const moveItemOrColumn = move.moveItemOrColumn
 
     return {
       items,
       category,
       pickupItem,
       moveItemOrColumn,
-      onUpdateBoard
+      onBoardMove
     }
   }
 })

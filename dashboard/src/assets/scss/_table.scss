@@ -1,0 +1,50 @@
+.table-container {
+  height: 35rem;
+  display: flex;
+  flex-direction: column;
+  > div > div > table > thead > tr > th {
+    white-space: nowrap;
+  }
+  // margin: 0rem 0rem 25rem 0rem;
+  // to make up for hidden part
+  // so bottom border is not hidden 
+  // without messing with .table-minimize-container max-height: 
+  padding: 0rem 0rem 18rem 0rem;
+}
+
+.contact-table-minimize-container {
+  // margin-top: .55rem;
+}
+.table-minimize-container {
+  max-height: 100%;
+}
+
+.message-table-container,
+.contact-table-container,
+.task-table-container {
+  height: 100%;
+  // max-height: 50%;
+  // overflow-y: scroll;
+}
+
+.task-table-container {
+  // keep bottom border visible
+  padding: 0rem 0rem 1.2rem 0rem;
+  margin: 0rem 0rem 0rem 0rem;
+}
+
+.message-row,
+.contact-row,
+.task-row {
+  >td {
+    text-align: center;
+  }
+  .id-cell {
+    text-align: left;
+    cursor: pointer;
+  }
+  .icon-cell {
+    text-align: center;
+    cursor: pointer;
+  }
+}

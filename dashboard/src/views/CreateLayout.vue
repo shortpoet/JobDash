@@ -4,12 +4,18 @@
     * will start nesting relative padding (I think)
   -->
   <section class="section tabs-section">
-    <BaseBox>
-      <BaseTabs :tabs="tabs" @tab-activated="tabActivated" :active-tab="activeTab.name"/>
-      <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts"/> -->
-      <ContactCreate v-if="activeTab.name == 'Contact'" @update-contacts="onUpdateContacts"/>
-      <TaskCreate v-if="activeTab.name == 'Task'" @update-tasks="onUpdateTasks"/>
-    </BaseBox>
+    <BaseMinimize
+      :class-prop="''"
+      :component-name="'Create Tabs'"
+    >
+      <BaseBox>
+        <BaseTabs :tabs="tabs" @tab-activated="tabActivated" :active-tab="activeTab.name"/>
+        <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts"/> -->
+        <ContactCreate v-if="activeTab.name == 'Contact'" @update-contacts="onUpdateContacts"/>
+        <TaskCreate v-if="activeTab.name == 'Task'" @update-tasks="onUpdateTasks"/>
+      </BaseBox>
+    </BaseMinimize>
+
   </section>
 </template>
 
@@ -18,6 +24,7 @@ import { defineComponent, computed, ref, onMounted } from 'vue'
 import BaseTabs from './../components/common/BaseTabs.vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
+import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import ContactCreate from './../components/contacts/ContactCreate.vue'
 import TaskCreate from './../components/task/TaskCreate.vue'
@@ -30,6 +37,7 @@ export default defineComponent({
   components: {
     BaseTabs,
     BaseBox,
+    BaseMinimize,
     ContactCreate,
     TaskCreate,
   },

@@ -1,5 +1,5 @@
 <template>
-  <div class="box scrollable-box" :style="styleComputed">
+  <div :class="scrollable ? 'box my-box scrollable-box' : 'box my-box' " :style="styleComputed">
     <slot />
   </div>
 </template>

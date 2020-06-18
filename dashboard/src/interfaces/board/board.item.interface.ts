@@ -5,4 +5,5 @@ export interface IBoardItem extends IBoardable{
   category: string
   itemOrder: number
   columnOrder: number
+  item: object
 }

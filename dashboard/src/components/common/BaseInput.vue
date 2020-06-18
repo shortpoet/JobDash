@@ -1,10 +1,10 @@
 <template>
   <div class="field">
-    <label :for="name" class="label">{{name}}</label>
+    <label :for="name" class="label" :class="['label', small ? 'is-small' : '']">{{name}}</label>
     <div class="control"><input
       :type="type"
       :id="readonly ? 'disabled-input' : `${name}-input`"
-      :class="['input', disabled ? 'disabled-input' : '']" 
+      :class="['input', disabled ? 'disabled-input' : '', small ? 'is-small' : '']" 
       @input="handleInput"
       :value="modelValue"
       :disabled="disabled"
@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-  import {defineComponent} from 'vue'
+  import {defineComponent, computed} from 'vue'
 
   export default defineComponent({
 
@@ -50,6 +50,10 @@
       placeholder: {
         type: String,
         default: 'Placeholder'
+      },
+      small: {
+        type: Boolean,
+        default: false
       }
     },
 
@@ -58,7 +62,6 @@
         // emitting special update event with modifier called modelValue updated the prop which is v-model
         ctx.emit('update:modelValue', event.target.value)
       }
-
       return {
         handleInput
       }

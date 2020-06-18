@@ -1,14 +1,29 @@
-.main-layout {
-  .ui-collapse {
-    background-color: $royal-purple;
+.display-properties.checkbox {
+  font-size: .75rem;
+  line-height: 1.25rem;
+  .checkbox {
+  }
+}
+
+.taskboard-container{
+  display: flex;
+}
+
+.board-controls-container {
+  padding: 0rem .5rem;
+  width: 9rem;
+  .box.my-box.board-controls {
+    padding: 1rem .25rem;
+    box-sizing: inherit;
     display: flex;
-    justify-content: flex-end;
-    border-radius: $task-border-radius;
-    // margin here to offset bulma columns -.75rem default
-    // so clickable area
-    margin: 0rem 0rem .75rem 0rem;
-    cursor: pointer;
-    .ui-collapse-icon {
+    flex-direction: column;
+    // for buttons to be aligned
+    .field > .control {
+      display: flex;
+      flex-direction: column;
+      .button {
+        margin: .25rem 0rem;
+      }
     }
   }
 }
@@ -66,14 +81,26 @@
           display: flex;
           flex-direction: column;
           .board-item {
-            .board-item-text {
+            display: flex;
+            flex-direction: column;
+            .task-link-icon {
               cursor: pointer;
+              height: 1.5rem;
+              width: 1.5rem;
             }
+            .board-item-text-column {
+              display: flex;
+              flex-direction: column;
+              .board-item-category-key {
+                font-size: .75rem;
+              }
+              .board-item-text {
+                font-size: .75rem;
+              }
+            }            
           }
         }
       }
     }
   }
 }
-
-
