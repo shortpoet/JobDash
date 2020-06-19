@@ -50,7 +50,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch, onMounted, Ref } from 'vue'
-import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig, ControlName } from './../../interfaces/table/table.column.interface'
+import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig, ControlName } from './../../interfaces/table/table.interface'
 import BaseSwitchArray from './../common/BaseSwitchArray.vue'
 import TableRowHeader from './TableRowHeader.vue'
 import TableRowBody from './TableRowBody.vue'

@@ -23,7 +23,7 @@
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import TableCellHeaderData from './TableCellHeaderData.vue'
 import TableCellHeaderControl from './TableCellHeaderControl.vue'
-import { ITableControl, ITableData, BaseTableConfig, BaseTableControl, BaseTableData } from './../../interfaces/table/table.column.interface'
+import { ITableControl, ITableData, BaseTableConfig, BaseTableControl, BaseTableData } from './../../interfaces/table/table.interface'
 
 export default defineComponent({
   name: 'TableRowHeader',

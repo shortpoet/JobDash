@@ -28,7 +28,7 @@ import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import BaseTableCellData from './../table/BaseTableCellData.vue'
 import BaseTableCellControl from './../table/BaseTableCellControl.vue'
 import TableCellControlDelete from './../table/TableCellControlDelete.vue'
-import { ITableControl, ITableData, BaseTableData, BaseTableControl, ID, DELETE, EDIT, MESSAGE, LOCKED } from '../../interfaces/table/table.column.interface'
+import { ITableControl, ITableData, BaseTableData, BaseTableControl, ID, DELETE, EDIT, MESSAGE, LOCKED } from '../../interfaces/table/table.interface'
 import { colorLog } from '../../utils'
 export default defineComponent({
   name: 'TableRowBody',
@@ -64,7 +64,6 @@ export default defineComponent({
     BaseTableCellData,
     BaseTableCellControl,
     TableCellControlDelete
-
   },
 
   emits: ['update-contacts'],
