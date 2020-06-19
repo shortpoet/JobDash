@@ -26,6 +26,8 @@
           :messages="allMessages"
           @update-messages="onUpdateMessages"
           @handle-delete="handleDelete"
+          @confirm-delete="confirmDelete"
+          @update-values="onUpdateValues"
         />
       </div>
     </BaseMinimize>
@@ -75,6 +77,7 @@ export default defineComponent({
     TableLayout,
     BoardLayout
   },
+  emits: ['update-values'],
   async setup(props, ctx) {
     const error = ref(null)
     onErrorCaptured(e => {
@@ -131,8 +134,8 @@ export default defineComponent({
       const taskCardModal = useModal(taskCardDestination)
       const messageModal = useModal(messageDestination)
 
-      const targetsLoadedRef = ref(false)
-      targetsLoadedRef.value = !!document.querySelector(taskCardDestination) 
+      // const targetsLoadedRef = ref(false)
+      // targetsLoadedRef.value = !!document.querySelector(taskCardDestination) 
       
       // const targetsLoaded = computed(() => {
       //   console.log('target loaded')
@@ -191,12 +194,25 @@ export default defineComponent({
 
   //#region delete
     const taskIdSymbol = '_id'
-    const taskDelete = useDelete(itemDeleteModal, taskCardDestination, store, taskIdSymbol, ctx)
+    const taskDelete = useDelete(itemDeleteModal, taskCardDestination, taskStore, taskIdSymbol, ctx)
     const handleDelete = (e) => {
       console.log(e)
       switch(e.itemType) {
         case 'task':
-          taskDelete.handleConfirmDelete(e.item, itemDeleteModal)
+          taskDelete.handleConfirmDelete(e.item, itemDeleteModal, taskIdSymbol, onUpdateTasks)
+      }
+    }
+    const confirmDelete = (e) => {
+      switch(e.itemType) {
+        case 'task':
+          taskDelete.deleteItem(itemDeleteModal, taskIdSymbol, onUpdateTasks)
+      }
+    }
+    const onUpdateValues = (e) => {
+      console.log(e)
+      switch(e.itemType) {
+        case 'task':
+          onUpdateTasks()
       }
     }
 
@@ -213,11 +229,12 @@ export default defineComponent({
       onUpdateContacts,
       onUpdateTasks,
       onUpdateMessages,
-      targetsLoadedRef,
+      // targetsLoadedRef,
       activeBoard,
       showClear,
       handleActiveBoardChange,
-      handleDelete
+      handleDelete,
+      confirmDelete
     }
 
   }

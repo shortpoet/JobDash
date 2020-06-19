@@ -60,8 +60,9 @@
               :id-symbol="'_id'"
               :item-type="'task'"
               :delete-modal="deleteModal"
-              @update-values="onUpdateTasks"
+              @update-values="onUpdateValues"
               @handle-delete="handleDelete"
+              @confirm-delete="confirmDelete"
             />
           </BaseBox>
         </BaseMinimize>
@@ -135,7 +136,7 @@ export default defineComponent({
     ContactCard,
     MessageTable
   },
-  emits: ['update-contacts', 'update-tasks', 'update-messages', 'handle-delete'],
+  emits: ['update-values', 'update-contacts', 'update-tasks', 'update-messages', 'handle-delete', 'confirm-delete'],
   setup(props, ctx) {
     const contactDestination: Destination = '#delete-contact-modal'
     const taskDestination: Destination = '#delete-task-modal'
@@ -222,6 +223,9 @@ export default defineComponent({
     const onUpdateTasks = () => {
       ctx.emit('update-tasks')
     }
+    const onUpdateValues = () => {
+      ctx.emit('update-values')
+    }
     const onUpdateMessages = () => {
       ctx.emit('update-messages')
     }
@@ -235,7 +239,9 @@ export default defineComponent({
       cardIsOpen,
       onUpdateContacts,
       onUpdateTasks,
+      onUpdateValues,
       handleDelete: (item) => ctx.emit('handle-delete', item),
+      confirmDelete: (item) => ctx.emit('confirm-delete', item),
     }
 
   }

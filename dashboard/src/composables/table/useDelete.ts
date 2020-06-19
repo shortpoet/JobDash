@@ -16,9 +16,9 @@ export function useDelete(modal, destination, store, idSymbol, ctx) {
     // const destination = '#delete-task-modal'
     // modalMap.addModal(destination)
     // const modal = modalMap.modalMap[destination]
+  
 
-
-    const handleConfirmDelete = (item, modal) => {
+    const handleConfirmDelete = (item, modal, idSymbol, updateValuesCallback) => {
       colorLog('handle confirm delete from use delete', 'blue', 'green')
       console.log(item)
       if (item.locked) {
@@ -26,37 +26,18 @@ export function useDelete(modal, destination, store, idSymbol, ctx) {
         modal.showModal()
       } else {
         deleteCandidate.value = item
-        deleteItem(modal)
+        deleteItem(modal, idSymbol, updateValuesCallback)
       }
     }
     
-    const deleteItem = async (modal) => {
+    const deleteItem = async (modal, idSymbol, updateValuesCallback) => {
+      colorLog('delete item from use delete', 'blue', 'green')
+      console.log(idSymbol)
       modal.hideModal()
       const deletedId = await store.deleteRecord(deleteCandidate.value)
-      // console.log('delete item')
-      deleteCandidate.value[idSymbol] == deletedId ? deleteCandidate.value = null : ''
       // null check
-      // console.log(deleteCandidate.value)
-      ctx.emit('update-values')
-
-      // if (e) {
-      //   if (e == destination) {
-      //     modal.hideModal()
-      //     const deletedId = await store.deleteRecord(deleteCandidate.value)
-      //     // console.log('delete item')
-      //     deleteCandidate.value[idSymbol] == deletedId ? deleteCandidate.value = null : ''
-      //     // null check
-      //     // console.log(deleteCandidate.value)
-      //     ctx.emit('update-values')
-      //   }          
-      // } else {
-      //   const deletedId = await store.deleteRecord(deleteCandidate.value)
-      //   // console.log('delete item')
-      //   deleteCandidate.value[idSymbol] == deletedId ? deleteCandidate.value = null : ''
-      //   // null check
-      //   // console.log(deleteCandidate.value)
-      //   ctx.emit('update-values')
-      // }
+      deleteCandidate.value[idSymbol] == deletedId ? deleteCandidate.value = null : ''
+      updateValuesCallback()
     }
     
     const toggleDeletable = async (item) => {
@@ -75,6 +56,7 @@ export function useDelete(modal, destination, store, idSymbol, ctx) {
   //#endregion
 
   return {
-    handleConfirmDelete
+    handleConfirmDelete,
+    deleteItem
   }
 }

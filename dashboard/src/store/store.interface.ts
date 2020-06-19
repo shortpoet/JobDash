@@ -88,6 +88,7 @@ export class Store<T> extends BaseStore<T> {
   }
 
   public deleteRecord(record: any, idSymbol:(string | number)): void {
+    console.log(idSymbol)
     const id = record[idSymbol]
     delete this.state.records.all[id]
     const index = this.state.records.ids.indexOf(idSymbol.toString())

@@ -3,6 +3,7 @@ import axios from "axios"
 import { Task } from "../interfaces/task/task.interface"
 import { TaskDTO } from "../interfaces/task/taskDTO.interface"
 import { StoreState, StateMap, IStore, StoreAxios } from "./store.interface"
+import { colorLog } from "../utils"
 
 interface TasksStateMap extends StateMap {
   ids: string[]
@@ -44,6 +45,7 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   }
   
   async deleteRecord(task: Task): Promise<string> {
+    colorLog('delete record from task store', 'orange', 'violet')
     super.deleteRecord(task, '_id')
     const response = await axios.delete<TaskDTO>(`http://localhost:3000/task/delete?task_id=${task._id}`)
     return response.data.task._id

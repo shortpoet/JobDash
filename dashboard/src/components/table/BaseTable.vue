@@ -38,7 +38,7 @@
   </table>
 
   <teleport :to="`#delete-item-modal`" v-if="deleteModal.visible">
-    <ModalWarning @delete-item="confirmDelete" :destination="'#delete-item-modal'"/>
+    <ModalWarning @delete-item="confirmDelete" :destination="'#delete-item-modal'" />
   </teleport>
 
   <!-- <teleport :to="`#edit-${itemType}-modal`" v-if="contactCardModal.visible">
@@ -66,7 +66,7 @@ export default defineComponent({
   props: {
     items: {
       type: Array,
-      required: true
+      default: () => []
     },
     idSymbol: {
       type: String,

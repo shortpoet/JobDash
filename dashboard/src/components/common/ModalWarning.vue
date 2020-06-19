@@ -33,7 +33,7 @@ export default defineComponent({
       modal: useModal(props.destination),
       deleteItem: () => {
         colorLog('modal warning delete', 'green', 'silver')
-        ctx.emit('delete-item', props.destination)
+        ctx.emit('delete-item')
       }
     }
   }
