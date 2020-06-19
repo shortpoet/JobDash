@@ -1,4 +1,4 @@
-.display-properties.checkbox {
+.base-switch.checkbox {
   font-size: .75rem;
   line-height: 1.25rem;
   .checkbox {
@@ -9,20 +9,87 @@
   display: flex;
 }
 
-.board-controls-container {
+.box.my-box.base-table-controls-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.base-switch-container.vertical {
   padding: 0rem .5rem;
-  width: 9rem;
-  .box.my-box.board-controls {
+  width: 7rem;
+  display: flex;
+  .box.my-box.base-switch-box {
     padding: 1rem .25rem;
     box-sizing: inherit;
     display: flex;
     flex-direction: column;
     // for buttons to be aligned
-    .field > .control {
+    .field > .control.vertical {
       display: flex;
       flex-direction: column;
       .button {
         margin: .25rem 0rem;
+      }
+    }
+  }
+}
+.base-switch-container.horizontal {
+  padding: 0rem .5rem;
+  width: auto;
+  display: flex;
+  .box.my-box.base-switch-box {
+    padding: 1rem .25rem;
+    box-sizing: inherit;
+    display: flex;
+    flex-direction: column;
+    // for buttons to be aligned
+    .field > .control.horizontal {
+      display: flex;
+      flex-direction: row;
+      .label {
+        margin: .25rem .25rem;
+        padding: 0rem 0rem
+      }
+    }
+  }
+}
+
+// non-boxed
+.base-switch-container.vertical {
+  padding: 0rem .5rem;
+  width: 7rem;
+  display: flex;
+  .base-switch-box {
+    padding: 1rem .25rem;
+    box-sizing: inherit;
+    display: flex;
+    flex-direction: column;
+    // for buttons to be aligned
+    .field > .control.vertical {
+      display: flex;
+      flex-direction: column;
+      .button {
+        margin: .25rem 0rem;
+      }
+    }
+  }
+}
+.base-switch-container.horizontal {
+  padding: 0rem .5rem;
+  width: auto;
+  display: flex;
+  .base-switch-box {
+    padding: 1rem .25rem;
+    box-sizing: inherit;
+    display: flex;
+    flex-direction: column;
+    // for buttons to be aligned
+    .field > .control.horizontal {
+      display: flex;
+      flex-direction: row;
+      .label {
+        margin: .25rem .25rem;
+        padding: 0rem 0rem
       }
     }
   }

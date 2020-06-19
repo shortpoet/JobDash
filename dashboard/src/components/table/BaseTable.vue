@@ -1,10 +1,16 @@
 <template>
-  <BaseSwitchArray
-    :options="columnNames"
-  />
-  <BaseSwitchArray
-    :options="controlNames"
-  />
+  <BaseBox class="base-table-controls-box">
+    <BaseSwitchArray
+      :options="columnNames"
+      :boxed="false"
+      :orientation="'horizontal'"
+    />
+    <BaseSwitchArray
+      :options="controlNames"
+      :boxed="false"
+      :orientation="'horizontal'"
+    />
+  </BaseBox>
   <table class="table is-hoverable">
     <thead>
       <TableRowHeader
@@ -41,6 +47,7 @@ import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig } from './../../interfaces/table/table.column.interface'
 import BaseSwitchArray from './../common/BaseSwitchArray.vue'
 import TableRowHeader from './TableRowHeader.vue'
+import BaseBox from './../common/BaseBox.vue'
 
 export default defineComponent({
   name: 'BaseTable',
@@ -61,6 +68,7 @@ export default defineComponent({
   },
 
   components: {
+    BaseBox,
     BaseSwitchArray,
     TableRowHeader
   },

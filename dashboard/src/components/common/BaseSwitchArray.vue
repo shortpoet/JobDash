@@ -1,21 +1,37 @@
 <template>
-  <div class="base-switch-container">
-    <BaseBox class="base-switch">
+  <div :class="['base-switch-container', orientation]">
+    <BaseBox v-if="boxed" class="base-switch-box">
       <div class="field is-small">          
         <p :class="['control', 'is-small', orientation]">
           <label
             v-for="(prop, i) in options"
             :key="i"
-            :for="`display-property-${i}`"
-            class="display-properties checkbox is-small"
+            :for="`base-switch-${i}`"
+            class="base-switch label checkbox is-small"
             
           >      
-            <input :id="`display-property-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperties(prop)" v-model="chosenProperties[prop]">
+            <input :id="`base-switch-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperties(prop)" v-model="chosenProperties[prop]">
             {{prop}}
           </label>
         </p>
       </div>
     </BaseBox>
+    <div v-else class="base-switch-box">
+      <div class="field is-small">          
+        <p :class="['control', 'is-small', orientation]">
+          <label
+            v-for="(prop, i) in options"
+            :key="i"
+            :for="`base-switch-${i}`"
+            class="base-switch checkbox label is-small"
+            
+          >      
+            <input :id="`base-switch-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperties(prop)" v-model="chosenProperties[prop]">
+            {{prop}}
+          </label>
+        </p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -39,6 +55,10 @@ export default defineComponent({
     orientation: {
       type: String as () => Orientation,
       default: 'horizontal'
+    },
+    boxed: {
+      type: Boolean,
+      default: true
     }
   },
   emits: ['chosen-properties'],

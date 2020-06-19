@@ -15,7 +15,7 @@
             v-for="(prop, i) in displayProperties"
             :key="i"
             :for="`display-property-${i}`"
-            class="display-properties checkbox is-small"
+            class="display-properties label checkbox is-small"
             
           >      
             <input :id="`display-property-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperties(prop)" v-model="chosenProperties[prop]">
