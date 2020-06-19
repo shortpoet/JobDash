@@ -29,37 +29,44 @@ export interface ITableHeader {
   export interface ITableData extends ITableHeader {
     propertyName: string
     displayName: string
+    editable: boolean
   }
 
   export abstract class BaseTableData implements ITableData {
-    constructor (propertyName: string) {}
+    constructor (propertyName: string, editable: boolean) {}
     propertyName: string
     displayName: string
+    editable: boolean
   }
   class TableData extends BaseTableData {
-    constructor (propertyName: string) {
-      super(propertyName);
+    constructor (propertyName: string, editable: boolean) {
+      super(propertyName, editable);
       this.propertyName = propertyName;
       this.displayName = propertyName.charAt(0).toUpperCase() + propertyName.slice(1);
+      this.editable = editable
     }
     propertyName: string
     displayName: string
+    editable: boolean
   }
 //#endregion
 
 //#region table
   export interface ITableConfig {
-    columns: (ITableHeader[])
+    columns: (ITableHeader[]),
   }
 
   export interface ITableConfigSettings {
     columns: (ControlName[]|string[])
+    editable: (boolean[])
   }
 
 
   export abstract class BaseTableConfig implements ITableConfig {
     constructor (config: ITableConfigSettings) {}
     columns: (ITableHeader[])
+    editable: (boolean[])
+
   }
 
   export const ID: ControlName = 'Id'
@@ -98,13 +105,12 @@ export interface ITableHeader {
       }
       // must actually initialize the array or is undefined imagine that
       this.columns = []
-      console.log(config.columns)
-      config.columns.forEach(column => {
+      config.columns.forEach((column, i) => {
         // console.log(column)
         if (controlNames.includes(column)) {
           this.columns.push(new TableControl(column, getAction(column)))
         } else {
-          this.columns.push(new TableData(column))
+          this.columns.push(new TableData(column, config.editable[i]))
         }
       })
     }

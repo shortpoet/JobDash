@@ -24,14 +24,17 @@
       />
     </thead>
 
-  <tbody>
-    <tr
-      v-for="item in items"
-      :key="item[idSymbol]" 
-      :class="`${itemType}-row has-text-centered`"
-    >
-    </tr>
-  </tbody>
+    <tbody>
+      <tr
+        v-for="item in items"
+        :key="item[idSymbol]" 
+        :class="`${itemType}-row has-text-centered`"
+      >
+        <td>{{item.itemId}}</td>
+        <td>{{item.name}}</td>
+      </tr>
+    </tbody>
+
   </table>
 
   <!-- <teleport :to="`#delete-${itemType}-modal`" v-if="deleteContactModal.visible">
@@ -195,14 +198,16 @@ export default defineComponent({
                   ...controls.slice(0, 1),
                   ...dataProperties,
                   ...controls.slice(1),
-                ]
+                ],
+                editable: [...dataProperties.filter(prop => prop.toLowerCase().match(/id$/))]
               })
             } else {
               return new TableConfig({
                 columns: [
                   ...dataProperties,
                   ...controls
-                ]
+                ],
+                editable: [...dataProperties.filter(prop => prop.toLowerCase().match(/id$/))]
               })
             }
           } else {
@@ -214,7 +219,8 @@ export default defineComponent({
                 EDIT,
                 LOCKED,
                 MESSAGE
-              ]
+              ],
+              editable: [...dataProperties.filter(prop => prop.toLowerCase().match(/id$/))]
             })
           }
         }
@@ -223,7 +229,9 @@ export default defineComponent({
       //#endregion
     //#endregion
 
-    
+    //#region body
+
+    //#endregion
     return {
       dataProperties,
       columnNames,
