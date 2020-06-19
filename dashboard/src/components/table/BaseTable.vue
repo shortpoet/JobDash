@@ -2,7 +2,8 @@
   <table class="table is-hoverable">
     <thead>
       <TableRowHeader
-        :data-properties="dataProperties"
+        :columns="configRef.columns"
+        :data-properties="chosenProperties"
         :control-types="controlTypes"
       />
     </thead>
@@ -31,6 +32,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
+import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig } from './../../interfaces/table/table.column.interface'
 
 import TableRowHeader from './TableRowHeader.vue'
 
@@ -56,22 +58,70 @@ export default defineComponent({
     TableRowHeader
   },
 
-  emits: ['update-contacts'],
+  emits: ['update-values'],
 
   async setup(props, ctx){
+    const include = [
+      // "_id",
+      // "itemId",
+      "name",
+      "category",
+      "description",
+      "contact",
+      // "created",
+      // "edited",
+      // "editable",
+      // "locked",
+      // "__v"
+    ]
     
-    const dataProperties = computed(() => [{
-      propertyName: 'testPropertyName'
-    }])
-    const controlTypes = computed(() => [{
-      controlName: 'testControlName'
-    }])
+    const dataProperties = Object.keys(props.items[0]).filter(prop => include.includes(prop))
+    const config = new TableConfig({
+      columns: [
+        ID,
+        ...dataProperties,
+        DELETE,
+        EDIT,
+        LOCKED,
+        MESSAGE
+      ]
+    })    
+    console.log(config)
 
+    const controlTypes = computed(() => [
+      { displayName: 'Id', action: 'open-link' },
+      { displayName: 'Delete', action: 'delete' },
+      { displayName: 'Edit', action: 'edit' },
+      { displayName: 'Locked', action: 'toggle-delete' },
+      { displayName: 'Message', action: 'send-message' },
 
+    ])
+    const configRef = ref<ITableConfig>()
+    configRef.value = config
+    console.log(configRef.value)
+    const chosenProperties = ref([
+      // "_id",
+      // "itemId",
+      "name",
+      "category",
+      "description",
+      "contact",
+      // "created",
+      // "edited",
+      // "editable",
+      // "locked",
+      // "__v"
+    ])
+    const displayProperties = computed(() => chosenProperties.value)
+    const handleChosenPropertyChange = (e) => {
+      // colorLog("on chosen prop change", "orange", "purple")
+      chosenProperties.value = e
+    }
 
     return {
-      dataProperties,
-      controlTypes
+      chosenProperties,
+      controlTypes,
+      configRef
     }
 
   }

@@ -2,7 +2,7 @@
   <section class="section table-section">
     <div class="table-container" :style="onlyTaskShown ? 'height: auto; padding: 0rem;' : ''">
 
-      <div class="table-minimize-container message-table-minimize-container">
+      <!-- <div class="table-minimize-container message-table-minimize-container">
         <BaseMinimize
           :class-prop="'message-table-container'"
           :component-name="'Message Table'"
@@ -16,7 +16,7 @@
             />
           </BaseBox>
         </BaseMinimize>
-      </div>
+      </div> -->
 
       <div class="table-minimize-container contact-table-minimize-container">
         <BaseMinimize
@@ -33,7 +33,7 @@
         </BaseMinimize>
       </div>
 
-      <div class="table-minimize-container task-table-minimize-container">
+      <!-- <div class="table-minimize-container task-table-minimize-container">
         <BaseMinimize
           :class-prop="'task-table-container'"
           :component-name="'Task Table'"
@@ -43,6 +43,23 @@
             <TaskTable
               :tasks="tasks"
               @update-tasks="onUpdateTasks"
+            />
+          </BaseBox>
+        </BaseMinimize>
+      </div>
+ -->
+      <div class="table-minimize-container task-table-minimize-container">
+        <BaseMinimize
+          :class-prop="'task-table-container'"
+          :component-name="'Task Table'"
+          @minimize-change="handleMinimize"
+        >
+          <BaseBox scrollable>
+            <BaseTable
+              :items="tasks"
+              :id-symbol="'_id'"
+              :item-type="'task'"
+              @update-values="onUpdateTasks"
             />
           </BaseBox>
         </BaseMinimize>
@@ -120,7 +137,8 @@ export default defineComponent({
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
     
-    const onlyTaskShown = ref(false)
+    // const onlyTaskShown = ref(false)
+    const onlyTaskShown = ref(true)
     const minimized = reactive({
       messageTable: true,
       contactTable: false,

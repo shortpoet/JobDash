@@ -1,16 +1,17 @@
 <template>
-  <th>{{ propertyName }}</th>
+  <th class="table-cell-header-data">{{ props.propertyName }}</th>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
+import { ITableData } from '../../interfaces/table/table.column.interface'
 
 export default defineComponent({
   name: 'TableCellHeaderData',
 
   props: {
-    propertyName: {
-      type: String,
+    props: {
+      type: Object as () => ITableData,
       required: true
     }
   },

@@ -1,16 +1,17 @@
 <template>
-  <th>{{ controlName }}</th>
+  <th>{{ props.displayName }}</th>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
+import { ITableControl } from '../../interfaces/table/table.column.interface'
 
 export default defineComponent({
   name: 'TableCellHeaderControl',
 
   props: {
-    controlName: {
-      type: String,
+    props: {
+      type: Object as () => ITableControl,
       required: true
     }
   },
