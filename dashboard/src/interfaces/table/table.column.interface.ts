@@ -1,5 +1,9 @@
+export interface ITableHeader {
+  displayName: string
+}
+
 //#region control
-  export interface ITableControl {
+  export interface ITableControl extends ITableHeader {
     displayName: string
     action: string
     
@@ -15,32 +19,37 @@
       this.displayName = displayName;
       this.action = action;
     }
-    propertyName: string
+    displayName: string
+    action: string
   }
 //#endregion
 
 //#region data
 
-  export interface ITableData {
+  export interface ITableData extends ITableHeader {
     propertyName: string
+    displayName: string
   }
 
   export abstract class BaseTableData implements ITableData {
     constructor (propertyName: string) {}
     propertyName: string
+    displayName: string
   }
   class TableData extends BaseTableData {
     constructor (propertyName: string) {
       super(propertyName);
       this.propertyName = propertyName;
+      this.displayName = propertyName.charAt(0).toUpperCase() + propertyName.slice(1);
     }
     propertyName: string
+    displayName: string
   }
 //#endregion
 
 //#region table
   export interface ITableConfig {
-    columns: (ITableControl[]&ITableData[])
+    columns: (ITableHeader[])
   }
 
   export interface ITableConfigSettings {
@@ -50,7 +59,7 @@
 
   export abstract class BaseTableConfig implements ITableConfig {
     constructor (config: ITableConfigSettings) {}
-    columns: (ITableControl[]&ITableData[])
+    columns: (ITableHeader[])
   }
 
   export const ID = 'Id'
@@ -62,7 +71,7 @@
   export type ControlName = 'Id' | 'Delete' | 'Edit' | 'Locked' | 'Message'
 
   export class TableConfig extends BaseTableConfig {
-    columns: (ITableControl[]&ITableData[])
+    columns: (ITableHeader[])
     constructor(config: ITableConfigSettings) {
       const controlNames: ControlName[] = [ID, DELETE, EDIT, LOCKED, MESSAGE]
       super(config);
@@ -90,6 +99,7 @@
       // must actually initialize the array or is undefined imagine that
       this.columns = []
       config.columns.forEach(column => {
+        // console.log(column)
         if (controlNames.includes(column)) {
           this.columns.push(new TableControl(column, getAction(column)))
         } else {

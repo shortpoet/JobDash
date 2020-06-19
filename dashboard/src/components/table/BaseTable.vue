@@ -1,4 +1,10 @@
 <template>
+  <BaseSwitchArray
+    :options="columnNames"
+  />
+  <BaseSwitchArray
+    :options="controlNames"
+  />
   <table class="table is-hoverable">
     <thead>
       <TableRowHeader
@@ -33,7 +39,7 @@
 <script lang="ts">
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig } from './../../interfaces/table/table.column.interface'
-
+import BaseSwitchArray from './../common/BaseSwitchArray.vue'
 import TableRowHeader from './TableRowHeader.vue'
 
 export default defineComponent({
@@ -55,12 +61,28 @@ export default defineComponent({
   },
 
   components: {
+    BaseSwitchArray,
     TableRowHeader
   },
 
   emits: ['update-values'],
 
   async setup(props, ctx){
+    const controlTypes =  [
+      { displayName: ID, action: 'open-link' },
+      { displayName: DELETE, action: 'delete' },
+      { displayName: EDIT, action: 'edit' },
+      { displayName: LOCKED, action: 'toggle-delete' },
+      { displayName: MESSAGE, action: 'send-message' },
+    ]
+
+    const controlNames = controlTypes.map(column => column.displayName)
+
+    const columnNames = [
+      ...Object.keys(props.items[0]).concat(),
+      // ...controlTypes.map(column => column.displayName)
+    ]
+
     const include = [
       // "_id",
       // "itemId",
@@ -75,30 +97,22 @@ export default defineComponent({
       // "__v"
     ]
     
-    const dataProperties = Object.keys(props.items[0]).filter(prop => include.includes(prop))
+    const dataProperties = computed((() => Object.keys(props.items[0]).filter(prop => include.includes(prop))))
+
     const config = new TableConfig({
       columns: [
         ID,
-        ...dataProperties,
+        ...dataProperties.value,
         DELETE,
         EDIT,
         LOCKED,
         MESSAGE
       ]
     })    
-    console.log(config)
 
-    const controlTypes = computed(() => [
-      { displayName: 'Id', action: 'open-link' },
-      { displayName: 'Delete', action: 'delete' },
-      { displayName: 'Edit', action: 'edit' },
-      { displayName: 'Locked', action: 'toggle-delete' },
-      { displayName: 'Message', action: 'send-message' },
-
-    ])
     const configRef = ref<ITableConfig>()
     configRef.value = config
-    console.log(configRef.value)
+    
     const chosenProperties = ref([
       // "_id",
       // "itemId",
@@ -120,6 +134,8 @@ export default defineComponent({
 
     return {
       chosenProperties,
+      columnNames,
+      controlNames,
       controlTypes,
       configRef
     }

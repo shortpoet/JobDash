@@ -49,7 +49,6 @@ export default defineComponent({
 
 
   async setup(props, ctx){
-    console.log(props.columns)
     const componentComputed = (column: (ITableControl|ITableData)) => {
       if (column instanceof BaseTableControl) {
         return 'TableCellHeaderControl'
