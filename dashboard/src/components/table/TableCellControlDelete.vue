@@ -1,9 +1,9 @@
 <template>
-  <td class="icon-cell" v-if="props.propertyData.locked" @click="handleClick(props.propertyData)">
+  <td class="icon-cell" v-if="props.propertyData.locked" @click="handleDelete(props.propertyData)">
     <BaseIcon color="gold" name="lock"></BaseIcon>
   </td>
 
-  <td class="icon-cell" v-else @click="handleClick(props.propertyData)">
+  <td class="icon-cell" v-else @click="handleDelete(props.propertyData)">
     <BaseIcon color="silver" name="unlock"></BaseIcon>
   </td>
 </template>
@@ -12,6 +12,7 @@
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import BaseTableCellControl from './BaseTableCellControl.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
+import { colorLog } from '../../utils'
 
 export default defineComponent({
   name: 'TableCellControlDelete',
@@ -35,14 +36,16 @@ export default defineComponent({
     //   default: false
     // }
   },
-  emits: ['handle-click'],
+  emits: ['handle-delete'],
   async setup(props, ctx){
     const propertyEdit = ref()
-    const handleClick = (item) => {
-      ctx.emit('handle-click', item)
+    const handleDelete = (item) => {
+      colorLog('handle delete table cell control delete', 'orange', 'green')
+
+      ctx.emit('handle-delete', item)
     }
     return {
-      handleClick
+      handleDelete
     }
 
   }

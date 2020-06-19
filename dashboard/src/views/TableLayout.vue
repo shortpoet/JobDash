@@ -59,7 +59,9 @@
               :items="tasks"
               :id-symbol="'_id'"
               :item-type="'task'"
+              :delete-modal="deleteModal"
               @update-values="onUpdateTasks"
+              @handle-delete="handleDelete"
             />
           </BaseBox>
         </BaseMinimize>
@@ -100,7 +102,7 @@ import MessageTable from '../components/message/MessageTable.vue'
 
 import { useModal } from '../composables/useModal'
 
-import { Destination } from '../interfaces/common/modal.interface'
+import { Destination, IModal } from '../interfaces/common/modal.interface'
 import { Tab } from '../interfaces/common/tab.interface'
 
 import { useRouter } from 'vue-router'
@@ -119,6 +121,9 @@ export default defineComponent({
     messages: {
       type: Array,
       required: true
+    },
+    deleteModal: {
+      type: Object as () => IModal
     }
   },
   components: {
@@ -130,7 +135,7 @@ export default defineComponent({
     ContactCard,
     MessageTable
   },
-  emits: ['update-contacts', 'update-tasks', 'update-messages'],
+  emits: ['update-contacts', 'update-tasks', 'update-messages', 'handle-delete'],
   setup(props, ctx) {
     const contactDestination: Destination = '#delete-contact-modal'
     const taskDestination: Destination = '#delete-task-modal'
@@ -229,7 +234,8 @@ export default defineComponent({
       taskModal,
       cardIsOpen,
       onUpdateContacts,
-      onUpdateTasks
+      onUpdateTasks,
+      handleDelete: (item) => ctx.emit('handle-delete', item),
     }
 
   }

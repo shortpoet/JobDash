@@ -9,6 +9,7 @@
 <script lang="ts">
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
+import { colorLog } from '../../utils'
 
 export default defineComponent({
   name: 'BaseTableCellControl',
@@ -39,9 +40,11 @@ export default defineComponent({
     // console.log(props)
     const propertyEdit = ref()
     const handleClick = (item) => {
-      ctx.emit('handle-click', item)
+      colorLog('handle click base table cell control', 'orange', 'green')
+      ctx.emit('handle-click', {item: props.props.propertyData, action: props.props.action})
     }
     return {
+      handleClick,
       propertyEdit
     }
 

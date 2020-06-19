@@ -21,9 +21,11 @@
           :contacts="allContacts"
           @update-contacts="onUpdateContacts"
           :tasks="allTasks"
+          :deleteModal="itemDeleteModal"
           @update-tasks="onUpdateTasks"
           :messages="allMessages"
           @update-messages="onUpdateMessages"
+          @handle-delete="handleDelete"
         />
       </div>
     </BaseMinimize>
@@ -33,6 +35,7 @@
       :active-board="activeBoard"
     />
   </div>
+  
   <div />
 </template>
 
@@ -59,6 +62,7 @@ import { BoardStore } from '../store/board.store'
 import { IBoardColumn } from '../interfaces/board/board.column.interface'
 import useBoard from '../composables/useBoard'
 import useMessage from '../composables/useMessage'
+import { useDelete } from '../composables/table/useDelete'
 
 
 
@@ -105,6 +109,7 @@ export default defineComponent({
       const taskUse = await useTask(taskStore, allTasks)
 
       const onUpdateTasks = taskUse.onUpdateTasks
+
     //#endregion
 
     //#region messageUse
@@ -146,6 +151,10 @@ export default defineComponent({
         }
       })
 
+      const deleteItemDestination: Destination = '#delete-item-modal'
+      const itemDeleteModal = useModal(deleteItemDestination)
+
+
       const handleModal = () => {
         switch(router.currentRoute.value.name) {
           case contactCardDestination:
@@ -180,10 +189,24 @@ export default defineComponent({
       handleModal()
     //#endregion
 
+  //#region delete
+    const taskIdSymbol = '_id'
+    const taskDelete = useDelete(itemDeleteModal, taskCardDestination, store, taskIdSymbol, ctx)
+    const handleDelete = (e) => {
+      console.log(e)
+      switch(e.itemType) {
+        case 'task':
+          taskDelete.handleConfirmDelete(e.item, itemDeleteModal)
+      }
+    }
+
+  //#endregion
+
     return {
       error,
       showUIFull,
       contactCardModal,
+      itemDeleteModal,
       allContacts,
       allTasks,
       allMessages,
@@ -193,7 +216,8 @@ export default defineComponent({
       targetsLoadedRef,
       activeBoard,
       showClear,
-      handleActiveBoardChange
+      handleActiveBoardChange,
+      handleDelete
     }
 
   }

@@ -13,6 +13,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useModal } from "../../composables/useModal";
+import { colorLog } from "../../utils";
 
 export default defineComponent({
   
@@ -30,7 +31,10 @@ export default defineComponent({
   setup(props, ctx) {
     return {
       modal: useModal(props.destination),
-      deleteItem: () => ctx.emit('delete-item', props.destination)
+      deleteItem: () => {
+        colorLog('modal warning delete', 'green', 'silver')
+        ctx.emit('delete-item', props.destination)
+      }
     }
   }
 })

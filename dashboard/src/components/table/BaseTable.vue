@@ -31,16 +31,17 @@
         :class="`${itemType}-row has-text-centered`"
         :item="item"
         :columns="configRef.columns"
+        @handle-delete="handleDelete"
       />
     </tbody>
 
   </table>
 
-  <!-- <teleport :to="`#delete-${itemType}-modal`" v-if="deleteContactModal.visible">
-    <ModalWarning @delete-item="deleteContact" :destination="'#delete-contact-modal'"/>
+  <teleport :to="`#delete-item-modal`" v-if="deleteModal.visible">
+    <ModalWarning @delete-item="confirmDelete" :destination="'#delete-item-modal'"/>
   </teleport>
 
-  <teleport :to="`#edit-${itemType}-modal`" v-if="contactCardModal.visible">
+  <!-- <teleport :to="`#edit-${itemType}-modal`" v-if="contactCardModal.visible">
     <router-view/>
     <ContactCard @update-contacts="updateContacts" :destination="'#contact-card-modal'"/>
   </teleport> -->
@@ -52,10 +53,12 @@
 import { defineComponent, computed, ref, watch, onMounted, Ref } from 'vue'
 import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig, ControlName } from './../../interfaces/table/table.interface'
 import BaseSwitchArray from './../common/BaseSwitchArray.vue'
+import ModalWarning from './../common/ModalWarning.vue'
 import TableRowHeader from './TableRowHeader.vue'
 import TableRowBody from './TableRowBody.vue'
 import BaseBox from './../common/BaseBox.vue'
 import { colorLog } from '../../utils'
+import { IModal } from '../../interfaces/common/modal.interface'
 
 export default defineComponent({
   name: 'BaseTable',
@@ -72,6 +75,9 @@ export default defineComponent({
     itemType: {
       type: String,
       required: true
+    },
+    deleteModal: {
+      type: Object as () => IModal
     }
   },
 
@@ -79,10 +85,11 @@ export default defineComponent({
     BaseBox,
     BaseSwitchArray,
     TableRowHeader,
-    TableRowBody
+    TableRowBody,
+    ModalWarning
   },
 
-  emits: ['update-values'],
+  emits: ['update-values', 'handle-delete', 'confirm-delete'],
 
   async setup(props, ctx){
 
@@ -243,6 +250,9 @@ export default defineComponent({
       handleChosenControlChange,
       // controlSwitch,
       // columnSwitch
+      handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
+      confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
+
     }
 
   }

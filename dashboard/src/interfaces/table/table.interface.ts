@@ -1,3 +1,4 @@
+
 export interface ITableHeader {
   displayName: string
 }
@@ -75,7 +76,14 @@ export interface ITableHeader {
   export const LOCKED: ControlName = 'Locked'
   export const MESSAGE: ControlName = 'Message'
 
+  export const ACTION_ID: ActionName = 'open-link'
+  export const ACTION_DELETE: ActionName = 'delete'
+  export const ACTION_EDIT: ActionName = 'edit'
+  export const ACTION_LOCKED: ActionName = 'toggle-delete'
+  export const ACTION_MESSAGE: ActionName = 'send-message'
+
   export type ControlName = 'Id' | 'Delete' | 'Edit' | 'Locked' | 'Message'
+  export type ActionName = 'open-link' | 'delete' | 'edit' | 'toggle-delete' | 'send-message'
 
   export class TableConfig extends BaseTableConfig {
     columns: (ITableHeader[])
@@ -104,6 +112,7 @@ export interface ITableHeader {
         return action
       }
       // must actually initialize the array or is undefined imagine that
+      console.log(this.columns)
       this.columns = []
       config.columns.forEach((column, i) => {
         // console.log(column)
