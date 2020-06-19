@@ -4,12 +4,14 @@
       :options="columnNames"
       :boxed="false"
       :orientation="'horizontal'"
+      :type="'columns'"
       @chosen-properties="handleChosenColumnChange"
     />
     <BaseSwitchArray
       :options="controlNames"
       :boxed="false"
       :orientation="'horizontal'"
+      :type="'controls'"
       @chosen-properties="handleChosenControlChange"
     />
   </BaseBox>
@@ -17,7 +19,7 @@
     <thead>
       <TableRowHeader
         :columns="configRef.columns"
-        :data-properties="chosenProperties"
+        :data-properties="dataProperties"
         :control-types="controlTypes"
       />
     </thead>
@@ -45,8 +47,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch, onMounted } from 'vue'
-import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig } from './../../interfaces/table/table.column.interface'
+import { defineComponent, computed, ref, watch, onMounted, Ref } from 'vue'
+import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig, ControlName } from './../../interfaces/table/table.column.interface'
 import BaseSwitchArray from './../common/BaseSwitchArray.vue'
 import TableRowHeader from './TableRowHeader.vue'
 import BaseBox from './../common/BaseBox.vue'
@@ -87,91 +89,141 @@ export default defineComponent({
       { displayName: MESSAGE, action: 'send-message' },
     ]
 
-    const controlNames = controlTypes.map(column => column.displayName)
+    const controlNames: ControlName[] = [
+      ID,
+      DELETE,
+      EDIT,
+      LOCKED,
+      MESSAGE
+    ]
 
     const columnNames = [
-      ...Object.keys(props.items[0]).concat(),
-      // ...controlTypes.map(column => column.displayName)
+      ...Object.keys(props.items[0]),
     ]
+
+    // const controlSwitch = {}
+    // const columnSwitch = {}
+    // controlNames.forEach(control => {const dict = {}; dict[control] = true; Object.assign(controlSwitch, dict)})
+    // columnNames.forEach((column, i) => {const dict = {}; (i > 2 && i < 6) ? dict[column] = true : dict[column] = false; Object.assign(columnSwitch, dict)})
 
     const chosenProperties = ref([
-      // "_id",
-      // "itemId",
-      "name",
-      "category",
-      "description",
-      "contact",
-      // "created",
-      // "edited",
-      // "editable",
-      // "locked",
-      // "__v"
+      ...columnNames.slice(2,6)
     ])
-    const displayProperties = computed(() => chosenProperties.value)
+    const chosenControls = ref([
+      ...controlNames
+    ])
+
     const handleChosenColumnChange = (e) => {
       // colorLog("on chosen column change", "pink", "blue")
-      console.log(e)
-      chosenProperties.value = e
+      chosenProperties.value = e.chosenProperties
     }
+
     const handleChosenControlChange = (e) => {
       // colorLog("on chosen control change", "orange", "purple")
-      console.log(e)
-      chosenProperties.value = e
+      chosenControls.value = e.chosenProperties
     }
-
-    const include = [
-      // "_id",
-      // "itemId",
-      "name",
-      "category",
-      "description",
-      "contact",
-      // "created",
-      // "edited",
-      // "editable",
-      // "locked",
-      // "__v"
-    ]
     
-    const dataProperties = computed((() => {colorLog('data props computed', 'orange', 'blue'); return Object.keys(props.items[0]).filter(prop => chosenProperties.value.includes(prop))}))
+    const chosenPropArray = computed (() => chosenProperties.value)
 
-    const configComputed = (dataProperties) => {
-      colorLog('config computed', 'yellow', 'green')
-      return new TableConfig({
-        columns: [
-          ID,
-          ...dataProperties,
-          DELETE,
-          EDIT,
-          LOCKED,
-          MESSAGE
-        ]
+    const dataProperties = computed((() => Object.keys(props.items[0]).filter(prop => chosenPropArray.value.includes(prop))))
+
+    const controls: Ref<ControlName[]> = computed((() => {
+      // colorLog('controls computed', 'purple', 'orange')
+      const names: ControlName[] = [] as ControlName[]
+      controlNames.forEach(control => {
+        if(chosenControls.value.includes(control)) {
+          let controlName: ControlName
+          switch(control) {
+            case 'Id':
+              controlName = ID
+              break
+            case 'Delete':
+              controlName = DELETE
+              break
+            case 'Edit':
+              controlName = EDIT
+              break
+            case 'Locked':
+              controlName = LOCKED
+              break
+            case 'Message':
+              controlName = MESSAGE
+              break
+          }
+          names.push(controlName)
+        }
       })
-    }
+      return names
+    }))
 
+    const configComputed = (dataProperties, controls?: ControlName[]) => {
+      // colorLog('config computed', 'yellow', 'green')
+      if (controls) {
+        // colorLog('has controls', 'yellow', 'blue')
+        if (controls.includes(ID)) {
+          return new TableConfig({
+            columns: [
+              ...controls.slice(0, 1),
+              ...dataProperties,
+              ...controls.slice(1),
+            ]
+          })
+        } else {
+          return new TableConfig({
+            columns: [
+              ...dataProperties,
+              ...controls
+            ]
+          })
+        }
+      } else {
+        return new TableConfig({
+          columns: [
+            ID,
+            ...dataProperties,
+            DELETE,
+            EDIT,
+            LOCKED,
+            MESSAGE
+          ]
+        })
+      }
+    }
     const configRef = ref<ITableConfig>()
     configRef.value = configComputed(dataProperties.value)
     // need watch because of class instantiation
     watch(
       () => dataProperties.value.length, 
       (value: number, previous:number) => {
-          console.log(`Watch dataProperties.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+          // console.log(`Watch dataProperties.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
           configRef.value = configComputed(dataProperties.value)
       },
       // not sure if i want this called immediately
       // makes update function run on load
-      {immediate: true}
+      {immediate: false}
+    )
+    watch(
+      () => controls.value.length, 
+      (value: number, previous:number) => {
+          // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+          configRef.value = configComputed(dataProperties.value, controls.value)
+      },
+      // not sure if i want this called immediately
+      // makes update function run on load
+      {immediate: false}
     )
 
 
     return {
-      chosenProperties,
+      dataProperties,
       columnNames,
       controlNames,
       controlTypes,
       configRef,
       handleChosenColumnChange,
-      handleChosenControlChange
+      handleChosenControlChange,
+      // controlSwitch,
+      // columnSwitch
     }
 
   }

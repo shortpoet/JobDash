@@ -48,8 +48,12 @@ export default defineComponent({
     BaseBox,
   },
   props: {
+    // options: {
+    //   type: Array as () => string[]|number[],
+    //   required: true
+    // },
     options: {
-      type: Array as () => string[]|number[],
+      type: Array as () => Record<string|number, boolean>[],
       required: true
     },
     orientation: {
@@ -72,11 +76,11 @@ export default defineComponent({
 
     const chosenProperties = ref({})
 
-    props.options.forEach(prop => {
-      const dict = {}
-      dict[prop] = false
-      Object.assign(chosenProperties.value, dict)
-    })
+    // props.options.forEach(prop => {
+    //   const dict = {}
+    //   dict[prop] = false
+    //   Object.assign(chosenProperties.value, dict)
+    // })
     const handleInputChosenProperties = (prop) => {
       // colorLog('handle input chosen', 'yellow', 'blue')
       // toggle value
@@ -88,7 +92,8 @@ export default defineComponent({
         if (entry[1] == false)
         chosenPropertyArray.splice(i)
       })
-      ctx.emit('chosen-properties', chosenPropertyArray)
+      ctx.emit('chosen-properties', {chosenProperties: chosenPropertyArray, type: props.type})
+      // ctx.emit('chosen-properties', {chosenProperties: chosenProperties.value, type: props.type})
     }
     // a weird watch is obvious sign of probably needing to look things differently
     // maybe even WALK AWAY XD

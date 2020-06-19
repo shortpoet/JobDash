@@ -62,11 +62,11 @@ export interface ITableHeader {
     columns: (ITableHeader[])
   }
 
-  export const ID = 'Id'
-  export const DELETE = 'Delete'
-  export const EDIT = 'Edit'
-  export const LOCKED = 'Locked'
-  export const MESSAGE = 'Message'
+  export const ID: ControlName = 'Id'
+  export const DELETE: ControlName = 'Delete'
+  export const EDIT: ControlName = 'Edit'
+  export const LOCKED: ControlName = 'Locked'
+  export const MESSAGE: ControlName = 'Message'
 
   export type ControlName = 'Id' | 'Delete' | 'Edit' | 'Locked' | 'Message'
 
@@ -98,6 +98,7 @@ export interface ITableHeader {
       }
       // must actually initialize the array or is undefined imagine that
       this.columns = []
+      console.log(config.columns)
       config.columns.forEach(column => {
         // console.log(column)
         if (controlNames.includes(column)) {

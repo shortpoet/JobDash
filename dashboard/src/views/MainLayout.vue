@@ -1,6 +1,10 @@
 <template>
 
-  <div class="main-layout" v-if="targetsLoadedRef">
+  <!-- 
+    <div class="main-layout" v-if="targetsLoadedRef">
+    might not need this v-if after all but that random progress bar multiplying bug still happens
+  -->
+  <div class="main-layout" >
     <BaseMinimize
       :class-prop="'columns'"
       :component-name="'Create and Tables'"
@@ -39,6 +43,7 @@ import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
 import BoardLayout from './BoardLayout.vue'
 import BaseMinimize from '../components/common/BaseMinimize.vue'
+import { onErrorCaptured } from 'vue'
 
 import { useRouter } from 'vue-router'
 import { useStore } from '../store'
@@ -55,6 +60,8 @@ import { IBoardColumn } from '../interfaces/board/board.column.interface'
 import useBoard from '../composables/useBoard'
 import useMessage from '../composables/useMessage'
 
+
+
 export default defineComponent({
   name: 'MainLayout',
 
@@ -65,6 +72,12 @@ export default defineComponent({
     BoardLayout
   },
   async setup(props, ctx) {
+    const error = ref(null)
+    onErrorCaptured(e => {
+      error.value = e
+      console.log(e)
+      return true
+    })
 
     const router = useRouter()
     const store = useStore()
@@ -168,6 +181,7 @@ export default defineComponent({
     //#endregion
 
     return {
+      error,
       showUIFull,
       contactCardModal,
       allContacts,
