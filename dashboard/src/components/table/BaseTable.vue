@@ -4,11 +4,13 @@
       :options="columnNames"
       :boxed="false"
       :orientation="'horizontal'"
+      @chosen-properties="handleChosenColumnChange"
     />
     <BaseSwitchArray
       :options="controlNames"
       :boxed="false"
       :orientation="'horizontal'"
+      @chosen-properties="handleChosenControlChange"
     />
   </BaseBox>
   <table class="table is-hoverable">
@@ -48,6 +50,7 @@ import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, Table
 import BaseSwitchArray from './../common/BaseSwitchArray.vue'
 import TableRowHeader from './TableRowHeader.vue'
 import BaseBox from './../common/BaseBox.vue'
+import { colorLog } from '../../utils'
 
 export default defineComponent({
   name: 'BaseTable',
@@ -91,36 +94,6 @@ export default defineComponent({
       // ...controlTypes.map(column => column.displayName)
     ]
 
-    const include = [
-      // "_id",
-      // "itemId",
-      "name",
-      "category",
-      "description",
-      "contact",
-      // "created",
-      // "edited",
-      // "editable",
-      // "locked",
-      // "__v"
-    ]
-    
-    const dataProperties = computed((() => Object.keys(props.items[0]).filter(prop => include.includes(prop))))
-
-    const config = new TableConfig({
-      columns: [
-        ID,
-        ...dataProperties.value,
-        DELETE,
-        EDIT,
-        LOCKED,
-        MESSAGE
-      ]
-    })    
-
-    const configRef = ref<ITableConfig>()
-    configRef.value = config
-    
     const chosenProperties = ref([
       // "_id",
       // "itemId",
@@ -135,17 +108,70 @@ export default defineComponent({
       // "__v"
     ])
     const displayProperties = computed(() => chosenProperties.value)
-    const handleChosenPropertyChange = (e) => {
-      // colorLog("on chosen prop change", "orange", "purple")
+    const handleChosenColumnChange = (e) => {
+      // colorLog("on chosen column change", "pink", "blue")
+      console.log(e)
       chosenProperties.value = e
     }
+    const handleChosenControlChange = (e) => {
+      // colorLog("on chosen control change", "orange", "purple")
+      console.log(e)
+      chosenProperties.value = e
+    }
+
+    const include = [
+      // "_id",
+      // "itemId",
+      "name",
+      "category",
+      "description",
+      "contact",
+      // "created",
+      // "edited",
+      // "editable",
+      // "locked",
+      // "__v"
+    ]
+    
+    const dataProperties = computed((() => {colorLog('data props computed', 'orange', 'blue'); return Object.keys(props.items[0]).filter(prop => chosenProperties.value.includes(prop))}))
+
+    const configComputed = (dataProperties) => {
+      colorLog('config computed', 'yellow', 'green')
+      return new TableConfig({
+        columns: [
+          ID,
+          ...dataProperties,
+          DELETE,
+          EDIT,
+          LOCKED,
+          MESSAGE
+        ]
+      })
+    }
+
+    const configRef = ref<ITableConfig>()
+    configRef.value = configComputed(dataProperties.value)
+    // need watch because of class instantiation
+    watch(
+      () => dataProperties.value.length, 
+      (value: number, previous:number) => {
+          console.log(`Watch dataProperties.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+          configRef.value = configComputed(dataProperties.value)
+      },
+      // not sure if i want this called immediately
+      // makes update function run on load
+      {immediate: true}
+    )
+
 
     return {
       chosenProperties,
       columnNames,
       controlNames,
       controlTypes,
-      configRef
+      configRef,
+      handleChosenColumnChange,
+      handleChosenControlChange
     }
 
   }

@@ -6,11 +6,11 @@
           <label
             v-for="(prop, i) in options"
             :key="i"
-            :for="`base-switch-${i}`"
+            :for="`base-switch-${type}-${i}`"
             class="base-switch label checkbox is-small"
             
           >      
-            <input :id="`base-switch-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperties(prop)" v-model="chosenProperties[prop]">
+            <input :id="`base-switch-${type}-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperties(prop)" v-model="chosenProperties[prop]">
             {{prop}}
           </label>
         </p>
@@ -22,11 +22,11 @@
           <label
             v-for="(prop, i) in options"
             :key="i"
-            :for="`base-switch-${i}`"
+            :for="`base-switch-${type}-${i}`"
             class="base-switch checkbox label is-small"
             
           >      
-            <input :id="`base-switch-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperties(prop)" v-model="chosenProperties[prop]">
+            <input :id="`base-switch-${type}-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperties(prop)" v-model="chosenProperties[prop]">
             {{prop}}
           </label>
         </p>
@@ -59,6 +59,11 @@ export default defineComponent({
     boxed: {
       type: Boolean,
       default: true
+    },
+    // so each id/for label pair is unique
+    type: {
+      type: String,
+      default: () => Math.random().toString(16).slice(2)
     }
   },
   emits: ['chosen-properties'],
