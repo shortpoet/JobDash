@@ -26,6 +26,7 @@
           :messages="allMessages"
           @update-messages="onUpdateMessages"
           @handle-delete="handleDelete"
+          @handle-edit="handleEdit"
           @confirm-delete="confirmDelete"
           @update-values="onUpdateValues"
         />
@@ -194,7 +195,7 @@ export default defineComponent({
 
   //#region delete
     const taskIdSymbol = '_id'
-    const taskDelete = useDelete(itemDeleteModal, taskCardDestination, taskStore, taskIdSymbol, ctx)
+    const taskDelete = useDelete(taskStore, ctx)
     const handleDelete = (e) => {
       console.log(e)
       switch(e.itemType) {
@@ -208,13 +209,30 @@ export default defineComponent({
           taskDelete.deleteItem(itemDeleteModal, taskIdSymbol, onUpdateTasks)
       }
     }
-    const onUpdateValues = (e) => {
+    // const onUpdateValues = (e) => {
+    //   console.log(e)
+    //   switch(e.itemType) {
+    //     case 'task':
+    //       onUpdateTasks()
+    //   }
+    // }
+
+  //#endregion
+
+  //#region edit
+    // const taskEdit = useEdit(itemDeleteModal, taskCardDestination, taskStore, taskIdSymbol, ctx)
+    const handleEdit = (e) => {
       console.log(e)
       switch(e.itemType) {
         case 'task':
-          onUpdateTasks()
       }
     }
+    // const confirmDelete = (e) => {
+    //   switch(e.itemType) {
+    //     case 'task':
+    //       taskDelete.deleteItem(itemDeleteModal, taskIdSymbol, onUpdateTasks)
+    //   }
+    // }
 
   //#endregion
 
@@ -234,6 +252,7 @@ export default defineComponent({
       showClear,
       handleActiveBoardChange,
       handleDelete,
+      handleEdit,
       confirmDelete
     }
 

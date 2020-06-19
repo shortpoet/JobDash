@@ -32,6 +32,8 @@
         :item="item"
         :columns="configRef.columns"
         @handle-delete="handleDelete"
+        @handle-edit="handleEdit"
+        @handle-click="handleClick"
       />
     </tbody>
 
@@ -89,7 +91,7 @@ export default defineComponent({
     ModalWarning
   },
 
-  emits: ['update-values', 'handle-delete', 'confirm-delete'],
+  emits: ['update-values', 'handle-delete', 'handle-edit', 'confirm-delete'],
 
   async setup(props, ctx){
 
@@ -240,6 +242,7 @@ export default defineComponent({
     //#region body
 
     //#endregion
+
     return {
       dataProperties,
       columnNames,
@@ -250,6 +253,7 @@ export default defineComponent({
       handleChosenControlChange,
       // controlSwitch,
       // columnSwitch
+      handleEdit: (item) => ctx.emit('handle-edit', {item: item, itemType: props.itemType}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
 

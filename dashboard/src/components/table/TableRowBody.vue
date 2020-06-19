@@ -31,7 +31,7 @@ import BaseTableCellData from './../table/BaseTableCellData.vue'
 import BaseTableCellControl from './../table/BaseTableCellControl.vue'
 import TableCellControlDelete from './../table/TableCellControlDelete.vue'
 import { useDelete } from './../../composables/table/useDelete'
-import { ITableControl, ITableData, BaseTableData, BaseTableControl, ID, DELETE, EDIT, MESSAGE, LOCKED, ACTION_DELETE } from '../../interfaces/table/table.interface'
+import { ITableControl, ITableData, BaseTableData, BaseTableControl, ID, DELETE, EDIT, MESSAGE, LOCKED, ACTION_DELETE, ACTION_EDIT } from '../../interfaces/table/table.interface'
 import { colorLog } from '../../utils'
 export default defineComponent({
   name: 'TableRowBody',
@@ -69,7 +69,7 @@ export default defineComponent({
     TableCellControlDelete
   },
 
-  emits: ['handle-delete'],
+  emits: ['handle-delete', 'handle-edit'],
 
   async setup(props, ctx){
   //#region component and props
@@ -137,6 +137,10 @@ export default defineComponent({
       switch(e.action) {
         case ACTION_DELETE:
           ctx.emit('handle-delete', e.item)
+          break
+        case ACTION_EDIT:
+          ctx.emit('handle-edit', e.item)
+          break
       }
     }
 

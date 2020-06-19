@@ -1,7 +1,7 @@
 import { ref } from "vue"
 import { colorLog } from "../../utils"
 
-export function useDelete(modal, destination, store, idSymbol, ctx) {
+export function useDelete(store, ctx) {
 
   // emits: ['update-values']
 
