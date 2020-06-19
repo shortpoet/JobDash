@@ -1,12 +1,11 @@
 <template>
   <slot>
-    <td v-if="editable" contenteditable>
-      <BaseInput type="text" :name="propertyData.propertyName" @input="handleInput" v-model="propertyEdit" />
+    <td v-if="props.editable" contenteditable>
+      <BaseInput type="text" :name="props.propertyName" @input="handleInput" v-model="propertyEdit" />
         {{ propertyEdit }}
     </td>
-    <td v-else>{{ propertyData.data }}</td>
+    <td v-else>{{ props.propertyData[props.propertyName] }}</td>
   </slot>
-  <div/>
 </template>
 
 <script lang="ts">
@@ -21,14 +20,18 @@ export default defineComponent({
   },
 
   props: {
-    propertyData: {
+    props: {
       type: Object,
       required: true
     },
-    editable: {
-      type: Boolean,
-      default: false
-    }
+    // propertyData: {
+    //   type: Object,
+    //   required: true
+    // },
+    // editable: {
+    //   type: Boolean,
+    //   default: false
+    // }
   },
 
   async setup(props, ctx){

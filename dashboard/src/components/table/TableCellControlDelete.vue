@@ -1,13 +1,11 @@
 <template>
-  <BaseTableCellControl>
-    <td class="icon-cell" v-if="locked" @click="handleClick(item)">
-      <BaseIcon color="gold" name="lock"></BaseIcon>
-    </td>
+  <td class="icon-cell" v-if="props.propertyData.locked" @click="handleClick(props.propertyData)">
+    <BaseIcon color="gold" name="lock"></BaseIcon>
+  </td>
 
-    <td class="icon-cell" v-else @click="handleClick(item)">
-      <BaseIcon color="silver" name="unlock"></BaseIcon>
-    </td>
-  </BaseTableCellControl>
+  <td class="icon-cell" v-else @click="handleClick(props.propertyData)">
+    <BaseIcon color="silver" name="unlock"></BaseIcon>
+  </td>
 </template>
 
 <script lang="ts">
@@ -23,14 +21,19 @@ export default defineComponent({
   },
 
   props: {
-    propertyData: {
+    props: {
       type: Object,
       required: true
     },
-    locked: {
-      type: Boolean,
-      default: false
-    }
+
+    // propertyData: {
+    //   type: Object,
+    //   required: true
+    // },
+    // locked: {
+    //   type: Boolean,
+    //   default: false
+    // }
   },
   emits: ['handle-click'],
   async setup(props, ctx){

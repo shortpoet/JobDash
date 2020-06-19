@@ -25,14 +25,13 @@
     </thead>
 
     <tbody>
-      <tr
+      <TableRowBody
         v-for="item in items"
         :key="item[idSymbol]" 
         :class="`${itemType}-row has-text-centered`"
-      >
-        <td>{{item.itemId}}</td>
-        <td>{{item.name}}</td>
-      </tr>
+        :item="item"
+        :columns="configRef.columns"
+      />
     </tbody>
 
   </table>
@@ -54,6 +53,7 @@ import { defineComponent, computed, ref, watch, onMounted, Ref } from 'vue'
 import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig, ControlName } from './../../interfaces/table/table.column.interface'
 import BaseSwitchArray from './../common/BaseSwitchArray.vue'
 import TableRowHeader from './TableRowHeader.vue'
+import TableRowBody from './TableRowBody.vue'
 import BaseBox from './../common/BaseBox.vue'
 import { colorLog } from '../../utils'
 
@@ -78,7 +78,8 @@ export default defineComponent({
   components: {
     BaseBox,
     BaseSwitchArray,
-    TableRowHeader
+    TableRowHeader,
+    TableRowBody
   },
 
   emits: ['update-values'],
@@ -92,7 +93,7 @@ export default defineComponent({
         ]
 
         const chosenProperties = ref([
-          ...columnNames.slice(2,6)
+          ...columnNames.slice(2,5)
         ])
         
         const handleChosenColumnChange = (e) => {
@@ -199,7 +200,7 @@ export default defineComponent({
                   ...dataProperties,
                   ...controls.slice(1),
                 ],
-                editable: [...dataProperties.filter(prop => prop.toLowerCase().match(/id$/))]
+                editable: [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : true)]
               })
             } else {
               return new TableConfig({
@@ -207,7 +208,7 @@ export default defineComponent({
                   ...dataProperties,
                   ...controls
                 ],
-                editable: [...dataProperties.filter(prop => prop.toLowerCase().match(/id$/))]
+                editable: [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : true)]
               })
             }
           } else {
@@ -220,7 +221,7 @@ export default defineComponent({
                 LOCKED,
                 MESSAGE
               ],
-              editable: [...dataProperties.filter(prop => prop.toLowerCase().match(/id$/))]
+              editable: [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : true)]
             })
           }
         }

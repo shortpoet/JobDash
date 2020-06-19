@@ -1,10 +1,9 @@
 <template>
   <slot>
-    <td class="icon-cell" @click="handleClick(item)">
-      <BaseIcon :color="color" :name="controlIcon"></BaseIcon>        
+    <td class="icon-cell" @click="handleClick(props.item)">
+      <BaseIcon :color="props.color" :name="props.controlIcon"></BaseIcon>        
     </td>
   </slot>
-  <div />
 </template>
 
 <script lang="ts">
@@ -17,21 +16,27 @@ export default defineComponent({
     BaseIcon
   },
   props: {
-    color: {
-      type: String,
-      required: true
-    },
-    controlIcon: {
-      type: String,
-      required: true
-    },
-    item: {
+    props: {
       type: Object,
       required: true
-    }
+    },
+
+    // color: {
+    //   type: String,
+    //   required: true
+    // },
+    // controlIcon: {
+    //   type: String,
+    //   required: true
+    // },
+    // item: {
+    //   type: Object,
+    //   required: true
+    // }
   },
   emits: ['handle-click'],
   async setup(props, ctx){
+    // console.log(props)
     const propertyEdit = ref()
     const handleClick = (item) => {
       ctx.emit('handle-click', item)
