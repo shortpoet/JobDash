@@ -225,6 +225,7 @@ export default defineComponent({
   //#endregion
 
   let taskEditRefs = []
+  let taskItemTouchedRef = ref()
   let taskEdit
   let refsCreated = false
   let properties
@@ -245,14 +246,15 @@ export default defineComponent({
           //   // console.log(taskEditRefs.value)
           //   refsCreated = true
           // }
-          taskEdit = useEdit(taskStore, ctx)
+          taskItemTouchedRef.value = e.itemTouched
+          taskEdit = useEdit(taskStore, ctx, taskItemTouchedRef, e.refArray)
           const toggleEditable = taskEdit.toggleEditable
           console.log(e)
           console.log(e.itemTouched)
           console.log(e.refArray)
           taskEditRefs = e.refArray
           console.log(taskEditRefs)
-          toggleEditable(e.item, taskIdSymbol, onUpdateTasks, e.refArray, e.editableColumns, e.itemTouched)
+          toggleEditable(e.item, taskIdSymbol, onUpdateTasks,  e.editableColumns, e.refArray)
 
       }
     }
