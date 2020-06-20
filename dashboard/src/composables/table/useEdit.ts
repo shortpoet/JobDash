@@ -5,7 +5,7 @@ import moment from "moment";
 
 export function useEdit(store, ctx, itemTouched, refArray) {
   colorLog('use edit', 'blue', 'yellow')
-  console.log(itemTouched)
+  console.log(itemTouched.value)
   // console.log(editable)
   //   //#region edit
   //   const properties = []
@@ -46,12 +46,12 @@ export function useEdit(store, ctx, itemTouched, refArray) {
       // this closes the edit window by updating the refs after newTask editable set to false
       ctx.emit('update-tasks')
     }
-    console.log('about to use update vals')
-    useUpdateValues(itemTouched, refArray)
+    // console.log('about to use update vals')
+    // useUpdateValues(itemTouched, refArray)
     
     const toggleEditable = async (oldItem, idSymbol, updateValuesCallback, editableColumns, refArray) => {
       colorLog('toggle editable', 'red', 'yellow')
-      console.log(itemTouched)
+      console.log(itemTouched.value)
       if (oldItem.editable == false) {
         colorLog('editable false', 'red', 'yellow')
         store.toggleEditable(oldItem, true)

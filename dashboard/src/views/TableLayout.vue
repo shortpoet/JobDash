@@ -95,7 +95,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, reactive } from 'vue'
+import { defineComponent, computed, ref, reactive, onUpdated } from 'vue'
 import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
@@ -111,6 +111,7 @@ import { Destination, IModal } from '../interfaces/common/modal.interface'
 import { Tab } from '../interfaces/common/tab.interface'
 
 import { useRouter } from 'vue-router'
+import { colorLog } from '../utils'
 
 export default defineComponent({
   name: 'TableLayout',
@@ -160,7 +161,11 @@ export default defineComponent({
     const taskDestination: Destination = '#delete-task-modal'
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
-    
+    onUpdated(() => {
+      colorLog('on updated table layout', 'green', 'yellow')
+      // console.log(props.taskEditRefs)
+    })
+
     // const onlyTaskShown = ref(false)
     const onlyTaskShown = ref(true)
     const minimized = reactive({

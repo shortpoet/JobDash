@@ -1,13 +1,13 @@
 <template>
   <td v-if="props.propertyData.editable" contenteditable>
-    <BaseInput type="text" :name="props.propertyName" @input="handleInput" v-model="propertyEdit" />
+    <BaseInput v-if="propertyEdit != ''" type="text" :name="props.propertyName" @input="handleInput" v-model="propertyEdit" />
       {{ propertyEdit }}
   </td>
   <td v-else>{{ props.propertyData[props.propertyName] }}</td>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch, onMounted } from 'vue'
+import { defineComponent, computed, ref, watch, onMounted, onUpdated } from 'vue'
 import BaseInput from './../../components/common/BaseInput.vue'
 import { colorLog } from '../../utils'
 import { useInitEdit } from '../../composables/table/useInitEdit'
@@ -39,8 +39,29 @@ export default defineComponent({
   async setup(props, ctx){
     colorLog('table data edit', 'red', 'yellow')
     // console.log(props)
+    
 
-    const propertyEdit = ref(props.props.propertyData[props.props.propertyName])
+    // const propertyEdit = ref(props.props.propertyData[props.props.propertyName])
+    const index = props.props.editableColumns.indexOf(props.props.propertyName)
+    // console.log(index)
+    // console.log(props.props.editRefs)
+    let propertyEdit = ref(props.props.editRefs[index] ? props.props.editRefs[index].value : '')
+    // console.log(propertyEdit)
+    onUpdated(() => {
+      colorLog('on updated table cell editable', 'green', 'yellow')
+      console.log(props.props.editRefs)
+      const index = props.props.editableColumns.indexOf(props.props.propertyName)
+      console.log(index)
+      const _propertyEdit = props.props.editRefs[index]
+      propertyEdit.value = _propertyEdit.value
+      console.log(propertyEdit.value)
+    })
+
+    // const editableColumns = props.props.editableColumns
+    // const { refArray, itemTouched } = useInitEdit(props.props.editableColumns)
+
+    // console.log('about to use update vals')
+    // useUpdateValues(itemTouched, refArray)
 
     // const checkRefs = async (oldItem, idSymbol, updateValuesCallback, properties) => {
     // const checkRefs = async () => {
@@ -75,7 +96,9 @@ export default defineComponent({
 
     const handleInput = () => {
       const itemEdit = props.props.propertyData
-      itemEdit[props.props.propertyName] = propertyEdit.value
+      // below throws warning that set error on readonly
+
+      // itemEdit[props.props.propertyName] = propertyEdit.value
       // console.log({item: itemEdit})
       // ctx.emit('handle-input', {item: itemEdit})
       ctx.emit('handle-input-edit', {value: propertyEdit.value, propertyName: props.props.propertyName})

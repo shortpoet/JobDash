@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch, nextTick } from 'vue'
+import { defineComponent, computed, ref, watch, nextTick, onUpdated } from 'vue'
 
 import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
@@ -85,6 +85,11 @@ export default defineComponent({
   },
   emits: ['update-values'],
   async setup(props, ctx) {
+    onUpdated(() => {
+      colorLog('on updated main layout', 'orange', 'yellow')
+      console.log(taskEditRefs)
+    })
+
     const error = ref(null)
     onErrorCaptured(e => {
       error.value = e
@@ -224,7 +229,7 @@ export default defineComponent({
 
   //#endregion
 
-  let taskEditRefs = []
+  let taskEditRefs = ref([])
   let taskItemTouchedRef = ref()
   let taskEdit
   let refsCreated = false
@@ -249,11 +254,11 @@ export default defineComponent({
           taskItemTouchedRef.value = e.itemTouched
           taskEdit = useEdit(taskStore, ctx, taskItemTouchedRef, e.refArray)
           const toggleEditable = taskEdit.toggleEditable
-          console.log(e)
+          // console.log(e)
           console.log(e.itemTouched)
-          console.log(e.refArray)
-          taskEditRefs = e.refArray
-          console.log(taskEditRefs)
+          // console.log(e.refArray)
+          taskEditRefs.value = e.refArray
+          // console.log(taskEditRefs)
           toggleEditable(e.item, taskIdSymbol, onUpdateTasks,  e.editableColumns, e.refArray)
 
       }
@@ -264,7 +269,7 @@ export default defineComponent({
         case 'task':
           colorLog('edited item at main layout', 'purple', 'green')
           console.log(taskEditRefs)
-          taskEditRefs.forEach(ref => {
+          taskEditRefs.value.forEach(ref => {
             // if (e.propertyName == ref.value) 
             console.log('ref')
             console.log(ref.value)

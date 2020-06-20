@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch, onMounted, Ref } from 'vue'
+import { defineComponent, computed, ref, watch, onMounted, Ref, onUpdated } from 'vue'
 import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig, ControlName } from './../../interfaces/table/table.interface'
 import BaseSwitchArray from './../common/BaseSwitchArray.vue'
 import ModalWarning from './../common/ModalWarning.vue'
@@ -102,6 +102,13 @@ export default defineComponent({
   emits: ['update-values', 'handle-delete', 'handle-edit', 'handle-toggle-edit', 'handle-input-edit', 'confirm-delete'],
 
   async setup(props, ctx){
+    colorLog('base table', 'green', 'yellow')
+    // console.log(props.editRefs);
+    
+    onUpdated(() => {
+      colorLog('on updated base table', 'blue', 'yellow')
+      // console.log(props.editRefs)
+    })
 
     //#region header
       //#region dataProperties
@@ -281,7 +288,7 @@ export default defineComponent({
         }
       ),
       // handleEdit: (item) => ctx.emit('handle-edit', {value: item.value, propertyName: item.propertyName, itemType: props.itemType}),
-      handleToggleEdit: (e) => ctx.emit(
+      handleToggleEdit: (e) => {console.log(props.editRefs);ctx.emit(
         'handle-toggle-edit',
         {
           item: e.item,
@@ -291,7 +298,7 @@ export default defineComponent({
           refArray: e.refArray,
           editableColumns: e.editableColumns
         }
-      ),
+      )},
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
       editableColumnsComputed

@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import moment from 'moment'
-import { defineComponent, computed, ref, watch, onMounted } from 'vue'
+import { defineComponent, computed, ref, watch, onMounted, onUpdated } from 'vue'
 import BaseTableCellData from './../table/BaseTableCellData.vue'
 import BaseTableCellControl from './../table/BaseTableCellControl.vue'
 import TableCellControlDelete from './../table/TableCellControlDelete.vue'
@@ -85,6 +85,11 @@ export default defineComponent({
 
   async setup(props, ctx){
   //#region component and props
+
+    onUpdated(() => {
+      colorLog('on updated table row body', 'red', 'yellow')
+      // console.log(props.editRefs)
+    })
     const componentComputed = (column: (ITableControl|ITableData)) => {
       // console.log(column.displayName)
       if (column instanceof BaseTableControl) {
@@ -129,6 +134,7 @@ export default defineComponent({
     }
     // colorLog('table row body', 'orange', 'green')
     // console.log(props.columns)
+
     const propsComputed = (column: (ITableControl|ITableData)) => {
       if (column instanceof BaseTableControl) {
         return {
@@ -149,6 +155,7 @@ export default defineComponent({
         }
       }
     }
+
   //#endregion
     const handleClick = (e) => {
       console.log(e)
