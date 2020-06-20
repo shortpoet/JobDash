@@ -63,7 +63,10 @@
               @update-values="onUpdateValues"
               @handle-delete="handleDelete"
               @handle-edit="handleEdit"
+              @handle-input-edit="handleInputEdit"
+              @handle-toggle-edit="handleToggleEdit"
               @confirm-delete="confirmDelete"
+              :edit-refs="taskEditRefs"
             />
           </BaseBox>
         </BaseMinimize>
@@ -126,6 +129,10 @@ export default defineComponent({
     },
     deleteModal: {
       type: Object as () => IModal
+    },
+    taskEditRefs: {
+      type: Array,
+      required: false
     }
   },
   components: {
@@ -144,6 +151,8 @@ export default defineComponent({
     'update-messages',
     'handle-delete',
     'handle-edit',
+    'handle-input-edit',
+    'handle-toggle-edit',
     'confirm-delete'
   ],
   setup(props, ctx) {
@@ -226,19 +235,6 @@ export default defineComponent({
       })
     //#endregion
 
-    const onUpdateContacts = () => {
-      ctx.emit('update-contacts')
-    }
-    const onUpdateTasks = () => {
-      ctx.emit('update-tasks')
-    }
-    const onUpdateValues = () => {
-      ctx.emit('update-values')
-    }
-    const onUpdateMessages = () => {
-      ctx.emit('update-messages')
-    }
-
     return {
       minimized,
       onlyTaskShown,
@@ -246,10 +242,9 @@ export default defineComponent({
       contactModal,
       taskModal,
       cardIsOpen,
-      onUpdateContacts,
-      onUpdateTasks,
-      onUpdateValues,
+      handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
       handleEdit: (item) => ctx.emit('handle-edit', item),
+      handleToggleEdit: (item) => ctx.emit('handle-toggle-edit', item),
       handleDelete: (item) => ctx.emit('handle-delete', item),
       confirmDelete: (item) => ctx.emit('confirm-delete', item),
     }

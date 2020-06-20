@@ -21,12 +21,14 @@
           :contacts="allContacts"
           @update-contacts="onUpdateContacts"
           :tasks="allTasks"
+          :task-edit-refs="taskEditRefs"
           :deleteModal="itemDeleteModal"
           @update-tasks="onUpdateTasks"
           :messages="allMessages"
           @update-messages="onUpdateMessages"
           @handle-delete="handleDelete"
-          @handle-edit="handleEdit"
+          @handle-input-edit="handleInputEdit"
+          @handle-toggle-edit="handleToggleEdit"
           @confirm-delete="confirmDelete"
           @update-values="onUpdateValues"
         />
@@ -67,6 +69,8 @@ import useBoard from '../composables/useBoard'
 import useMessage from '../composables/useMessage'
 import { useDelete } from '../composables/table/useDelete'
 import { useEdit } from '../composables/table/useEdit'
+import { useInitEdit } from '../composables/table/useInitEdit'
+import { colorLog } from '../utils'
 
 
 
@@ -220,16 +224,56 @@ export default defineComponent({
 
   //#endregion
 
+  let taskEditRefs = []
+  let taskEdit
+  let refsCreated = false
+  let properties
+  let refArray
+
   //#region edit
-    const handleEdit = (e) => {
+    const handleToggleEdit = (e) => {
       console.log(e)
       switch(e.itemType) {
         case 'task':
-          const taskEdit = useEdit(taskStore, ctx, e.editable)
+          colorLog('handle toggle edit at main layout', 'green', 'silver')
+          // console.log(refsCreated)
+          // if (refsCreated == false) {
+          //   colorLog('refs created false at main layout', 'silver', 'green')
+          //   properties = useInitEdit(e.editable).properties
+          //   refArray = useInitEdit(e.editable).refArray
+          //   // taskEditRefs.value = taskEdit.createEditRefArray()
+          //   // console.log(taskEditRefs.value)
+          //   refsCreated = true
+          // }
+          taskEdit = useEdit(taskStore, ctx)
           const toggleEditable = taskEdit.toggleEditable
-          toggleEditable(e.item, taskIdSymbol, onUpdateTasks)
+          console.log(e)
+          console.log(e.itemTouched)
+          console.log(e.refArray)
+          taskEditRefs = e.refArray
+          console.log(taskEditRefs)
+          toggleEditable(e.item, taskIdSymbol, onUpdateTasks, e.refArray, e.editableColumns, e.itemTouched)
+
       }
     }
+    const handleInputEdit = (e) => {
+      console.log(e)
+      switch(e.itemType) {
+        case 'task':
+          colorLog('edited item at main layout', 'purple', 'green')
+          console.log(taskEditRefs)
+          taskEditRefs.forEach(ref => {
+            // if (e.propertyName == ref.value) 
+            console.log('ref')
+            console.log(ref.value)
+            return ref.value
+          })
+          // const taskEdit = useEdit(taskStore, ctx, e.editable)
+          // const toggleEditable = taskEdit.toggleEditable
+          // toggleEditable(e.item, taskIdSymbol, onUpdateTasks)
+      }
+    }
+    
     // const confirmDelete = (e) => {
     //   switch(e.itemType) {
     //     case 'task':
@@ -251,11 +295,13 @@ export default defineComponent({
       onUpdateTasks,
       onUpdateMessages,
       // targetsLoadedRef,
+      taskEditRefs,
       activeBoard,
       showClear,
       handleActiveBoardChange,
       handleDelete,
-      handleEdit,
+      handleToggleEdit,
+      handleInputEdit,
       confirmDelete
     }
 

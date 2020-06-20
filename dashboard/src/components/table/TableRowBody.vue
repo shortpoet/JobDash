@@ -11,7 +11,7 @@
       :props="propsComputed(column, item)"
       @handle-delete="handleDelete"
       @handle-click="handleClick"
-      @handle-input="handleEdit"
+      @handle-input-edit="handleInputEdit"
     />
   </tr>
     <!-- <BaseTableCellData
@@ -58,7 +58,12 @@ export default defineComponent({
     editableColumns: {
       type: Array,
       required: true
+    },
+    editRefs: {
+      type: Array,
+      required: false
     }
+
     // idSymbol: {
     //   type: String,
     //   required: true
@@ -76,7 +81,7 @@ export default defineComponent({
     TableCellDataEditable
   },
 
-  emits: ['handle-delete', 'handle-edit'],
+  emits: ['handle-delete', 'handle-edit', 'handle-toggle-edit', 'handle-input-edit'],
 
   async setup(props, ctx){
   //#region component and props
@@ -131,13 +136,16 @@ export default defineComponent({
           color: getIconConfig(column).color,
           controlIcon: getIconConfig(column).controlIcon,
           action: column.action,
-          propertyData: props.item
+          propertyData: props.item,
+          editableColumns: props.editableColumns
         }
       }
       else if (column instanceof BaseTableData) {
         return {
           propertyName: column.propertyName,
-          propertyData: props.item
+          propertyData: props.item,
+          editRefs: props.editRefs,
+          editableColumns: props.editableColumns
         }
       }
     }
@@ -149,14 +157,19 @@ export default defineComponent({
           ctx.emit('handle-delete', e.item)
           break
         case ACTION_EDIT:
-          ctx.emit('handle-edit', e.item)
+          ctx.emit('handle-toggle-edit', e)
           break
       }
+    }
+    const handleInputEdit = (e) => {
+      // colorLog('handle input edit', 'red', 'yellow')
+      ctx.emit('handle-input-edit', e)
     }
 
     return {
       handleClick,
       handleDelete: (item) => ctx.emit('handle-delete', item),
+      handleInputEdit,
       componentComputed,
       propsComputed,
 

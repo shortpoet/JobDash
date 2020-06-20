@@ -1,10 +1,13 @@
 import { watch, Ref } from "vue"
+import { colorLog } from "../utils"
 
 
 export const useUpdateValues = (touched: Ref<boolean>, fields: Ref<string>[]) => {
+  colorLog('use update values', 'yellow', 'blue')
 
   const updateField = (value: string, previous: string) => {
     if (previous) {
+      console.log(previous)
       touched.value = true
     }
   }

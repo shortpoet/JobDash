@@ -10,6 +10,8 @@
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import BaseInput from './../../components/common/BaseInput.vue'
 import { colorLog } from '../../utils'
+import { useInitEdit } from '../../composables/table/useInitEdit'
+import { useUpdateValues } from '../../composables/useUpdateValues'
 
 export default defineComponent({
   name: 'TableCellDataEditable',
@@ -32,12 +34,51 @@ export default defineComponent({
     //   default: false
     // }
   },
+  emits: ['handle-input-edit'],
 
   async setup(props, ctx){
     colorLog('table data edit', 'red', 'yellow')
-    const propertyEdit = ref()
+    // console.log(props)
+
+    const propertyEdit = ref(props.props.propertyData[props.props.propertyName])
+
+    // const checkRefs = async (oldItem, idSymbol, updateValuesCallback, properties) => {
+    // const checkRefs = async () => {
+    //   colorLog('toggle editable', 'red', 'yellow')
+    //   console.log(refArray)
+
+    //   console.log(oldItem)
+    //   if (oldItem.editable == false) {
+    //     colorLog('editable false', 'red', 'yellow')
+    //     // store.toggleEditable(oldItem, true)
+    //     updateValuesCallback()
+    //     // this sets the ref value to the current value otherwise defaults to category/column name
+    //     refArray.forEach((item, i) => {
+    //       item.value = oldItem[properties[i]]
+    //     })
+    //   } else {
+    //     if (itemTouched.value == true) {
+    //       colorLog('item is touched', 'blue', 'yellow')
+          
+    //       // editItem(oldItem, idSymbol, properties)
+    //     } else {
+    //       colorLog('item NOT touched', 'green', 'yellow')
+    //       console.log(oldItem)
+    //       // store.toggleEditable(oldItem, false)
+    //     }
+    //   }
+    // }
+
+
+
+
+
     const handleInput = () => {
-      ctx.emit('handle-input', propertyEdit.value)
+      const itemEdit = props.props.propertyData
+      itemEdit[props.props.propertyName] = propertyEdit.value
+      // console.log({item: itemEdit})
+      // ctx.emit('handle-input', {item: itemEdit})
+      ctx.emit('handle-input-edit', {value: propertyEdit.value, propertyName: props.props.propertyName})
     }
     return {
       propertyEdit,

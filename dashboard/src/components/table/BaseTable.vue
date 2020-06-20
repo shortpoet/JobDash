@@ -33,8 +33,11 @@
         :columns="configRef.columns"
         @handle-delete="handleDelete"
         @handle-edit="handleEdit"
+        @handle-input-edit="handleInputEdit"
+        @handle-toggle-edit="handleToggleEdit"
         @handle-click="handleClick"
         :editable-columns="editableColumnsComputed"
+        :edit-refs="editRefs"
       />
     </tbody>
 
@@ -81,6 +84,10 @@ export default defineComponent({
     },
     deleteModal: {
       type: Object as () => IModal
+    },
+    editRefs: {
+      type: Array,
+      required: false
     }
   },
 
@@ -92,7 +99,7 @@ export default defineComponent({
     ModalWarning
   },
 
-  emits: ['update-values', 'handle-delete', 'handle-edit', 'confirm-delete'],
+  emits: ['update-values', 'handle-delete', 'handle-edit', 'handle-toggle-edit', 'handle-input-edit', 'confirm-delete'],
 
   async setup(props, ctx){
 
@@ -256,7 +263,35 @@ export default defineComponent({
       handleChosenControlChange,
       // controlSwitch,
       // columnSwitch
-      handleEdit: (item) => ctx.emit('handle-edit', {item: item, itemType: props.itemType, editable: editableColumns(dataProperties.value)}),
+      handleEdit: (item) => ctx.emit(
+        'handle-edit',
+        {
+          item: item,
+          propertyName: item.propertyName,
+          itemType: props.itemType,
+          editable: editableColumns(dataProperties.value)
+        }
+      ),
+      handleInputEdit: (e) => ctx.emit(
+        'handle-input-edit',
+        {
+          value: e.value,
+          propertyName: e.propertyName,
+          itemType: props.itemType
+        }
+      ),
+      // handleEdit: (item) => ctx.emit('handle-edit', {value: item.value, propertyName: item.propertyName, itemType: props.itemType}),
+      handleToggleEdit: (e) => ctx.emit(
+        'handle-toggle-edit',
+        {
+          item: e.item,
+          itemType: props.itemType,
+          editable: editableColumns(dataProperties.value),
+          itemTouched: e.itemTouched,
+          refArray: e.refArray,
+          editableColumns: e.editableColumns
+        }
+      ),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
       editableColumnsComputed
