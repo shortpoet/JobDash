@@ -1,49 +1,65 @@
-// export function useEdit() {
-//     //#region edit
-//     const nameEdit = ref() 
-//     const categoryEdit = ref() 
-//     const descriptionEdit = ref() 
+import { ref, toRefs, Ref } from "vue"
+import { colorLog } from "../../utils"
+import { useUpdateValues } from "../useUpdateValues";
+import moment from "moment";
+
+export function useEdit(store, ctx, editable) {
+    //#region edit
+    const editRefs = toRefs(editable)
+    colorLog('use edit', 'blue', 'yellow')
+    console.log(editRefs);
+    const refArray = []
+    const properties = []
+    Object.entries(editRefs).forEach(entry => {
+      refArray.push(entry[1])
+      properties.push(entry[1].value)
+    })
     
-//     //#region updateValues
-//       const taskTouched = ref(false)
-//       useUpdateValues(taskTouched, [nameEdit, descriptionEdit, categoryEdit])
-//     //#endregion
+    
+    //#region updateValues
+      const itemTouched = ref(false)
+      useUpdateValues(itemTouched, refArray)
+    //#endregion
 
-//     const toggleEditable = async (oldTask: Task) => {
-//       if (oldTask.editable == false) {
-//         taskStore.toggleEditable(oldTask, true)
-//         nameEdit.value = oldTask.name
-//         categoryEdit.value = oldTask.category
-//         descriptionEdit.value = oldTask.description
-//       } else {
-//         if (taskTouched.value == true) {
-//           const newTask: Task = {
-//             _id: oldTask._id,
-//             itemId: oldTask._id,
-//             name: nameEdit.value,
-//             category: categoryEdit.value,
-//             description: descriptionEdit.value,
-//             contact: oldTask.contact,
-//             created: oldTask.created,
-//             edited: moment(),
-//             editable: false,
-//             locked: true
-//           }
-  
-//           await taskStore.editRecord(
-//             oldTask, 
-//             newTask,
-//             '_id'
-//           )
-//           taskTouched.value = false
-//           // this closes the edit window by updating the refs after newTask editable set to false
-//           ctx.emit('update-tasks')
-//         } else {
-//           taskStore.toggleEditable(oldTask, false)
-//         }
-//       }
-//     }
+    const toggleEditable = async (oldItem, idSymbol, updateValuesCallback) => {
+      colorLog('toggle editable', 'red', 'yellow')
+      console.log(oldItem)
+      if (oldItem.editable == false) {
+        colorLog('editable false', 'red', 'yellow')
+        store.toggleEditable(oldItem, true)
+        updateValuesCallback()
+        refArray.forEach((item, i) => {
+          item.value = oldItem[properties[i]]
+        })
+      } else {
+        if (itemTouched.value == true) {
+          let newItem = {
+            ...oldItem,
+            edited: moment(),
+            editable: false,
+            locked: true
+          }
+          properties.forEach(prop => {
+            const dict = {}
+            dict[prop] = oldItem[prop]
+            Object.assign(newItem, dict)
+          })  
+          await store.editRecord(
+            oldItem, 
+            newItem,
+            idSymbol
+          )
+          itemTouched.value = false
+          // this closes the edit window by updating the refs after newTask editable set to false
+          ctx.emit('update-tasks')
+        } else {
+          store.toggleEditable(oldItem, false)
+        }
+      }
+    }
 
-//   //#endregion
-
-// }
+  // #endregion
+    return {
+      toggleEditable
+    }
+}

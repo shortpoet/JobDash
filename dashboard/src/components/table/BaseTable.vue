@@ -34,6 +34,7 @@
         @handle-delete="handleDelete"
         @handle-edit="handleEdit"
         @handle-click="handleClick"
+        :editable-columns="editableColumnsComputed"
       />
     </tbody>
 
@@ -198,6 +199,8 @@ export default defineComponent({
       // columnNames.forEach((column, i) => {const dict = {}; (i > 2 && i < 6) ? dict[column] = true : dict[column] = false; Object.assign(columnSwitch, dict)})
       
       //#region config
+        const editableColumnsComputed = computed(() => [...dataProperties.value.map(prop => prop.toLowerCase().match(/id$/) ? false : prop)])
+        const editableColumns = (dataProperties) => [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : prop)]
         const configComputed = (dataProperties, controls?: ControlName[]) => {
           // colorLog('config computed', 'yellow', 'green')
           if (controls) {
@@ -253,9 +256,10 @@ export default defineComponent({
       handleChosenControlChange,
       // controlSwitch,
       // columnSwitch
-      handleEdit: (item) => ctx.emit('handle-edit', {item: item, itemType: props.itemType}),
+      handleEdit: (item) => ctx.emit('handle-edit', {item: item, itemType: props.itemType, editable: editableColumns(dataProperties.value)}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
+      editableColumnsComputed
 
     }
 

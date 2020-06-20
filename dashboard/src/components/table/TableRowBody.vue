@@ -11,6 +11,7 @@
       :props="propsComputed(column, item)"
       @handle-delete="handleDelete"
       @handle-click="handleClick"
+      @handle-input="handleEdit"
     />
   </tr>
     <!-- <BaseTableCellData
@@ -30,6 +31,7 @@ import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import BaseTableCellData from './../table/BaseTableCellData.vue'
 import BaseTableCellControl from './../table/BaseTableCellControl.vue'
 import TableCellControlDelete from './../table/TableCellControlDelete.vue'
+import TableCellDataEditable from './../table/TableCellDataEditable.vue'
 import { useDelete } from './../../composables/table/useDelete'
 import { ITableControl, ITableData, BaseTableData, BaseTableControl, ID, DELETE, EDIT, MESSAGE, LOCKED, ACTION_DELETE, ACTION_EDIT } from '../../interfaces/table/table.interface'
 import { colorLog } from '../../utils'
@@ -52,6 +54,10 @@ export default defineComponent({
     class: {
       type: String,
       required: true
+    },
+    editableColumns: {
+      type: Array,
+      required: true
     }
     // idSymbol: {
     //   type: String,
@@ -66,7 +72,8 @@ export default defineComponent({
   components: {
     BaseTableCellData,
     BaseTableCellControl,
-    TableCellControlDelete
+    TableCellControlDelete,
+    TableCellDataEditable
   },
 
   emits: ['handle-delete', 'handle-edit'],
@@ -83,6 +90,9 @@ export default defineComponent({
         }
       }
       else if (column instanceof BaseTableData) {
+        if (props.editableColumns.includes(column.propertyName)) {
+          return 'TableCellDataEditable'
+        }
         return 'BaseTableCellData'
       }
     }

@@ -66,6 +66,7 @@ import { IBoardColumn } from '../interfaces/board/board.column.interface'
 import useBoard from '../composables/useBoard'
 import useMessage from '../composables/useMessage'
 import { useDelete } from '../composables/table/useDelete'
+import { useEdit } from '../composables/table/useEdit'
 
 
 
@@ -220,11 +221,13 @@ export default defineComponent({
   //#endregion
 
   //#region edit
-    // const taskEdit = useEdit(itemDeleteModal, taskCardDestination, taskStore, taskIdSymbol, ctx)
     const handleEdit = (e) => {
       console.log(e)
       switch(e.itemType) {
         case 'task':
+          const taskEdit = useEdit(taskStore, ctx, e.editable)
+          const toggleEditable = taskEdit.toggleEditable
+          toggleEditable(e.item, taskIdSymbol, onUpdateTasks)
       }
     }
     // const confirmDelete = (e) => {
