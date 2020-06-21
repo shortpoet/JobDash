@@ -66,10 +66,10 @@ export default defineComponent({
   emits: ['handle-delete', 'handle-edit', 'handle-toggle-edit', 'handle-input-edit', 'handle-edit-init'],
 
   async setup(props, ctx){
-  //#region component and props
     onUpdated(() => {
-      colorLog('on updated table row body', 'red', 'yellow')
+      // colorLog('on updated table row body', 'red', 'yellow')
     })
+  //#region component and props
     const componentComputed = (column: (ITableControl|ITableData)) => {
       // console.log(column.displayName)
       if (column instanceof BaseTableControl) {
@@ -137,7 +137,7 @@ export default defineComponent({
   //#endregion
     // all controls emit click (i think)
     const handleClick = (e) => {
-      console.log(e)
+      // console.log(e)
       switch(e.action) {
         case ACTION_DELETE:
           ctx.emit('handle-delete', e.item)

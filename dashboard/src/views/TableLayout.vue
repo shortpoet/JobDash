@@ -64,7 +64,6 @@
               @handle-delete="handleDelete"
               @handle-edit="handleEdit"
               @handle-input-edit="handleInputEdit"
-              @handle-toggle-edit="handleToggleEdit"
               @handle-confirm-edit="handleConfirmEdit"
               @confirm-delete="confirmDelete"
             />
@@ -150,7 +149,6 @@ export default defineComponent({
     'handle-edit',
     'handle-input-edit',
     'handle-confirm-edit',
-    'handle-toggle-edit',
     'confirm-delete',
     'handle-edit-init'
   ],
@@ -160,7 +158,7 @@ export default defineComponent({
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
     onUpdated(() => {
-      colorLog('on updated table layout', 'green', 'yellow')
+      // colorLog('on updated table layout', 'green', 'yellow')
       // console.log(props.taskEditRefs)
     })
 
@@ -247,7 +245,6 @@ export default defineComponent({
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
       handleEdit: (item) => ctx.emit('handle-edit', item),
       handleConfirmEdit: (item) => ctx.emit('handle-confirm-edit', item),
-      handleToggleEdit: (item) => ctx.emit('handle-toggle-edit', item),
       handleDelete: (item) => ctx.emit('handle-delete', item),
       confirmDelete: (item) => ctx.emit('confirm-delete', item),
     }

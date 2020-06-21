@@ -40,7 +40,7 @@ export default defineComponent({
   emits: ['handle-input-edit'],
   async setup(props, ctx){
     
-    colorLog('table data edit', 'red', 'yellow')
+    // colorLog('table data edit', 'red', 'yellow')
     const initialValue = ref(props.props.propertyData[props.props.propertyName])
 
     const propertyEdit = ref(props.props.propertyData[props.props.propertyName])
@@ -51,7 +51,7 @@ export default defineComponent({
 
     onUpdated(() => {
       if (isItemUnderEdit) {
-        colorLog('on updated table cell editable', 'green', 'red')
+        // colorLog('on updated table cell editable', 'green', 'red')
         valueChanged.value = propertyEdit.value != initialValue.value
       }
     })

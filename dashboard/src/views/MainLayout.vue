@@ -28,7 +28,6 @@
           @handle-delete="handleDelete"
           @handle-input-edit="handleInputEdit"
           @handle-confirm-edit="handleConfirmEdit"
-          @handle-toggle-edit="handleToggleEdit"
           @confirm-delete="confirmDelete"
           @update-values="onUpdateValues"
         />
@@ -206,7 +205,7 @@ export default defineComponent({
     const taskIdSymbol = '_id'
     const taskDelete = useDelete(taskStore, ctx)
     const handleDelete = (e) => {
-      console.log(e)
+      // console.log(e)
       switch(e.itemType) {
         case 'task':
           taskDelete.handleConfirmDelete(e.item, itemDeleteModal, taskIdSymbol, onUpdateTasks)
@@ -234,18 +233,8 @@ export default defineComponent({
 
   //#region edit
 
-    const handleToggleEdit = (e) => {
-      console.log(e)
-      switch(e.itemType) {
-        case 'task':
-          colorLog('handle toggle edit at main layout', 'green', 'silver')
-          // const toggleEditable = taskEdit.toggleEditable
-          // toggleEditable(taskItemTouched)
-
-      }
-    }
     const handleInputEdit = (e) => {
-      console.log(e)
+      // console.log(e)
       switch(e.itemType) {
         case 'task':
           colorLog('edited item at main layout', 'purple', 'green')
@@ -255,7 +244,7 @@ export default defineComponent({
       }
     }
     const handleConfirmEdit = (e) => {
-      console.log(e)
+      // console.log(e)
       switch(e.itemType) {
         case 'task':
           colorLog('confirm edit item at main layout', 'yellow', 'blue')
@@ -289,7 +278,6 @@ export default defineComponent({
       showClear,
       handleActiveBoardChange,
       handleDelete,
-      handleToggleEdit,
       handleInputEdit,
       handleConfirmEdit,
       confirmDelete

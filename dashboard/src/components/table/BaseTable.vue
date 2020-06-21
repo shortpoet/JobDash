@@ -104,7 +104,6 @@ export default defineComponent({
     'update-values',
     'handle-delete',
     'handle-edit',
-    'handle-toggle-edit',
     'handle-input-edit',
     'handle-confirm-edit',
     'confirm-delete', 
@@ -136,7 +135,7 @@ export default defineComponent({
     }
     
     onUpdated(() => {
-      colorLog('on updated base table', 'blue', 'yellow')
+      // colorLog('on updated base table', 'blue', 'yellow')
     })
 
     //#region header
@@ -320,7 +319,7 @@ export default defineComponent({
         }
       ),
       handleToggleEdit: (e) => {
-        console.log(e)
+        // console.log(e)
         if (e.itemUnderEdit == false) {
           // if it is false but being emitted it wants this component to set it to true
           itemUnderEdit.value = e.item          
