@@ -21,7 +21,6 @@
           :contacts="allContacts"
           @update-contacts="onUpdateContacts"
           :tasks="allTasks"
-          :task-edit-refs="taskEditRefs"
           :deleteModal="itemDeleteModal"
           @update-tasks="onUpdateTasks"
           :messages="allMessages"
@@ -30,7 +29,6 @@
           @handle-input-edit="handleInputEdit"
           @handle-confirm-edit="handleConfirmEdit"
           @handle-toggle-edit="handleToggleEdit"
-          @handle-edit-init="handleEditInit"
           @confirm-delete="confirmDelete"
           @update-values="onUpdateValues"
         />
@@ -89,7 +87,6 @@ export default defineComponent({
   async setup(props, ctx) {
     onUpdated(() => {
       colorLog('on updated main layout', 'orange', 'yellow')
-      console.log(taskEditRefs)
     })
 
     const error = ref(null)
@@ -231,23 +228,11 @@ export default defineComponent({
 
   //#endregion
 
-  let taskEditRefs = ref([])
   let taskItemTouched = ref()
   const taskEdit = useEdit(taskStore, ctx)
-  let refsCreated = false
-  let properties
-  let refArray
 
 
   //#region edit
-    const handleEditInit = (e) => {
-      switch(e.itemType) {
-        case 'task':
-          colorLog('handle edit init main layout', 'white', 'green')
-          taskEditRefs.value = e.refArray
-          taskItemTouched = e.itemTouched
-      }
-    }
 
     const handleToggleEdit = (e) => {
       console.log(e)
@@ -266,10 +251,6 @@ export default defineComponent({
           colorLog('edited item at main layout', 'purple', 'green')
           const toggleEditable = taskEdit.toggleEditable
           taskItemTouched.value = e.valueChanged
-
-          console.log(e.value)
-          console.log(e.propertyName)
-
           toggleEditable(taskItemTouched, e.value, e.propertyName)
       }
     }
@@ -279,9 +260,7 @@ export default defineComponent({
         case 'task':
           colorLog('confirm edit item at main layout', 'yellow', 'blue')
           const editItem = taskEdit.editItem
-          // console.log(e.value)
-          // console.log(e.propertyName)
-          editItem(e.item, taskIdSymbol, onUpdateTasks, e.editableColumns, taskItemTouched)
+          editItem(e.item, taskIdSymbol, onUpdateTasks, taskItemTouched)
       }
     }
     
@@ -306,14 +285,12 @@ export default defineComponent({
       onUpdateTasks,
       onUpdateMessages,
       // targetsLoadedRef,
-      taskEditRefs,
       activeBoard,
       showClear,
       handleActiveBoardChange,
       handleDelete,
       handleToggleEdit,
       handleInputEdit,
-      handleEditInit,
       handleConfirmEdit,
       confirmDelete
     }

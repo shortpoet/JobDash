@@ -113,24 +113,19 @@ export default defineComponent({
 
   async setup(props, ctx){
     colorLog('base table', 'green', 'yellow')
-    // console.log(props.editRefs);
     const itemUnderEdit = ref()
-    // const keyComputed = computed((item) => {
-    //   console.log(item)
-    //   if (!!itemUnderEdit.value) {
-    //     if(itemUnderEdit.value.itemId == item.itemId) {
-    //       return `${item[props.idSymbol]}-edit`
-    //     }
-    //   }
-    //   return item[props.idSymbol]
-    // })
     const keyComputed = (item) => {
-      if (!!itemUnderEdit.value) {
-        if(itemUnderEdit.value.itemId == item.itemId) {
-          return `${item[props.idSymbol]}-edit`
-        }
-      }
-      return item[props.idSymbol]
+      return !!itemUnderEdit.value
+        ? itemUnderEdit.value.itemId == item.itemId
+          ? `${item[props.idSymbol]}-edit`
+          : item[props.idSymbol]
+        : item[props.idSymbol]
+      // if (!!itemUnderEdit.value) {
+      //   if(itemUnderEdit.value.itemId == item.itemId) {
+      //     return `${item[props.idSymbol]}-edit`
+      //   }
+      // }
+      // return item[props.idSymbol]
     }
     const itemUnderEditComputed = (item) => {
       return itemUnderEdit.value
@@ -142,7 +137,6 @@ export default defineComponent({
     
     onUpdated(() => {
       colorLog('on updated base table', 'blue', 'yellow')
-      // console.log(props.editRefs)
     })
 
     //#region header
@@ -294,15 +288,6 @@ export default defineComponent({
     //#region body
 
     //#endregion
-    // const getEditRefs = (item) => {
-    //   if (itemUnderEdit.value) {
-    //     if (item.itemId == itemUnderEdit.value.itemId) {
-    //       return props.editRefs
-    //     }
-    //   } else {
-    //     return []
-    //   }
-    // } 
     return {
       keyComputed,
       itemUnderEdit,
@@ -334,7 +319,6 @@ export default defineComponent({
           valueChanged: e.valueChanged
         }
       ),
-      // handleEdit: (item) => ctx.emit('handle-edit', {value: item.value, propertyName: item.propertyName, itemType: props.itemType}),
       handleToggleEdit: (e) => {
         console.log(e)
         if (e.itemUnderEdit == false) {
@@ -347,19 +331,14 @@ export default defineComponent({
             {
               item: e.item,
               itemType: props.itemType,
-              // editable: editableColumns(dataProperties.value),
-              // itemTouched: e.itemTouched,
-              // refArray: e.refArray,
               editableColumns: e.editableColumns
             }
           )
         }
       },
-      handleEditInit: (item) => ctx.emit('handle-edit-init', {item: item, itemType: props.itemType, refArray: item.refArray, itemTouched: item.itemTouched}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
       editableColumnsComputed
-
     }
 
   }

@@ -8,7 +8,7 @@ export function useEdit(store, ctx) {
   const _valueChanged = ref()
   let refArray = []
 
-  const editItem = async (oldItem, idSymbol, updateValuesCallback, editableColumns, valueChanged) => {
+  const editItem = async (oldItem, idSymbol, updateValuesCallback, valueChanged) => {
     colorLog('edit item', 'yellow', 'red')
     console.log(valueChanged.value)
     console.log(refArray)
@@ -23,22 +23,14 @@ export function useEdit(store, ctx) {
         const key = Object.keys(ref.value)[0]
         newItem[key] = ref.value[key]
       })
-      console.log(newItem)
-      // editableColumns.forEach(prop => {
-      //   const dict = {}
-      //   dict[prop] = oldItem[prop]
-      //   Object.assign(newItem, dict)
-      // })  
       await store.editRecord(
         oldItem, 
         newItem,
         idSymbol
       )
-
       // this closes the edit window by updating the refs after newTask editable set to false
       updateValuesCallback()
     }
-
   }
     
   const toggleEditable = async (valueChanged, value, propertyName) => {

@@ -26,6 +26,10 @@ export default defineComponent({
     //   type: Object,
     //   required: true
     // },
+    // propertyName: {
+    //   type: String,
+    //   required: true
+    // },
     // editable: {
     //   type: Boolean,
     //   default: false

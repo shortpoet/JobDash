@@ -10,7 +10,6 @@
 import { defineComponent, computed, ref, watch, onMounted, onUpdated, nextTick } from 'vue'
 import BaseInput from './../../components/common/BaseInput.vue'
 import { colorLog } from '../../utils'
-import { useInitEdit } from '../../composables/table/useInitEdit'
 import { useUpdateValues } from '../../composables/useUpdateValues'
 
 export default defineComponent({
@@ -29,12 +28,16 @@ export default defineComponent({
     //   type: Object,
     //   required: true
     // },
-    // editable: {
+    // propertyName: {
+    //   type: String,
+    //   required: true
+    // },
+    // itemUnderEdit: {
     //   type: Boolean,
     //   default: false
     // }
   },
-  emits: ['handle-input-edit', 'handle-edit-init'],
+  emits: ['handle-input-edit'],
   async setup(props, ctx){
     
     colorLog('table data edit', 'red', 'yellow')

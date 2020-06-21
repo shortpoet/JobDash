@@ -63,12 +63,10 @@
               @update-values="onUpdateValues"
               @handle-delete="handleDelete"
               @handle-edit="handleEdit"
-              @handle-edit-init="handleEditInit"
               @handle-input-edit="handleInputEdit"
               @handle-toggle-edit="handleToggleEdit"
               @handle-confirm-edit="handleConfirmEdit"
               @confirm-delete="confirmDelete"
-              :edit-refs="taskEditRefs"
             />
           </BaseBox>
         </BaseMinimize>
@@ -132,10 +130,6 @@ export default defineComponent({
     },
     deleteModal: {
       type: Object as () => IModal
-    },
-    taskEditRefs: {
-      type: Array,
-      required: false
     }
   },
   components: {
@@ -213,7 +207,6 @@ export default defineComponent({
         return router.currentRoute.value.name === contactCardDestination
       })
     //#endregion
-    
 
     //#region dynamic component
       const tabs = ref<Tab[]>()
@@ -252,7 +245,6 @@ export default defineComponent({
       taskModal,
       cardIsOpen,
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
-      handleEditInit: (item) => ctx.emit('handle-edit-init', item),
       handleEdit: (item) => ctx.emit('handle-edit', item),
       handleConfirmEdit: (item) => ctx.emit('handle-confirm-edit', item),
       handleToggleEdit: (item) => ctx.emit('handle-toggle-edit', item),

@@ -1,8 +1,4 @@
 <template>
-  <!-- <tr
-    v-for="item in items"
-    :key="item[props.idSymbol]"
-  > -->
   <tr>
     <component 
       v-for="(column, i) in columns" 
@@ -12,7 +8,6 @@
       @handle-delete="handleDelete"
       @handle-click="handleClick"
       @handle-input-edit="handleInputEdit"
-      @handle-edit-init="handleEditInit"
     />
   </tr>
     <!-- <BaseTableCellData
@@ -40,11 +35,6 @@ export default defineComponent({
   name: 'TableRowBody',
 
   props: {
-    // props: {
-    //   type: Object,
-    //   required: true
-    // },
-
     item: {
       type: Object,
       required: true
@@ -60,23 +50,10 @@ export default defineComponent({
       type: Array,
       required: true
     },
-    editRefs: {
-      type: Array,
-      required: false
-    },
     itemUnderEdit: {
       type: Boolean,
       default: false
     }
-
-    // idSymbol: {
-    //   type: String,
-    //   required: true
-    // },
-    // itemType: {
-    //   type: String,
-    //   required: true
-    // }
   },
 
   components: {
@@ -90,21 +67,8 @@ export default defineComponent({
 
   async setup(props, ctx){
   //#region component and props
-
-    // const itemUnderEdit = ref()
-    // putting keyComputed here somehow reversed the render order of the cell components
-    // const keyComputed = (i) => {
-    //   if (!!itemUnderEdit.value) {
-    //     if(itemUnderEdit.value.itemId == props.item.itemId) {
-    //       return `${i}-edit`
-    //     }
-    //   }
-    //   return i
-    // }
-
     onUpdated(() => {
       colorLog('on updated table row body', 'red', 'yellow')
-      // console.log(props.editRefs)
     })
     const componentComputed = (column: (ITableControl|ITableData)) => {
       // console.log(column.displayName)
@@ -149,7 +113,6 @@ export default defineComponent({
       return out
     }
     // colorLog('table row body', 'orange', 'green')
-    // console.log(props.itemUnderEdit)
     const propsComputed = (column: (ITableControl|ITableData)) => {
       if (column instanceof BaseTableControl) {
         return {
@@ -165,7 +128,6 @@ export default defineComponent({
         return {
           propertyName: column.propertyName,
           propertyData: props.item,
-          editRefs: props.editRefs,
           editableColumns: props.editableColumns,
           itemUnderEdit: props.itemUnderEdit
         }
@@ -185,7 +147,6 @@ export default defineComponent({
             ctx.emit('handle-toggle-edit', {item: e.item, itemUnderEdit: true, editableColumns: props.editableColumns})
           }
           ctx.emit('handle-toggle-edit', {item: e.item, itemUnderEdit: false, editableColumns: props.editableColumns})
-          // itemUnderEdit.value = e.item
           break
       }
     }
@@ -194,15 +155,10 @@ export default defineComponent({
       // colorLog('handle input edit', 'red', 'yellow')
       ctx.emit('handle-input-edit', e)
     }
-    const handleEditInit = (e) => {
-      // colorLog('handle input edit', 'red', 'yellow')
-      ctx.emit('handle-edit-init', e)
-    }
 
     return {
       handleClick,
       handleDelete: (item) => ctx.emit('handle-delete', item),
-      handleEditInit,
       handleInputEdit,
       componentComputed,
       propsComputed,
