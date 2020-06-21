@@ -12,6 +12,7 @@
       @handle-delete="handleDelete"
       @handle-click="handleClick"
       @handle-input-edit="handleInputEdit"
+      @handle-edit-init="handleEditInit"
     />
   </tr>
     <!-- <BaseTableCellData
@@ -85,7 +86,7 @@ export default defineComponent({
     TableCellDataEditable
   },
 
-  emits: ['handle-delete', 'handle-edit', 'handle-toggle-edit', 'handle-input-edit'],
+  emits: ['handle-delete', 'handle-edit', 'handle-toggle-edit', 'handle-input-edit', 'handle-edit-init'],
 
   async setup(props, ctx){
   //#region component and props
@@ -181,9 +182,9 @@ export default defineComponent({
           break
         case ACTION_EDIT:
           if (props.itemUnderEdit) {
-            ctx.emit('handle-toggle-edit', null)
+            ctx.emit('handle-toggle-edit', {item: e.item, itemUnderEdit: true})
           }
-          ctx.emit('handle-toggle-edit', e)
+          ctx.emit('handle-toggle-edit', {item: e.item, itemUnderEdit: false})
           // itemUnderEdit.value = e.item
           break
       }
@@ -193,10 +194,15 @@ export default defineComponent({
       // colorLog('handle input edit', 'red', 'yellow')
       ctx.emit('handle-input-edit', e)
     }
+    const handleEditInit = (e) => {
+      // colorLog('handle input edit', 'red', 'yellow')
+      ctx.emit('handle-edit-init', e)
+    }
 
     return {
       handleClick,
       handleDelete: (item) => ctx.emit('handle-delete', item),
+      handleEditInit,
       handleInputEdit,
       componentComputed,
       propsComputed,

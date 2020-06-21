@@ -36,6 +36,7 @@
         @handle-input-edit="handleInputEdit"
         @handle-toggle-edit="handleToggleEdit"
         @handle-click="handleClick"
+        @handle-edit-init="handleEditInit"
         :editable-columns="editableColumnsComputed"
         :item-under-edit="itemUnderEditComputed(item)"
       />
@@ -99,7 +100,7 @@ export default defineComponent({
     ModalWarning
   },
 
-  emits: ['update-values', 'handle-delete', 'handle-edit', 'handle-toggle-edit', 'handle-input-edit', 'confirm-delete'],
+  emits: ['update-values', 'handle-delete', 'handle-edit', 'handle-toggle-edit', 'handle-input-edit', 'confirm-delete', 'handle-edit-init'],
 
   async setup(props, ctx){
     colorLog('base table', 'green', 'yellow')
@@ -320,26 +321,32 @@ export default defineComponent({
         {
           value: e.value,
           propertyName: e.propertyName,
-          itemType: props.itemType
+          itemType: props.itemType,
+          valueChanged: e.valueChanged
         }
       ),
       // handleEdit: (item) => ctx.emit('handle-edit', {value: item.value, propertyName: item.propertyName, itemType: props.itemType}),
       handleToggleEdit: (e) => {
-        return e
-          ? itemUnderEdit.value = e.item
-          : itemUnderEdit.value = null
-        // ctx.emit(
-        //   'handle-toggle-edit',
-        //   {
-        //     item: e.item,
-        //     itemType: props.itemType
-        //     // editable: editableColumns(dataProperties.value),
-        //     // itemTouched: e.itemTouched,
-        //     // refArray: e.refArray,
-        //     // editableColumns: e.editableColumns
-        //   }
-        // )
+        console.log(e)
+        if (e.itemUnderEdit == false) {
+          // if it is false but being emitted it wants this component to set it to true
+          itemUnderEdit.value = e.item          
+        } else {
+          itemUnderEdit.value = null
+          ctx.emit(
+            'handle-toggle-edit',
+            {
+              item: e.item,
+              itemType: props.itemType
+              // editable: editableColumns(dataProperties.value),
+              // itemTouched: e.itemTouched,
+              // refArray: e.refArray,
+              // editableColumns: e.editableColumns
+            }
+          )
+        }
       },
+      handleEditInit: (item) => ctx.emit('handle-edit-init', {item: item, itemType: props.itemType, refArray: item.refArray, itemTouched: item.itemTouched}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
       editableColumnsComputed

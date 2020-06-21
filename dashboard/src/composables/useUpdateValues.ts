@@ -14,6 +14,7 @@ export const useUpdateValues = (touched: Ref<boolean>, fields: Ref<string>[]) =>
     }
   }
   fields.forEach(field => {
+    console.log(field.value)
     watch(
       () => field.value,
       (value: string, previous: string) => updateField(value, previous)

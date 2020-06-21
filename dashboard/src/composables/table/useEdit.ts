@@ -51,30 +51,42 @@ export function useEdit(store, ctx) {
     const toggleEditable = async (oldItem, idSymbol, updateValuesCallback, editableColumns, refArray, itemTouched) => {
       colorLog('toggle editable', 'red', 'yellow')
       console.log(itemTouched.value)
-      if (oldItem.editable == false) {
-        colorLog('editable false', 'red', 'yellow')
-        store.toggleEditable(oldItem, true)
-        let counter = 0
-        Object.keys(oldItem).forEach(property => {
-          if (editableColumns.includes(property)) {
-            refArray[counter].value = oldItem[property]
-            counter++
-          }
-        })
-        console.log(itemTouched)
-        updateValuesCallback()
+      if (itemTouched.value == true) {
+        colorLog('item is touched', 'blue', 'yellow')
+        // editItem(oldItem, idSymbol, properties)
       } else {
-        if (itemTouched.value == true) {
-          colorLog('item is touched', 'blue', 'yellow')
-          
-          // editItem(oldItem, idSymbol, properties)
-        } else {
-          colorLog('item NOT touched', 'green', 'yellow')
-          console.log(oldItem)
-          store.toggleEditable(oldItem, false)
-        }
+        colorLog('item NOT touched', 'green', 'yellow')
+        console.log(oldItem)
+        // store.toggleEditable(oldItem, false)
       }
     }
+    // const toggleEditable = async (oldItem, idSymbol, updateValuesCallback, editableColumns, refArray, itemTouched) => {
+    //   colorLog('toggle editable', 'red', 'yellow')
+    //   console.log(itemTouched.value)
+    //   if (oldItem.editable == false) {
+    //     colorLog('editable false', 'red', 'yellow')
+    //     store.toggleEditable(oldItem, true)
+    //     let counter = 0
+    //     Object.keys(oldItem).forEach(property => {
+    //       if (editableColumns.includes(property)) {
+    //         refArray[counter].value = oldItem[property]
+    //         counter++
+    //       }
+    //     })
+    //     console.log(itemTouched)
+    //     updateValuesCallback()
+    //   } else {
+    //     if (itemTouched.value == true) {
+    //       colorLog('item is touched', 'blue', 'yellow')
+          
+    //       // editItem(oldItem, idSymbol, properties)
+    //     } else {
+    //       colorLog('item NOT touched', 'green', 'yellow')
+    //       console.log(oldItem)
+    //       store.toggleEditable(oldItem, false)
+    //     }
+    //   }
+    // }
 
   // #endregion
     return {

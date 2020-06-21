@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch, onMounted, onUpdated } from 'vue'
+import { defineComponent, computed, ref, watch, onMounted, onUpdated, nextTick } from 'vue'
 import BaseInput from './../../components/common/BaseInput.vue'
 import { colorLog } from '../../utils'
 import { useInitEdit } from '../../composables/table/useInitEdit'
@@ -34,46 +34,38 @@ export default defineComponent({
     //   default: false
     // }
   },
-  emits: ['handle-input-edit'],
-
+  emits: ['handle-input-edit', 'handle-edit-init'],
   async setup(props, ctx){
+    
     colorLog('table data edit', 'red', 'yellow')
-    // console.log(props)
+    const initialValue = ref(props.props.propertyData[props.props.propertyName])
+
     const propertyEdit = ref(props.props.propertyData[props.props.propertyName])
+
+    const valueChanged = ref(initialValue.value != propertyEdit.value)
+
     const isItemUnderEdit = !!props.props.itemUnderEdit
-    // const isItemUnderEdit = hasItemUnderEdit ? props.props.itemUnderEdit.itemId == props.props.propertyData.itemId : false
-    if (isItemUnderEdit) {
-      console.log(isItemUnderEdit)
-      const editableColumns = props.props.editableColumns
-      const { refArray, itemTouched } = useInitEdit(props.props.editableColumns)
-      const index = props.props.editableColumns.indexOf(props.props.propertyName)
-      // init ref data 
-      refArray[index].value = props.props.propertyData[props.props.propertyName]
-      const propertyEdit = refArray[index]
-    }
-    // ctx.emit('handle-click', {item: props.props.propertyData, action: props.props.action, refArray: refArray, itemTouched: itemTouched.value, editableColumns: props.props.editableColumns})
 
     onUpdated(() => {
       if (isItemUnderEdit) {
         colorLog('on updated table cell editable', 'green', 'red')
-        console.log(isItemUnderEdit)
-        console.log(props.props.propertyData.itemId)
+        valueChanged.value = propertyEdit.value != initialValue.value
       }
     })
 
-
-
-    const handleInput = () => {
+    const handleInput = async () => {
       const itemEdit = props.props.propertyData
       // below throws warning that set error on readonly
       // itemEdit[props.props.propertyName] = propertyEdit.value
       // console.log({item: itemEdit})
       // ctx.emit('handle-input', {item: itemEdit})
-      ctx.emit('handle-input-edit', {value: propertyEdit.value, propertyName: props.props.propertyName})
+      // need to wait for updated hook to run before emitting
+      await nextTick()
+      ctx.emit('handle-input-edit', {value: propertyEdit.value, propertyName: props.props.propertyName, valueChanged: valueChanged.value})
     }
     return {
       propertyEdit,
-      handleInput
+      handleInput,
     }
 
   }

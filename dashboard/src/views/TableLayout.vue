@@ -63,6 +63,7 @@
               @update-values="onUpdateValues"
               @handle-delete="handleDelete"
               @handle-edit="handleEdit"
+              @handle-edit-init="handleEditInit"
               @handle-input-edit="handleInputEdit"
               @handle-toggle-edit="handleToggleEdit"
               @confirm-delete="confirmDelete"
@@ -154,7 +155,8 @@ export default defineComponent({
     'handle-edit',
     'handle-input-edit',
     'handle-toggle-edit',
-    'confirm-delete'
+    'confirm-delete',
+    'handle-edit-init'
   ],
   setup(props, ctx) {
     const contactDestination: Destination = '#delete-contact-modal'
@@ -248,6 +250,7 @@ export default defineComponent({
       taskModal,
       cardIsOpen,
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
+      handleEditInit: (item) => ctx.emit('handle-edit-init', item),
       handleEdit: (item) => ctx.emit('handle-edit', item),
       handleToggleEdit: (item) => ctx.emit('handle-toggle-edit', item),
       handleDelete: (item) => ctx.emit('handle-delete', item),

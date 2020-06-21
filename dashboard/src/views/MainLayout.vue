@@ -29,6 +29,7 @@
           @handle-delete="handleDelete"
           @handle-input-edit="handleInputEdit"
           @handle-toggle-edit="handleToggleEdit"
+          @handle-edit-init="handleEditInit"
           @confirm-delete="confirmDelete"
           @update-values="onUpdateValues"
         />
@@ -230,13 +231,23 @@ export default defineComponent({
   //#endregion
 
   let taskEditRefs = ref([])
-  let taskItemTouchedRef = ref()
+  let taskItemTouched
   let taskEdit
   let refsCreated = false
   let properties
   let refArray
 
+
   //#region edit
+    const handleEditInit = (e) => {
+      switch(e.itemType) {
+        case 'task':
+          colorLog('handle edit init main layout', 'white', 'green')
+          taskEditRefs.value = e.refArray
+          taskItemTouched = e.itemTouched
+      }
+    }
+
     const handleToggleEdit = (e) => {
       console.log(e)
       switch(e.itemType) {
@@ -251,15 +262,12 @@ export default defineComponent({
           //   // console.log(taskEditRefs.value)
           //   refsCreated = true
           // }
-          taskItemTouchedRef.value = e.itemTouched
+          // taskItemTouchedRef.value = e.itemTouched
           taskEdit = useEdit(taskStore, ctx)
           const toggleEditable = taskEdit.toggleEditable
-          // console.log(e)
-          console.log(e.itemTouched)
-          // console.log(e.refArray)
-          taskEditRefs.value = e.refArray
-          // console.log(taskEditRefs)
-          toggleEditable(e.item, taskIdSymbol, onUpdateTasks,  e.editableColumns, e.refArray, e.itemTouched)
+          console.log(taskItemTouched)
+          console.log(taskEditRefs)
+          toggleEditable(e.item, taskIdSymbol, onUpdateTasks,  e.editableColumns, taskEditRefs, taskItemTouched)
 
       }
     }
@@ -268,13 +276,14 @@ export default defineComponent({
       switch(e.itemType) {
         case 'task':
           colorLog('edited item at main layout', 'purple', 'green')
-          console.log(taskEditRefs)
-          taskEditRefs.value.forEach(ref => {
-            // if (e.propertyName == ref.value) 
-            console.log('ref')
-            console.log(ref.value)
-            return ref.value
-          })
+          // console.log(taskItemTouched.value)
+          // console.log(taskEditRefs)
+          // taskEditRefs.value.forEach(ref => {
+          //   // if (e.propertyName == ref.value) 
+          //   console.log('ref')
+          //   console.log(ref.value)
+          //   return ref.value
+          // })
           // const taskEdit = useEdit(taskStore, ctx, e.editable)
           // const toggleEditable = taskEdit.toggleEditable
           // toggleEditable(e.item, taskIdSymbol, onUpdateTasks)
@@ -309,6 +318,7 @@ export default defineComponent({
       handleDelete,
       handleToggleEdit,
       handleInputEdit,
+      handleEditInit,
       confirmDelete
     }
 

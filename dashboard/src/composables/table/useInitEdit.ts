@@ -4,8 +4,8 @@ import { useUpdateValues } from "../useUpdateValues";
 import moment from "moment";
 
 export function useInitEdit(editable) {
-  colorLog('use init edit', 'blue', 'yellow')
-  console.log(editable)
+  // colorLog('use init edit', 'blue', 'yellow')
+  // console.log(editable)
   const properties = []
   const refArray = []
   const editRefs = toRefs(reactive(editable))
