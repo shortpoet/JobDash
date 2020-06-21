@@ -66,6 +66,7 @@
               @handle-edit-init="handleEditInit"
               @handle-input-edit="handleInputEdit"
               @handle-toggle-edit="handleToggleEdit"
+              @handle-confirm-edit="handleConfirmEdit"
               @confirm-delete="confirmDelete"
               :edit-refs="taskEditRefs"
             />
@@ -154,6 +155,7 @@ export default defineComponent({
     'handle-delete',
     'handle-edit',
     'handle-input-edit',
+    'handle-confirm-edit',
     'handle-toggle-edit',
     'confirm-delete',
     'handle-edit-init'
@@ -252,6 +254,7 @@ export default defineComponent({
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
       handleEditInit: (item) => ctx.emit('handle-edit-init', item),
       handleEdit: (item) => ctx.emit('handle-edit', item),
+      handleConfirmEdit: (item) => ctx.emit('handle-confirm-edit', item),
       handleToggleEdit: (item) => ctx.emit('handle-toggle-edit', item),
       handleDelete: (item) => ctx.emit('handle-delete', item),
       confirmDelete: (item) => ctx.emit('confirm-delete', item),

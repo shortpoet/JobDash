@@ -182,9 +182,9 @@ export default defineComponent({
           break
         case ACTION_EDIT:
           if (props.itemUnderEdit) {
-            ctx.emit('handle-toggle-edit', {item: e.item, itemUnderEdit: true})
+            ctx.emit('handle-toggle-edit', {item: e.item, itemUnderEdit: true, editableColumns: props.editableColumns})
           }
-          ctx.emit('handle-toggle-edit', {item: e.item, itemUnderEdit: false})
+          ctx.emit('handle-toggle-edit', {item: e.item, itemUnderEdit: false, editableColumns: props.editableColumns})
           // itemUnderEdit.value = e.item
           break
       }

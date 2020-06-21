@@ -5,92 +5,61 @@ import moment from "moment";
 
 export function useEdit(store, ctx) {
   colorLog('use edit', 'blue', 'yellow')
-  // console.log(editable)
-  //   //#region edit
-  //   const properties = []
-  //   const createEditRefArray = () => {
-  //     const editRefs = toRefs(reactive(editable))
-  //     // const editRefs = toRefs(editable)
-  //     console.log(editRefs);
-  //     const refArray = []
-  //     Object.entries(editRefs).forEach(entry => {
-  //       refArray.push(entry[1])
-  //       properties.push(entry[1].value)
-  //     })
-  //     return refArray
-  //   }
-    // const refArray = createEditRefArray()
-    // //#region updateValues
-    //   const itemTouched = ref(false)
-    // //#endregion
+  const _valueChanged = ref()
+  let refArray = []
 
-    const editItem = async (oldItem, properties, idSymbol, itemTouched) => {
+  const editItem = async (oldItem, idSymbol, updateValuesCallback, editableColumns, valueChanged) => {
+    colorLog('edit item', 'yellow', 'red')
+    console.log(valueChanged.value)
+    console.log(refArray)
+    if(valueChanged.value == true) {
       let newItem = {
         ...oldItem,
         edited: moment(),
         editable: false,
         locked: true
       }
-      properties.forEach(prop => {
-        const dict = {}
-        dict[prop] = oldItem[prop]
-        Object.assign(newItem, dict)
-      })  
+      refArray.forEach(ref => {
+        const key = Object.keys(ref.value)[0]
+        newItem[key] = ref.value[key]
+      })
+      console.log(newItem)
+      // editableColumns.forEach(prop => {
+      //   const dict = {}
+      //   dict[prop] = oldItem[prop]
+      //   Object.assign(newItem, dict)
+      // })  
       await store.editRecord(
         oldItem, 
         newItem,
         idSymbol
       )
-      itemTouched.value = false
-      // this closes the edit window by updating the refs after newTask editable set to false
-      ctx.emit('update-tasks')
-    }
-    // console.log('about to use update vals')
-    // useUpdateValues(itemTouched, refArray)
-    
-    const toggleEditable = async (oldItem, idSymbol, updateValuesCallback, editableColumns, refArray, itemTouched) => {
-      colorLog('toggle editable', 'red', 'yellow')
-      console.log(itemTouched.value)
-      if (itemTouched.value == true) {
-        colorLog('item is touched', 'blue', 'yellow')
-        // editItem(oldItem, idSymbol, properties)
-      } else {
-        colorLog('item NOT touched', 'green', 'yellow')
-        console.log(oldItem)
-        // store.toggleEditable(oldItem, false)
-      }
-    }
-    // const toggleEditable = async (oldItem, idSymbol, updateValuesCallback, editableColumns, refArray, itemTouched) => {
-    //   colorLog('toggle editable', 'red', 'yellow')
-    //   console.log(itemTouched.value)
-    //   if (oldItem.editable == false) {
-    //     colorLog('editable false', 'red', 'yellow')
-    //     store.toggleEditable(oldItem, true)
-    //     let counter = 0
-    //     Object.keys(oldItem).forEach(property => {
-    //       if (editableColumns.includes(property)) {
-    //         refArray[counter].value = oldItem[property]
-    //         counter++
-    //       }
-    //     })
-    //     console.log(itemTouched)
-    //     updateValuesCallback()
-    //   } else {
-    //     if (itemTouched.value == true) {
-    //       colorLog('item is touched', 'blue', 'yellow')
-          
-    //       // editItem(oldItem, idSymbol, properties)
-    //     } else {
-    //       colorLog('item NOT touched', 'green', 'yellow')
-    //       console.log(oldItem)
-    //       store.toggleEditable(oldItem, false)
-    //     }
-    //   }
-    // }
 
-  // #endregion
-    return {
-      toggleEditable,
-      // createEditRefArray
+      // this closes the edit window by updating the refs after newTask editable set to false
+      updateValuesCallback()
     }
+
+  }
+    
+  const toggleEditable = async (valueChanged, value, propertyName) => {
+    colorLog('toggle editable', 'red', 'yellow')
+    console.log(valueChanged.value)
+    if (valueChanged.value == true) {
+      colorLog('item is touched', 'blue', 'yellow')
+      const dict = {}
+      dict[propertyName] = value
+      const propRef = ref(dict)
+      refArray.push(propRef)
+      _valueChanged.value = valueChanged.value
+    } else {
+      colorLog('item NOT touched', 'green', 'yellow')
+      refArray = refArray.filter(ref => Object.keys(ref.value) != propertyName)
+      _valueChanged.value = valueChanged.value
+    }
+  }
+
+  return {
+    toggleEditable,
+    editItem
+  }
 }

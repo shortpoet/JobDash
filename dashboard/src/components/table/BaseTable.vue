@@ -100,7 +100,16 @@ export default defineComponent({
     ModalWarning
   },
 
-  emits: ['update-values', 'handle-delete', 'handle-edit', 'handle-toggle-edit', 'handle-input-edit', 'confirm-delete', 'handle-edit-init'],
+  emits: [
+    'update-values',
+    'handle-delete',
+    'handle-edit',
+    'handle-toggle-edit',
+    'handle-input-edit',
+    'handle-confirm-edit',
+    'confirm-delete', 
+    'handle-edit-init'
+  ],
 
   async setup(props, ctx){
     colorLog('base table', 'green', 'yellow')
@@ -334,14 +343,14 @@ export default defineComponent({
         } else {
           itemUnderEdit.value = null
           ctx.emit(
-            'handle-toggle-edit',
+            'handle-confirm-edit',
             {
               item: e.item,
-              itemType: props.itemType
+              itemType: props.itemType,
               // editable: editableColumns(dataProperties.value),
               // itemTouched: e.itemTouched,
               // refArray: e.refArray,
-              // editableColumns: e.editableColumns
+              editableColumns: e.editableColumns
             }
           )
         }
