@@ -1,17 +1,16 @@
-import { ref, toRefs, Ref, reactive } from "vue"
+import { ref} from "vue"
 import { colorLog } from "../../utils"
-import { useUpdateValues } from "../useUpdateValues";
 import moment from "moment";
 
-export function useEdit(store, ctx) {
+export function useEdit(store) {
   colorLog('use edit', 'blue', 'yellow')
   const _valueChanged = ref()
   let refArray = []
 
   const editItem = async (oldItem, idSymbol, updateValuesCallback, valueChanged) => {
     colorLog('edit item', 'yellow', 'red')
-    console.log(valueChanged.value)
-    console.log(refArray)
+    // console.log(valueChanged.value)
+    // console.log(refArray)
     if(valueChanged.value == true) {
       let newItem = {
         ...oldItem,
@@ -35,7 +34,7 @@ export function useEdit(store, ctx) {
     
   const toggleEditable = async (valueChanged, value, propertyName) => {
     colorLog('toggle editable', 'red', 'yellow')
-    console.log(valueChanged.value)
+    // console.log(valueChanged.value)
     if (valueChanged.value == true) {
       colorLog('item is touched', 'blue', 'yellow')
       const dict = {}

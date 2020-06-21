@@ -32,7 +32,6 @@
         :item="item"
         :columns="configRef.columns"
         @handle-delete="handleDelete"
-        @handle-edit="handleEdit"
         @handle-input-edit="handleInputEdit"
         @handle-toggle-edit="handleToggleEdit"
         @handle-click="handleClick"
@@ -103,12 +102,9 @@ export default defineComponent({
   emits: [
     'update-values',
     'handle-delete',
-    'handle-edit',
     'handle-input-edit',
     'handle-toggle-edit',
-    'handle-confirm-edit',
     'confirm-delete', 
-    'handle-edit-init'
   ],
 
   async setup(props, ctx){
@@ -138,8 +134,7 @@ export default defineComponent({
     }
     
     onUpdated(() => {
-      colorLog('on updated base table', 'blue', 'yellow')
-      console.log(props.itemUnderEdit)
+      // colorLog('on updated base table', 'blue', 'yellow')
     })
 
     //#region header
@@ -304,15 +299,6 @@ export default defineComponent({
       handleChosenControlChange,
       // controlSwitch,
       // columnSwitch
-      handleEdit: (item) => ctx.emit(
-        'handle-edit',
-        {
-          item: item,
-          propertyName: item.propertyName,
-          itemType: props.itemType,
-          editable: editableColumns(dataProperties.value)
-        }
-      ),
       handleInputEdit: (e) => ctx.emit(
         'handle-input-edit',
         {
@@ -325,20 +311,6 @@ export default defineComponent({
       handleToggleEdit: (e) => {
         // console.log(e)
         ctx.emit('handle-toggle-edit', {item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
-        // if (e.itemUnderEdit == false) {
-        //   // if it is false but being emitted it wants this component to set it to true
-        //   itemUnderEdit.value = e.item          
-        // } else {
-        //   itemUnderEdit.value = null
-        //   ctx.emit(
-        //     'handle-confirm-edit',
-        //     {
-        //       item: e.item,
-        //       itemType: props.itemType,
-        //       editableColumns: e.editableColumns
-        //     }
-        //   )
-        // }
       },
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),

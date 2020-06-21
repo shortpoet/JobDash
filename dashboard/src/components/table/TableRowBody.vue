@@ -63,7 +63,7 @@ export default defineComponent({
     TableCellDataEditable
   },
 
-  emits: ['handle-delete', 'handle-edit', 'handle-toggle-edit', 'handle-input-edit', 'handle-edit-init'],
+  emits: ['handle-delete', 'handle-toggle-edit', 'handle-input-edit'],
 
   async setup(props, ctx){
     onUpdated(() => {

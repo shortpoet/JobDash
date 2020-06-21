@@ -86,11 +86,13 @@ export default defineComponent({
   },
   emits: ['update-values'],
   async setup(props, ctx) {
+
     onUpdated(() => {
       colorLog('on updated main layout', 'orange', 'yellow')
     })
 
     const error = ref(null)
+
     onErrorCaptured(e => {
       error.value = e
       console.log(e)
@@ -105,6 +107,7 @@ export default defineComponent({
     }
     const showUIFull = ref(true)
     const showClear = ref(false)
+
     //#region contactUse
       const contactStore = store.modules['contactStore']
 
@@ -219,25 +222,17 @@ export default defineComponent({
           taskDelete.deleteItem(itemDeleteModal, taskIdSymbol, onUpdateTasks)
       }
     }
-    // const onUpdateValues = (e) => {
-    //   console.log(e)
-    //   switch(e.itemType) {
-    //     case 'task':
-    //       onUpdateTasks()
-    //   }
-    // }
-
   //#endregion
-
-  let taskItemTouched = ref()
-  const taskEdit = useEdit(taskStore, ctx)
-  let itemUnderEdit = ref()
 
   //#region edit
 
+    let taskItemTouched = ref()
+    const taskEdit = useEdit(taskStore)
+    let itemUnderEdit = ref()
+
     const handleToggleEdit = (e) => {
-      colorLog('toggle edited item at main layout', 'purple', 'green')
-      console.log(e)
+      // colorLog('toggle edited item at main layout', 'purple', 'green')
+      // console.log(e)
       if (!itemUnderEdit.value) {
         // if it is false but being emitted it wants this component to set it to true
         itemUnderEdit.value = e.item          
@@ -246,12 +241,12 @@ export default defineComponent({
         handleConfirmEdit(e)
       }
     }
-    
+
     const handleInputEdit = (e) => {
       // console.log(e)
       switch(e.itemType) {
         case 'task':
-          colorLog('edited item at main layout', 'purple', 'green')
+          // colorLog('edited item at main layout', 'purple', 'green')
           const toggleEditable = taskEdit.toggleEditable
           taskItemTouched.value = e.valueChanged
           toggleEditable(taskItemTouched, e.value, e.propertyName)
@@ -261,19 +256,11 @@ export default defineComponent({
       // console.log(e)
       switch(e.itemType) {
         case 'task':
-          colorLog('confirm edit item at main layout', 'yellow', 'blue')
+          // colorLog('confirm edit item at main layout', 'yellow', 'blue')
           const editItem = taskEdit.editItem
           editItem(e.item, taskIdSymbol, onUpdateTasks, taskItemTouched)
       }
     }
-    
-    // const confirmDelete = (e) => {
-    //   switch(e.itemType) {
-    //     case 'task':
-    //       taskDelete.deleteItem(itemDeleteModal, taskIdSymbol, onUpdateTasks)
-    //   }
-    // }
-
   //#endregion
 
     return {
