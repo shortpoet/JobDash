@@ -29,7 +29,7 @@ import BaseTableCellControl from './../table/BaseTableCellControl.vue'
 import TableCellControlDelete from './../table/TableCellControlDelete.vue'
 import TableCellDataEditable from './../table/TableCellDataEditable.vue'
 import { useDelete } from './../../composables/table/useDelete'
-import { ITableControl, ITableData, BaseTableData, BaseTableControl, ID, DELETE, EDIT, MESSAGE, LOCKED, ACTION_DELETE, ACTION_EDIT } from '../../interfaces/table/table.interface'
+import { ITableControl, ITableData, BaseTableData, BaseTableControl, ID, DELETE, EDIT, MESSAGE, LOCKED, ACTION_DELETE, ACTION_EDIT, ACTION_LOCKED } from '../../interfaces/table/table.interface'
 import { colorLog } from '../../utils'
 export default defineComponent({
   name: 'TableRowBody',
@@ -63,7 +63,12 @@ export default defineComponent({
     TableCellDataEditable
   },
 
-  emits: ['handle-delete', 'handle-toggle-edit', 'handle-input-edit'],
+  emits: [
+    'handle-delete',
+    'handle-toggle-delete',
+    'handle-toggle-edit',
+    'handle-input-edit'
+  ],
 
   async setup(props, ctx){
     onUpdated(() => {
@@ -137,8 +142,12 @@ export default defineComponent({
   //#endregion
     // all controls emit click (i think)
     const handleClick = (e) => {
-      // console.log(e)
+      console.log(e)
+      console.log(e.action)
       switch(e.action) {
+        case ACTION_LOCKED:
+          ctx.emit('handle-toggle-delete', e.item)
+          break
         case ACTION_DELETE:
           ctx.emit('handle-delete', e.item)
           break

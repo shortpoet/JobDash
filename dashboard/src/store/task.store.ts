@@ -92,7 +92,8 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   
   toggleDeletable(oldTask: Task, deletable: boolean) {
     // without this line I was getting the bug where I had to click twice
-    this.state.records.all[oldTask._id].locked = deletable
+    console.log(oldTask)
+    // this.state.records.all[oldTask._id].locked = deletable
 
     const newTask: Task = {
       _id: oldTask._id,

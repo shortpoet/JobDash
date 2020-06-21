@@ -62,6 +62,7 @@
               :delete-modal="deleteModal"
               @update-values="onUpdateValues"
               @handle-delete="handleDelete"
+              @handle-toggle-delete="handleToggleDelete"
               @handle-toggle-edit="handleToggleEdit"
               @handle-input-edit="handleInputEdit"
               @confirm-delete="confirmDelete"
@@ -150,6 +151,7 @@ export default defineComponent({
     'update-tasks',
     'update-messages',
     'handle-delete',
+    'handle-toggle-delete',
     'handle-toggle-edit',
     'handle-input-edit',
     'confirm-delete',
@@ -247,6 +249,7 @@ export default defineComponent({
       cardIsOpen,
       handleToggleEdit: (e) => ctx.emit('handle-toggle-edit', e),
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
+      handleToggleDelete: (e) => ctx.emit('handle-toggle-delete', e),
       handleDelete: (item) => ctx.emit('handle-delete', item),
       confirmDelete: (item) => ctx.emit('confirm-delete', item),
     }

@@ -26,6 +26,7 @@
           :messages="allMessages"
           @update-messages="onUpdateMessages"
           @handle-delete="handleDelete"
+          @handle-toggle-delete="handleToggleDelete"
           @handle-toggle-edit="handleToggleEdit"
           @handle-input-edit="handleInputEdit"
           @handle-confirm-edit="handleConfirmEdit"
@@ -209,6 +210,23 @@ export default defineComponent({
   //#region delete
     const taskIdSymbol = '_id'
     const taskDelete = useDelete(taskStore, ctx)
+
+    const handleToggleDelete = async (e) => {
+      colorLog('handle toggle delete at main layout', 'yellow', 'green')
+      console.log(e)
+      switch(e.itemType) {
+        case 'task':
+        console.log(e.item.locked)
+        console.log(e.item)
+        if (e.item.locked == false) {
+          await taskStore.toggleDeletable(e.item, true)
+          onUpdateTasks()
+        } else {
+          await taskStore.toggleDeletable(e.item, false)
+          onUpdateTasks()
+        }
+      }
+    }
     const handleDelete = (e) => {
       // console.log(e)
       switch(e.itemType) {
@@ -278,11 +296,12 @@ export default defineComponent({
       activeBoard,
       showClear,
       handleActiveBoardChange,
-      handleDelete,
       itemUnderEdit,
       handleToggleEdit,
       handleInputEdit,
       handleConfirmEdit,
+      handleDelete,
+      handleToggleDelete,
       confirmDelete
     }
 

@@ -34,6 +34,7 @@
         @handle-delete="handleDelete"
         @handle-input-edit="handleInputEdit"
         @handle-toggle-edit="handleToggleEdit"
+        @handle-toggle-delete="handleToggleDelete"
         @handle-click="handleClick"
         @handle-edit-init="handleEditInit"
         :editable-columns="editableColumnsComputed"
@@ -104,6 +105,7 @@ export default defineComponent({
     'handle-delete',
     'handle-input-edit',
     'handle-toggle-edit',
+    'handle-toggle-delete',
     'confirm-delete', 
   ],
 
@@ -312,6 +314,7 @@ export default defineComponent({
         // console.log(e)
         ctx.emit('handle-toggle-edit', {item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
       },
+      handleToggleDelete: (item) => ctx.emit('handle-toggle-delete', {item: item, itemType: props.itemType}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
       editableColumnsComputed
