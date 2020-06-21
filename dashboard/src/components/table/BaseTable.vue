@@ -86,8 +86,8 @@ export default defineComponent({
     deleteModal: {
       type: Object as () => IModal
     },
-    editRefs: {
-      type: Array,
+    itemUnderEdit: {
+      type: Object,
       required: false
     }
   },
@@ -105,6 +105,7 @@ export default defineComponent({
     'handle-delete',
     'handle-edit',
     'handle-input-edit',
+    'handle-toggle-edit',
     'handle-confirm-edit',
     'confirm-delete', 
     'handle-edit-init'
@@ -114,8 +115,10 @@ export default defineComponent({
     colorLog('base table', 'green', 'yellow')
     const itemUnderEdit = ref()
     const keyComputed = (item) => {
-      return !!itemUnderEdit.value
-        ? itemUnderEdit.value.itemId == item.itemId
+      // colorLog('key computed', 'green', 'yellow')
+      // console.log(props.itemUnderEdit)
+      return !!props.itemUnderEdit
+        ? props.itemUnderEdit.itemId == item.itemId
           ? `${item[props.idSymbol]}-edit`
           : item[props.idSymbol]
         : item[props.idSymbol]
@@ -127,15 +130,16 @@ export default defineComponent({
       // return item[props.idSymbol]
     }
     const itemUnderEditComputed = (item) => {
-      return itemUnderEdit.value
-        ? itemUnderEdit.value.itemId == item.itemId
+      return props.itemUnderEdit
+        ? props.itemUnderEdit.itemId == item.itemId
           ? true
           : false
         : false
     }
     
     onUpdated(() => {
-      // colorLog('on updated base table', 'blue', 'yellow')
+      colorLog('on updated base table', 'blue', 'yellow')
+      console.log(props.itemUnderEdit)
     })
 
     //#region header
@@ -289,7 +293,7 @@ export default defineComponent({
     //#endregion
     return {
       keyComputed,
-      itemUnderEdit,
+      // itemUnderEdit,
       itemUnderEditComputed,
       dataProperties,
       columnNames,
@@ -320,20 +324,21 @@ export default defineComponent({
       ),
       handleToggleEdit: (e) => {
         // console.log(e)
-        if (e.itemUnderEdit == false) {
-          // if it is false but being emitted it wants this component to set it to true
-          itemUnderEdit.value = e.item          
-        } else {
-          itemUnderEdit.value = null
-          ctx.emit(
-            'handle-confirm-edit',
-            {
-              item: e.item,
-              itemType: props.itemType,
-              editableColumns: e.editableColumns
-            }
-          )
-        }
+        ctx.emit('handle-toggle-edit', {item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
+        // if (e.itemUnderEdit == false) {
+        //   // if it is false but being emitted it wants this component to set it to true
+        //   itemUnderEdit.value = e.item          
+        // } else {
+        //   itemUnderEdit.value = null
+        //   ctx.emit(
+        //     'handle-confirm-edit',
+        //     {
+        //       item: e.item,
+        //       itemType: props.itemType,
+        //       editableColumns: e.editableColumns
+        //     }
+        //   )
+        // }
       },
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),

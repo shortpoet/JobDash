@@ -26,10 +26,12 @@
           :messages="allMessages"
           @update-messages="onUpdateMessages"
           @handle-delete="handleDelete"
+          @handle-toggle-edit="handleToggleEdit"
           @handle-input-edit="handleInputEdit"
           @handle-confirm-edit="handleConfirmEdit"
           @confirm-delete="confirmDelete"
           @update-values="onUpdateValues"
+          :item-under-edit="itemUnderEdit"
         />
       </div>
     </BaseMinimize>
@@ -229,10 +231,22 @@ export default defineComponent({
 
   let taskItemTouched = ref()
   const taskEdit = useEdit(taskStore, ctx)
-
+  let itemUnderEdit = ref()
 
   //#region edit
 
+    const handleToggleEdit = (e) => {
+      colorLog('toggle edited item at main layout', 'purple', 'green')
+      console.log(e)
+      if (!itemUnderEdit.value) {
+        // if it is false but being emitted it wants this component to set it to true
+        itemUnderEdit.value = e.item          
+      } else {
+        itemUnderEdit.value = null
+        handleConfirmEdit(e)
+      }
+    }
+    
     const handleInputEdit = (e) => {
       // console.log(e)
       switch(e.itemType) {
@@ -278,6 +292,8 @@ export default defineComponent({
       showClear,
       handleActiveBoardChange,
       handleDelete,
+      itemUnderEdit,
+      handleToggleEdit,
       handleInputEdit,
       handleConfirmEdit,
       confirmDelete

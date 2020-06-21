@@ -63,9 +63,11 @@
               @update-values="onUpdateValues"
               @handle-delete="handleDelete"
               @handle-edit="handleEdit"
+              @handle-toggle-edit="handleToggleEdit"
               @handle-input-edit="handleInputEdit"
               @handle-confirm-edit="handleConfirmEdit"
               @confirm-delete="confirmDelete"
+              :item-under-edit="itemUnderEdit"
             />
           </BaseBox>
         </BaseMinimize>
@@ -129,6 +131,10 @@ export default defineComponent({
     },
     deleteModal: {
       type: Object as () => IModal
+    },
+    itemUnderEdit: {
+      type: Object,
+      required: false
     }
   },
   components: {
@@ -147,6 +153,7 @@ export default defineComponent({
     'update-messages',
     'handle-delete',
     'handle-edit',
+    'handle-toggle-edit',
     'handle-input-edit',
     'handle-confirm-edit',
     'confirm-delete',
@@ -242,6 +249,7 @@ export default defineComponent({
       contactModal,
       taskModal,
       cardIsOpen,
+      handleToggleEdit: (e) => ctx.emit('handle-toggle-edit', e),
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
       handleEdit: (item) => ctx.emit('handle-edit', item),
       handleConfirmEdit: (item) => ctx.emit('handle-confirm-edit', item),
