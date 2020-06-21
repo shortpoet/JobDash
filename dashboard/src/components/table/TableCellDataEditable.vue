@@ -1,5 +1,5 @@
 <template>
-  <td v-if="props.propertyData.editable" contenteditable>
+  <td v-if="props.itemUnderEdit" >
     <BaseInput v-if="propertyEdit != ''" type="text" :name="props.propertyName" @input="handleInput" v-model="propertyEdit" />
       {{ propertyEdit }}
   </td>
@@ -39,65 +39,33 @@ export default defineComponent({
   async setup(props, ctx){
     colorLog('table data edit', 'red', 'yellow')
     // console.log(props)
-    
-
-    // const propertyEdit = ref(props.props.propertyData[props.props.propertyName])
-    const index = props.props.editableColumns.indexOf(props.props.propertyName)
-    // console.log(index)
-    // console.log(props.props.editRefs)
-    let propertyEdit = ref(props.props.editRefs[index] ? props.props.editRefs[index].value : '')
-    // console.log(propertyEdit)
-    onUpdated(() => {
-      colorLog('on updated table cell editable', 'green', 'yellow')
-      console.log(props.props.editRefs)
+    const propertyEdit = ref(props.props.propertyData[props.props.propertyName])
+    const isItemUnderEdit = !!props.props.itemUnderEdit
+    // const isItemUnderEdit = hasItemUnderEdit ? props.props.itemUnderEdit.itemId == props.props.propertyData.itemId : false
+    if (isItemUnderEdit) {
+      console.log(isItemUnderEdit)
+      const editableColumns = props.props.editableColumns
+      const { refArray, itemTouched } = useInitEdit(props.props.editableColumns)
       const index = props.props.editableColumns.indexOf(props.props.propertyName)
-      console.log(index)
-      const _propertyEdit = props.props.editRefs[index]
-      propertyEdit.value = _propertyEdit.value
-      console.log(propertyEdit.value)
+      // init ref data 
+      refArray[index].value = props.props.propertyData[props.props.propertyName]
+      const propertyEdit = refArray[index]
+    }
+    // ctx.emit('handle-click', {item: props.props.propertyData, action: props.props.action, refArray: refArray, itemTouched: itemTouched.value, editableColumns: props.props.editableColumns})
+
+    onUpdated(() => {
+      if (isItemUnderEdit) {
+        colorLog('on updated table cell editable', 'green', 'red')
+        console.log(isItemUnderEdit)
+        console.log(props.props.propertyData.itemId)
+      }
     })
-
-    // const editableColumns = props.props.editableColumns
-    // const { refArray, itemTouched } = useInitEdit(props.props.editableColumns)
-
-    // console.log('about to use update vals')
-    // useUpdateValues(itemTouched, refArray)
-
-    // const checkRefs = async (oldItem, idSymbol, updateValuesCallback, properties) => {
-    // const checkRefs = async () => {
-    //   colorLog('toggle editable', 'red', 'yellow')
-    //   console.log(refArray)
-
-    //   console.log(oldItem)
-    //   if (oldItem.editable == false) {
-    //     colorLog('editable false', 'red', 'yellow')
-    //     // store.toggleEditable(oldItem, true)
-    //     updateValuesCallback()
-    //     // this sets the ref value to the current value otherwise defaults to category/column name
-    //     refArray.forEach((item, i) => {
-    //       item.value = oldItem[properties[i]]
-    //     })
-    //   } else {
-    //     if (itemTouched.value == true) {
-    //       colorLog('item is touched', 'blue', 'yellow')
-          
-    //       // editItem(oldItem, idSymbol, properties)
-    //     } else {
-    //       colorLog('item NOT touched', 'green', 'yellow')
-    //       console.log(oldItem)
-    //       // store.toggleEditable(oldItem, false)
-    //     }
-    //   }
-    // }
-
-
 
 
 
     const handleInput = () => {
       const itemEdit = props.props.propertyData
       // below throws warning that set error on readonly
-
       // itemEdit[props.props.propertyName] = propertyEdit.value
       // console.log({item: itemEdit})
       // ctx.emit('handle-input', {item: itemEdit})

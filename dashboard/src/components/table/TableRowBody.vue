@@ -62,6 +62,10 @@ export default defineComponent({
     editRefs: {
       type: Array,
       required: false
+    },
+    itemUnderEdit: {
+      type: Boolean,
+      default: false
     }
 
     // idSymbol: {
@@ -85,6 +89,17 @@ export default defineComponent({
 
   async setup(props, ctx){
   //#region component and props
+
+    // const itemUnderEdit = ref()
+    // putting keyComputed here somehow reversed the render order of the cell components
+    // const keyComputed = (i) => {
+    //   if (!!itemUnderEdit.value) {
+    //     if(itemUnderEdit.value.itemId == props.item.itemId) {
+    //       return `${i}-edit`
+    //     }
+    //   }
+    //   return i
+    // }
 
     onUpdated(() => {
       colorLog('on updated table row body', 'red', 'yellow')
@@ -133,8 +148,7 @@ export default defineComponent({
       return out
     }
     // colorLog('table row body', 'orange', 'green')
-    // console.log(props.columns)
-
+    // console.log(props.itemUnderEdit)
     const propsComputed = (column: (ITableControl|ITableData)) => {
       if (column instanceof BaseTableControl) {
         return {
@@ -151,12 +165,14 @@ export default defineComponent({
           propertyName: column.propertyName,
           propertyData: props.item,
           editRefs: props.editRefs,
-          editableColumns: props.editableColumns
+          editableColumns: props.editableColumns,
+          itemUnderEdit: props.itemUnderEdit
         }
       }
     }
 
   //#endregion
+    // all controls emit click (i think)
     const handleClick = (e) => {
       console.log(e)
       switch(e.action) {
@@ -164,10 +180,15 @@ export default defineComponent({
           ctx.emit('handle-delete', e.item)
           break
         case ACTION_EDIT:
+          if (props.itemUnderEdit) {
+            ctx.emit('handle-toggle-edit', null)
+          }
           ctx.emit('handle-toggle-edit', e)
+          // itemUnderEdit.value = e.item
           break
       }
     }
+    // this is emitted from data editable cell
     const handleInputEdit = (e) => {
       // colorLog('handle input edit', 'red', 'yellow')
       ctx.emit('handle-input-edit', e)
@@ -179,7 +200,6 @@ export default defineComponent({
       handleInputEdit,
       componentComputed,
       propsComputed,
-
     }
 
   }

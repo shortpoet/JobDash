@@ -27,7 +27,7 @@
     <tbody>
       <TableRowBody
         v-for="item in items"
-        :key="item[idSymbol]" 
+        :key="keyComputed(item)" 
         :class="`${itemType}-row has-text-centered`"
         :item="item"
         :columns="configRef.columns"
@@ -37,7 +37,7 @@
         @handle-toggle-edit="handleToggleEdit"
         @handle-click="handleClick"
         :editable-columns="editableColumnsComputed"
-        :edit-refs="editRefs"
+        :item-under-edit="itemUnderEditComputed(item)"
       />
     </tbody>
 
@@ -104,6 +104,31 @@ export default defineComponent({
   async setup(props, ctx){
     colorLog('base table', 'green', 'yellow')
     // console.log(props.editRefs);
+    const itemUnderEdit = ref()
+    // const keyComputed = computed((item) => {
+    //   console.log(item)
+    //   if (!!itemUnderEdit.value) {
+    //     if(itemUnderEdit.value.itemId == item.itemId) {
+    //       return `${item[props.idSymbol]}-edit`
+    //     }
+    //   }
+    //   return item[props.idSymbol]
+    // })
+    const keyComputed = (item) => {
+      if (!!itemUnderEdit.value) {
+        if(itemUnderEdit.value.itemId == item.itemId) {
+          return `${item[props.idSymbol]}-edit`
+        }
+      }
+      return item[props.idSymbol]
+    }
+    const itemUnderEditComputed = (item) => {
+      return itemUnderEdit.value
+        ? itemUnderEdit.value.itemId == item.itemId
+          ? true
+          : false
+        : false
+    }
     
     onUpdated(() => {
       colorLog('on updated base table', 'blue', 'yellow')
@@ -259,8 +284,19 @@ export default defineComponent({
     //#region body
 
     //#endregion
-
+    // const getEditRefs = (item) => {
+    //   if (itemUnderEdit.value) {
+    //     if (item.itemId == itemUnderEdit.value.itemId) {
+    //       return props.editRefs
+    //     }
+    //   } else {
+    //     return []
+    //   }
+    // } 
     return {
+      keyComputed,
+      itemUnderEdit,
+      itemUnderEditComputed,
       dataProperties,
       columnNames,
       controlNames,
@@ -288,17 +324,22 @@ export default defineComponent({
         }
       ),
       // handleEdit: (item) => ctx.emit('handle-edit', {value: item.value, propertyName: item.propertyName, itemType: props.itemType}),
-      handleToggleEdit: (e) => {console.log(props.editRefs);ctx.emit(
-        'handle-toggle-edit',
-        {
-          item: e.item,
-          itemType: props.itemType,
-          editable: editableColumns(dataProperties.value),
-          itemTouched: e.itemTouched,
-          refArray: e.refArray,
-          editableColumns: e.editableColumns
-        }
-      )},
+      handleToggleEdit: (e) => {
+        return e
+          ? itemUnderEdit.value = e.item
+          : itemUnderEdit.value = null
+        // ctx.emit(
+        //   'handle-toggle-edit',
+        //   {
+        //     item: e.item,
+        //     itemType: props.itemType
+        //     // editable: editableColumns(dataProperties.value),
+        //     // itemTouched: e.itemTouched,
+        //     // refArray: e.refArray,
+        //     // editableColumns: e.editableColumns
+        //   }
+        // )
+      },
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
       editableColumnsComputed

@@ -3,9 +3,8 @@ import { colorLog } from "../../utils"
 import { useUpdateValues } from "../useUpdateValues";
 import moment from "moment";
 
-export function useEdit(store, ctx, itemTouched, refArray) {
+export function useEdit(store, ctx) {
   colorLog('use edit', 'blue', 'yellow')
-  console.log(itemTouched.value)
   // console.log(editable)
   //   //#region edit
   //   const properties = []
@@ -49,7 +48,7 @@ export function useEdit(store, ctx, itemTouched, refArray) {
     // console.log('about to use update vals')
     // useUpdateValues(itemTouched, refArray)
     
-    const toggleEditable = async (oldItem, idSymbol, updateValuesCallback, editableColumns, refArray) => {
+    const toggleEditable = async (oldItem, idSymbol, updateValuesCallback, editableColumns, refArray, itemTouched) => {
       colorLog('toggle editable', 'red', 'yellow')
       console.log(itemTouched.value)
       if (oldItem.editable == false) {

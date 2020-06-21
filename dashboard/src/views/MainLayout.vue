@@ -252,14 +252,14 @@ export default defineComponent({
           //   refsCreated = true
           // }
           taskItemTouchedRef.value = e.itemTouched
-          taskEdit = useEdit(taskStore, ctx, taskItemTouchedRef, e.refArray)
+          taskEdit = useEdit(taskStore, ctx)
           const toggleEditable = taskEdit.toggleEditable
           // console.log(e)
           console.log(e.itemTouched)
           // console.log(e.refArray)
           taskEditRefs.value = e.refArray
           // console.log(taskEditRefs)
-          toggleEditable(e.item, taskIdSymbol, onUpdateTasks,  e.editableColumns, e.refArray)
+          toggleEditable(e.item, taskIdSymbol, onUpdateTasks,  e.editableColumns, e.refArray, e.itemTouched)
 
       }
     }

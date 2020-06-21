@@ -1,9 +1,7 @@
 <template>
-  <slot>
-    <td class="icon-cell" @click="handleClick(props.item)">
-      <BaseIcon :color="props.color" :name="props.controlIcon"></BaseIcon>        
-    </td>
-  </slot>
+  <td class="icon-cell" @click="handleClick(props.item)">
+    <BaseIcon :color="props.color" :name="props.controlIcon"></BaseIcon>        
+  </td>
 </template>
 
 <script lang="ts">
@@ -44,9 +42,7 @@ export default defineComponent({
       colorLog('handle click base table cell control', 'orange', 'green')
       if (props.props.action == 'edit') {
       colorLog('handle click is EDIT', 'purple', 'silver')
-        const editableColumns = props.props.editableColumns
-        const { refArray, itemTouched } = useInitEdit(props.props.editableColumns)
-        ctx.emit('handle-click', {item: props.props.propertyData, action: props.props.action, refArray: refArray, itemTouched: itemTouched.value, editableColumns: props.props.editableColumns})
+        ctx.emit('handle-click', {item: props.props.propertyData, action: props.props.action})
 
       } else {
         ctx.emit('handle-click', {item: props.props.propertyData, action: props.props.action})

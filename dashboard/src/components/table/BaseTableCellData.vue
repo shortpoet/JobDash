@@ -1,11 +1,9 @@
 <template>
-  <slot>
-    <td v-if="props.editable" contenteditable>
-      <BaseInput type="text" :name="props.propertyName" @input="handleInput" v-model="propertyEdit" />
-        {{ propertyEdit }}
-    </td>
-    <td v-else>{{ props.propertyData[props.propertyName] }}</td>
-  </slot>
+  <td v-if="props.editable" contenteditable>
+    <BaseInput type="text" :name="props.propertyName" @input="handleInput" v-model="propertyEdit" />
+      {{ propertyEdit }}
+  </td>
+  <td v-else>{{ props.propertyData[props.propertyName] }}</td>
 </template>
 
 <script lang="ts">
