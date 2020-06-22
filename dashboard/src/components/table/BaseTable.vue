@@ -234,7 +234,7 @@ export default defineComponent({
       // columnNames.forEach((column, i) => {const dict = {}; (i > 2 && i < 6) ? dict[column] = true : dict[column] = false; Object.assign(columnSwitch, dict)})
       
       //#region config
-        const editableColumnsComputed = computed(() => [...dataProperties.value.map(prop => prop.toLowerCase().match(/id$/) ? false : prop)])
+        const editableColumnsComputed = computed(() => {colorLog('cols comp', 'yellow', 'red');return [...dataProperties.value.map(prop => prop.toLowerCase().match(/id$/) ? false : prop)]})
         const editableColumns = (dataProperties) => [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : prop)]
         const configComputed = (dataProperties, controls?: ControlName[]) => {
           // colorLog('config computed', 'yellow', 'green')

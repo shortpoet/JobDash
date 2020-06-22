@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch } from 'vue'
+import { defineComponent, computed, ref, watch, onUpdated } from 'vue'
 import moment from 'moment'
 
 import { useRouter } from 'vue-router'
@@ -36,6 +36,7 @@ import useContact from '../../composables/useContact'
 import { useModal } from '../../composables/useModal'
 import { useUpdateValues } from '../../composables/useUpdateValues'
 import { useInitEdit } from '../../composables/table/useInitEdit'
+import { colorLog } from '../../utils'
 
 export default defineComponent({
   name: 'BaseItemEditCard',
@@ -63,7 +64,9 @@ export default defineComponent({
   emits: ['update-values'],
 
   async setup(props, ctx){
-
+    colorLog('item edit card', 'green', 'yellow')
+    console.log(props.editableColumns);
+    
     //#region modal
       const modal = useModal(props.destination)
 
@@ -92,7 +95,9 @@ export default defineComponent({
       const itemEdit = ref()
       const loaded = ref(false)
 
-      const handleModalClose = () => {modal.hideModal(); router.push('/')}
+      const handleModalClose = () => {modal.hideModal(); router.push('/');}
+
+      // const editableColumns = () => [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : prop)]
 
       const { properties, refArray, itemTouched } = useInitEdit(props.editableColumns)
 
@@ -100,20 +105,31 @@ export default defineComponent({
       setTimeout(() => {
         const params = router.currentRoute.value.params
         item.value = JSON.parse(params['item'].toString())
-        props.editableColumns.forEach(() => {})
-        console.log(properties)
-        console.log(item)
-        refArray.forEach((ref, i) => ref.value = item.value[properties[i]])
-        console.log(refArray)
-        itemEdit.value = {...item.value}
+        console.log(item.value)
+        // props.editableColumns.forEach(() => {})
+        refArray.forEach((ref, i) => {
+          const key = properties[i]
+          console.log(ref.value)
+          console.log(item.value[key])
+          ref.value = item.value[key]
+        })
         loaded.value = true
       }, .1)
+      onUpdated(() => {
+        colorLog('on updated item edit card', 'yellow', 'blue')
+        console.log(properties)
+      })
+      console.log(refArray)
+      // itemEdit.value = {...item.value}
     
     //#region updateValues
-      // useUpdateValues(itemTouched, [...refArray])
+      useUpdateValues(itemTouched, [...refArray])
 
       const submit = async function(e: any) {
+        console.log('submit')
+        console.log(itemTouched.value)
         if (itemTouched.value == true) {
+
           // contactEdit.value.name = nameEdit.value
           // contactEdit.value.company = companyEdit.value
           // contactEdit.value.email = emailEdit.value
@@ -123,7 +139,7 @@ export default defineComponent({
           //   '_id'
           // )
           itemTouched.value = false
-          ctx.emit('update-values')
+          // ctx.emit('update-values')
         }
         handleModalClose()
       }

@@ -81,8 +81,11 @@ export default defineComponent({
   ],
 
   async setup(props, ctx){
+    // colorLog('table row body', 'red', 'yellow')
+    // console.log(props.editableColumns)
     onUpdated(() => {
       // colorLog('on updated table row body', 'red', 'yellow')
+      // console.log(props.editableColumns)
     })
   //#region component and props
     const componentComputed = (column: (ITableControl|ITableData)) => {
