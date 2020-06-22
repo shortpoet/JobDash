@@ -7,7 +7,7 @@ export interface ITableHeader {
   export interface ITableControl extends ITableHeader {
     displayName: string
     action: string
-    
+
   }
   export abstract class BaseTableControl implements ITableControl {
     constructor (displayName: string, action: string) {}

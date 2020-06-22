@@ -73,7 +73,10 @@ import { useEdit } from '../composables/table/useEdit'
 import { useInitEdit } from '../composables/table/useInitEdit'
 import { colorLog } from '../utils'
 
+import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableData, TableConfig, ControlName, TableConfigSettings, ITableData, TableControl  } from './../interfaces/table/table._interface'
 
+import { taskProps, taskData, contactProps, contactData, messageProps, messageData } from './columns'
+import { taskControls, contactControls, messageControls } from './controls'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -147,14 +150,61 @@ export default defineComponent({
       const itemEditModal = useModal(editItemDestination)
     //#endregion
 
+    // colorLog('items', 'red', 'yellow')
+    // console.log(Object.keys(allTasks.value[0]))
+    // console.log(Object.keys(allContacts.value[0]))
+    // console.log(Object.keys(allMessages.value[0]))
     const updateChosenProperties = (e) => {
       colorLog('update chosen props', 'green', 'orange')
       console.log(e)
     }
+
+    
+    const propArrays = [taskProps, contactProps, messageProps]
+
+    // const dataArrays: ITableData[][] = propArrays.map(arr => ([
+    //   ...arr.map((prop, i) => <ITableData> ({
+    //     propertyName: prop,
+    //     editable: false,
+    //     displayOrder: i
+    //   }))
+    // ]))
+
+    const dataArrays = [taskData, contactData, messageData]
+
+    const controlArrays = [taskControls, contactControls, messageControls]
+
+    console.log(dataArrays)
+
+    const data: ITableData[] = []
+
+    const configSettings = (i) =>
+      new TableConfigSettings({
+        data: dataArrays[i].map(datum => new TableData(datum.propertyName, datum.editable, datum.displayOrder)),
+        controls: controlArrays[i].map(datum => new TableControl(datum))
+      })
+    
+
+    // const { columns, controlNames, columnNames } = new TableConfig(configSettings(0))
+
+    const tableTypes = [
+      {itemType: 'message', idSymbol: '_id', items: allMessages.value},
+      {itemType: 'task', idSymbol: '_id', items: allTasks.value},
+      {itemType: 'contact', idSymbol: '_id', items: allContacts.value},
+    ]
     const tableItems = reactive([
-      {itemType: 'message', idSymbol: '_id', items: allMessages.value, columnNames: [], controlNames: []},
-      {itemType: 'task', idSymbol: '_id', items: allTasks.value,columnNames: [], controlNames: []},
-      {itemType: 'contact', idSymbol: '_id', items: allContacts.value, columnNames: [], controlNames: []},
+      ...tableTypes.map((type, i) => {
+        console.log(configSettings(i))
+        const { columns, controlNames, columnNames } = new TableConfig(configSettings(i))
+        return {
+          itemType: type.itemType,
+          idSymbol: type.idSymbol,
+          items: type.items,
+          columns: columns,
+          columnNames: columnNames,
+          controlNames: controlNames
+        }
+      })
     ])
 
     //#region cardModal
