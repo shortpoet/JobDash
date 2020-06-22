@@ -64,6 +64,7 @@
               @handle-delete="handleDelete"
               @handle-toggle-delete="handleToggleDelete"
               @handle-toggle-edit="handleToggleEdit"
+              @handle-confirm-edit="handleConfirmEdit"
               @handle-input-edit="handleInputEdit"
               @confirm-delete="confirmDelete"
               :item-under-edit="itemUnderEdit"
@@ -157,7 +158,7 @@ export default defineComponent({
     'handle-toggle-delete',
     'handle-toggle-edit',
     'handle-input-edit',
-    // 'handle-edit-modal',
+    'handle-confirm-edit',
     'confirm-delete',
     'handle-edit-init'
   ],
@@ -252,7 +253,7 @@ export default defineComponent({
       taskModal,
       cardIsOpen,
       handleToggleEdit: (e) => ctx.emit('handle-toggle-edit', e),
-      // handleEditModal: (e) => ctx.emit('handle-edit-modal', e),
+      handleConfirmEdit: (e) => ctx.emit('handle-confirm-edit', e),
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
       handleToggleDelete: (e) => ctx.emit('handle-toggle-delete', e),
       handleDelete: (item) => ctx.emit('handle-delete', item),

@@ -3,7 +3,7 @@ import { colorLog } from "../utils"
 
 
 export const useUpdateValues = (touched: Ref<boolean>, fields: Ref<string>[]) => {
-  colorLog('use update values', 'yellow', 'blue')
+  // colorLog('use update values', 'yellow', 'blue')
   // console.log(touched.value)
 
   const updateField = (value: string, previous: string) => {

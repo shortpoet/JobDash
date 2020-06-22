@@ -275,11 +275,15 @@ export default defineComponent({
         }
       }
       const handleConfirmEdit = (e) => {
-        // console.log(e)
+        console.log(e)
         switch(e.itemType) {
           case 'task':
             // colorLog('confirm edit item at main layout', 'yellow', 'blue')
             const editItem = taskEdit.editItem
+            e.modal
+              ? taskItemTouched.value = true
+              : taskItemTouched.value = taskItemTouched.value
+              
             editItem(e.item, taskIdSymbol, onUpdateTasks, taskItemTouched)
         }
       }

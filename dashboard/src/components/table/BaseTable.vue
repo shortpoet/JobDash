@@ -53,9 +53,8 @@
   <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible">
     <!-- <router-view/> -->
     <BaseItemEditCard
-      @update-values="updateValues"
+      @modal-confirm-edit="modalConfirmEdit"
       :editable-columns="editableColumnsComputed"
-      :item-type="itemType"
       :destination="editItemDestination"
     />
   </teleport>
@@ -116,7 +115,7 @@ export default defineComponent({
 
   emits: [
     'handle-delete',
-    // 'handle-edit-modal',
+    'handle-confirm-edit',
     'handle-input-edit',
     'handle-toggle-edit',
     'handle-toggle-delete',
@@ -358,11 +357,10 @@ export default defineComponent({
         // console.log(e)
         ctx.emit('handle-toggle-edit', {item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
       },
-      // handleEditModal: (e) => {
-      //   // console.log(e)
-        
-      //   // ctx.emit('handle-edit-modal', {item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
-      // },
+      modalConfirmEdit: (e) => {
+        console.log(e)        
+        ctx.emit('handle-confirm-edit', {modal: true, item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
+      },
       handleToggleDelete: (item) => ctx.emit('handle-toggle-delete', {item: item, itemType: props.itemType}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),

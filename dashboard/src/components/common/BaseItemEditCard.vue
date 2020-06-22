@@ -46,10 +46,6 @@ export default defineComponent({
       type: String,
       required: true
     },
-    itemType: {
-      type: String,
-      required: true
-    },
     editableColumns: {
       type: Array as () => string[],
       required: true
@@ -61,7 +57,7 @@ export default defineComponent({
     MessageWriter
   },
 
-  emits: ['update-values'],
+  emits: ['modal-confirm-edit'],
 
   async setup(props, ctx){
     
@@ -113,8 +109,8 @@ export default defineComponent({
         refArray.value = edit.refArray
         useUpdateValues(itemTouched, [...refArray.value])
         loaded.value = true
+        itemEdit.value = {...item.value}
       }, .1)
-      // itemEdit.value = {...item.value}
     
     //#region updateValues
 
@@ -122,17 +118,9 @@ export default defineComponent({
         console.log('submit')
         console.log(itemTouched.value)
         if (itemTouched.value == true) {
-
-          // contactEdit.value.name = nameEdit.value
-          // contactEdit.value.company = companyEdit.value
-          // contactEdit.value.email = emailEdit.value
-          // await contactStore.editRecord(
-          //   contact.value, 
-          //   contactEdit.value,
-          //   '_id'
-          // )
+          props.editableColumns.forEach((col, i) => itemEdit.value[col] = refArray.value[i].value)
           itemTouched.value = false
-          // ctx.emit('update-values')
+          ctx.emit('modal-confirm-edit', {item: itemEdit.value})
         }
         handleModalClose()
       }
