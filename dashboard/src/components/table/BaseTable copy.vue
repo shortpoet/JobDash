@@ -1,5 +1,5 @@
 <template>
-  <!-- <BaseBox class="base-table-controls-box">
+  <BaseBox class="base-table-controls-box">
     <BaseSwitchArray
       :options="columnNames"
       :boxed="false"
@@ -14,8 +14,8 @@
       :type="'controls'"
       @chosen-properties="handleChosenControlChange"
     />
-  </BaseBox> -->
-
+  </BaseBox>
+  
   <table class="table is-hoverable">
     <thead>
       <TableRowHeader
@@ -81,10 +81,6 @@ export default defineComponent({
   name: 'BaseTable',
 
   props: {
-    chosenPropArray: {
-      type: Array
-    },
-
     items: {
       type: Array,
       default: () => []
@@ -232,6 +228,11 @@ export default defineComponent({
         )
       //#endregion
 
+      // const controlSwitch = {}
+      // const columnSwitch = {}
+      // controlNames.forEach(control => {const dict = {}; dict[control] = true; Object.assign(controlSwitch, dict)})
+      // columnNames.forEach((column, i) => {const dict = {}; (i > 2 && i < 6) ? dict[column] = true : dict[column] = false; Object.assign(columnSwitch, dict)})
+      
       //#region config
         const editableColumnsComputed = computed(() => {colorLog('cols comp', 'yellow', 'red');return [...dataProperties.value.map(prop => prop.toLowerCase().match(/id$/) ? false : prop)]})
         const editableColumns = (dataProperties) => [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : prop)]

@@ -24,6 +24,7 @@
           :messages="allMessages"
           @update-messages="onUpdateMessages"
           @handle-delete="handleDelete"
+          @update-chosen-properties="updateChosenProperties"
           @handle-toggle-delete="handleToggleDelete"
           @handle-toggle-edit="handleToggleEdit"
           @handle-input-edit="handleInputEdit"
@@ -146,10 +147,14 @@ export default defineComponent({
       const itemEditModal = useModal(editItemDestination)
     //#endregion
 
+    const updateChosenProperties = (e) => {
+      colorLog('update chosen props', 'green', 'orange')
+      console.log(e)
+    }
     const tableItems = reactive([
-      {itemType: 'message', idSymbol: '_id', items: allMessages.value},
-      {itemType: 'task', idSymbol: '_id', items: allTasks.value},
-      {itemType: 'contact', idSymbol: '_id', items: allContacts.value},
+      {itemType: 'message', idSymbol: '_id', items: allMessages.value, columnNames: [], controlNames: []},
+      {itemType: 'task', idSymbol: '_id', items: allTasks.value,columnNames: [], controlNames: []},
+      {itemType: 'contact', idSymbol: '_id', items: allContacts.value, columnNames: [], controlNames: []},
     ])
 
     //#region cardModal

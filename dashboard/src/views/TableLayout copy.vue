@@ -26,11 +26,6 @@
           @minimize-change="handleMinimize"
           :minimized="minimized[table.itemType]"
         >
-          <BaseTableControls
-            :item-type="table.itemType"
-            :column-names="table.columnNames"
-            :control-names="table.controlNames"
-          />
           <BaseBox scrollable>
             <BaseTable
               :items="table.items"
@@ -79,7 +74,6 @@ import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
 import BaseTable from './../components/table/BaseTable.vue'
-import BaseTableControls from './../components/table/BaseTableControls.vue'
 import MessageTable from '../components/message/MessageTable.vue'
 
 import { useModal } from '../composables/useModal'
@@ -115,7 +109,6 @@ export default defineComponent({
   components: {
     BaseMinimize,
     BaseBox,
-    BaseTableControls,
     BaseTable,
     MessageTable
   },
