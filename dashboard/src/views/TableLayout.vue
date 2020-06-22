@@ -1,8 +1,8 @@
 <template>
   <section class="section table-section">
     <div class="table-container" :style="onlyTaskShown ? 'height: auto; padding: 0rem;' : ''">
-
-      <!-- <div class="table-minimize-container message-table-minimize-container">
+      
+      <div class="table-minimize-container message-table-minimize-container">
         <BaseMinimize
           :class-prop="'message-table-container'"
           :component-name="'Message Table'"
@@ -16,9 +16,36 @@
             />
           </BaseBox>
         </BaseMinimize>
-      </div> -->
+      </div>
 
-      <div class="table-minimize-container contact-table-minimize-container">
+      <div class="table-minimize-container task-table-minimize-container">
+        <BaseMinimize
+          v-for="table in tableItems"
+          :class-prop="`${table.itemType}-table-container`"
+          :component-name="`${table.itemType} Table`"
+          @minimize-change="handleMinimize"
+        >
+          <BaseBox scrollable>
+            <BaseTable
+              :items="table.items"
+              :id-symbol="table.idSymbol"
+              :item-type="table.itemType"
+              :edit-modal="editModal"
+              :delete-modal="deleteModal"
+              @handle-delete="handleDelete"
+              @handle-toggle-delete="handleToggleDelete"
+              @handle-toggle-edit="handleToggleEdit"
+              @handle-confirm-edit="handleConfirmEdit"
+              @handle-input-edit="handleInputEdit"
+              @confirm-delete="confirmDelete"
+              :item-under-edit="itemUnderEdit"
+            />
+          </BaseBox>
+        </BaseMinimize>
+      </div>
+
+
+      <!-- <div class="table-minimize-container contact-table-minimize-container">
         <BaseMinimize
           :class-prop="'contact-table-container'"
           :component-name="'Contact Table'"
@@ -31,7 +58,7 @@
           />  
           </BaseBox>
         </BaseMinimize>
-      </div>
+      </div> -->
 
       <!-- <div class="table-minimize-container task-table-minimize-container">
         <BaseMinimize
@@ -48,31 +75,6 @@
         </BaseMinimize>
       </div>
  -->
-      <div class="table-minimize-container task-table-minimize-container">
-        <BaseMinimize
-          :class-prop="'task-table-container'"
-          :component-name="'Task Table'"
-          @minimize-change="handleMinimize"
-        >
-          <BaseBox scrollable>
-            <BaseTable
-              :items="tasks"
-              :id-symbol="'_id'"
-              :item-type="'task'"
-              :edit-modal="editModal"
-              :delete-modal="deleteModal"
-              @handle-delete="handleDelete"
-              @handle-toggle-delete="handleToggleDelete"
-              @handle-toggle-edit="handleToggleEdit"
-              @handle-confirm-edit="handleConfirmEdit"
-              @handle-input-edit="handleInputEdit"
-              @confirm-delete="confirmDelete"
-              :item-under-edit="itemUnderEdit"
-            />
-          </BaseBox>
-        </BaseMinimize>
-      </div>
-
     </div>
 
     <!-- 
@@ -129,6 +131,10 @@ export default defineComponent({
       type: Array,
       required: true
     },
+    tableItems: {
+      type: Array as () => object[],
+      // required: true
+    },
     deleteModal: {
       type: Object as () => IModal
     },
@@ -167,6 +173,9 @@ export default defineComponent({
     const taskDestination: Destination = '#delete-task-modal'
     const contactModal = useModal(contactDestination)
     const taskModal = useModal(taskDestination)
+    colorLog('table layout', 'green', 'yellow')
+    console.log(props.tableItems)
+    
     onUpdated(() => {
       // colorLog('on updated table layout', 'green', 'yellow')
       // console.log(props.taskEditRefs)

@@ -18,6 +18,7 @@
       </div>
       <div class="column is-one-half">
         <TableLayout
+          :table-items="tableItems"
           :contacts="allContacts"
           @update-contacts="onUpdateContacts"
           :tasks="allTasks"
@@ -48,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch, nextTick, onUpdated } from 'vue'
+import { defineComponent, computed, ref, watch, nextTick, onUpdated, reactive, toRefs } from 'vue'
 
 import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
@@ -110,6 +111,7 @@ export default defineComponent({
     const showUIFull = ref(true)
     const showClear = ref(false)
 
+
     //#region contactUse
       const contactStore = store.modules['contactStore']
 
@@ -147,6 +149,12 @@ export default defineComponent({
       const editItemDestination: Destination = '#edit-item-modal'
       const itemEditModal = useModal(editItemDestination)
     //#endregion
+
+    const tableItems = reactive([
+      {itemType: 'task', idSymbol: '_id', items: allTasks.value},
+      {itemType: 'contact', idSymbol: '_id', items: allContacts.value},
+      {itemType: 'message', idSymbol: '_id', items: allMessages.value}
+    ])
 
     //#region cardModal
       const contactCardDestination: Destination = '#contact-card-modal'
@@ -317,6 +325,7 @@ export default defineComponent({
   //#endregion
 
     return {
+      tableItems,
       error,
       showUIFull,
       contactCardModal,
