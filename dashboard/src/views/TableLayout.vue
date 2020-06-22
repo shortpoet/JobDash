@@ -206,10 +206,13 @@ export default defineComponent({
     //#endregion
 
     //#region openCard
+      const editItemDestination: Destination = '#edit-item-modal'
+      const itemEditModal = useModal(editItemDestination)
+
       const router = useRouter()
       const openCard = (_id) => {
-        contactCardModal.showModal()
-        router.push({ name: '#contact-card-modal', params: { id: _id } })
+        itemEditModal.showModal()
+        router.push({ name: '#edit-item-modal', params: { id: _id } })
       }
       const cardIsOpen = computed(() => {
         return router.currentRoute.value.name === contactCardDestination

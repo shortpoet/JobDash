@@ -170,7 +170,8 @@ export default defineComponent({
       const routeIsCard = computed(() => {
         const isContact = router.currentRoute.value.name == contactCardDestination
         const isTask = router.currentRoute.value.name == taskCardDestination
-        const isCard = isContact || isTask
+        const isEditItem = router.currentRoute.value.name == editItemDestination
+        const isCard = isContact || isTask || isEditItem
         return {
           isCard: isCard,
           type: isTask ? 'task' : 'contact'
@@ -188,6 +189,12 @@ export default defineComponent({
           case messageDestination:
             messageModal.showModal()
             break
+          // no item in params
+          // could add query but hacky
+          // or just skip it
+          // case editItemDestination:
+          //   itemEditModal.showModal()
+          //   break
           break
         }
         // if (routeIsCard.value.isCard) {
