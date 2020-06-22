@@ -56,7 +56,7 @@
       @update-values="updateValues"
       :editable-columns="editableColumnsComputed"
       :item-type="itemType"
-      :item="item"
+      :destination="editItemDestination"
     />
   </teleport>
 
@@ -322,7 +322,7 @@ export default defineComponent({
               router.push({
                 name: '#edit-item-modal',
                 path: `/${itemType}/${e.item[idSymbol]}`,
-                params: { id: e.item[idSymbol] } 
+                params: { id: e.item[idSymbol], item: JSON.stringify(e.item) } 
               })
           }
         }
@@ -344,6 +344,7 @@ export default defineComponent({
       // columnSwitch
       itemEditModal,
       handleEditModal,
+      editItemDestination,
       handleInputEdit: (e) => ctx.emit(
         'handle-input-edit',
         {
