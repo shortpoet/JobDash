@@ -11,7 +11,7 @@
         v-for="(ref, i) in refArray"
         :key="i"
         type="text"
-        :name="properties[i]"
+        :name="editableColumns[i]"
         v-model="refArray[i].value"
       />
       <button class="button is-success">Save</button>
@@ -51,7 +51,7 @@ export default defineComponent({
       required: true
     },
     editableColumns: {
-      type: Array,
+      type: Array as () => string[],
       required: true
     }
   },
@@ -64,8 +64,6 @@ export default defineComponent({
   emits: ['update-values'],
 
   async setup(props, ctx){
-    colorLog('item edit card', 'green', 'yellow')
-    console.log(props.editableColumns);
     
     //#region modal
       const modal = useModal(props.destination)
@@ -79,15 +77,12 @@ export default defineComponent({
 
     //#endregion
 
-    // console.log('init contact card')
     if (cardIsOpen) {
       modal.showModal()
     }
 
     //#region initValues
-      // const store = useStore()
       const router = useRouter()
-      // const itemStore: ContactStore = store.modules['contactStore']
 
       const id = ref()
       const item = ref()
@@ -97,33 +92,31 @@ export default defineComponent({
 
       const handleModalClose = () => {modal.hideModal(); router.push('/');}
 
-      // const editableColumns = () => [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : prop)]
+      // const { properties, refArray, itemTouched } = useInitEdit(props.editableColumns)
 
-      const { properties, refArray, itemTouched } = useInitEdit(props.editableColumns)
+      // unintialize this value and see what happens XD
+      // lesson: init your values!!
+      // in this case an empty array wasn't enough... 
+      // need an array of empty strings of lenght of editable cols
+      // then wasn't reactive
+      // needed to be wrapped in ref 
+      let refArray = ref(props.editableColumns.map(prop => ref('')))
+      let itemTouched
 
       // params not available w/o timeout
       setTimeout(() => {
         const params = router.currentRoute.value.params
         item.value = JSON.parse(params['item'].toString())
-        console.log(item.value)
-        // props.editableColumns.forEach(() => {})
-        refArray.forEach((ref, i) => {
-          const key = properties[i]
-          console.log(ref.value)
-          console.log(item.value[key])
-          ref.value = item.value[key]
-        })
+        const values = props.editableColumns.map(prop => item.value[prop])
+        const edit = useInitEdit(values)
+        itemTouched = edit.itemTouched
+        refArray.value = edit.refArray
+        useUpdateValues(itemTouched, [...refArray.value])
         loaded.value = true
       }, .1)
-      onUpdated(() => {
-        colorLog('on updated item edit card', 'yellow', 'blue')
-        console.log(properties)
-      })
-      console.log(refArray)
       // itemEdit.value = {...item.value}
     
     //#region updateValues
-      useUpdateValues(itemTouched, [...refArray])
 
       const submit = async function(e: any) {
         console.log('submit')
@@ -147,7 +140,7 @@ export default defineComponent({
 
     return {
       refArray,
-      properties,
+      // properties,
       submit,
       modal,
       loaded,
