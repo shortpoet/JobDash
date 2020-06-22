@@ -7,7 +7,7 @@
           :class-prop="'message-table-container'"
           :component-name="'Message Table'"
           @minimize-change="handleMinimize"
-          minimized
+          
         >
           <BaseBox scrollable>
             <MessageTable 
@@ -24,6 +24,7 @@
           :class-prop="`${table.itemType}-table-container`"
           :component-name="`${table.itemType} Table`"
           @minimize-change="handleMinimize"
+          :minimized="minimized[table.itemType]"
         >
           <BaseBox scrollable>
             <BaseTable
@@ -45,36 +46,6 @@
       </div>
 
 
-      <!-- <div class="table-minimize-container contact-table-minimize-container">
-        <BaseMinimize
-          :class-prop="'contact-table-container'"
-          :component-name="'Contact Table'"
-          @minimize-change="handleMinimize"
-        >
-          <BaseBox scrollable>
-            <ContactTable 
-              :contacts="contacts"
-              @update-contacts="onUpdateContacts"
-          />  
-          </BaseBox>
-        </BaseMinimize>
-      </div> -->
-
-      <!-- <div class="table-minimize-container task-table-minimize-container">
-        <BaseMinimize
-          :class-prop="'task-table-container'"
-          :component-name="'Task Table'"
-          @minimize-change="handleMinimize"
-        >
-          <BaseBox scrollable>
-            <TaskTable
-              :tasks="tasks"
-              @update-tasks="onUpdateTasks"
-            />
-          </BaseBox>
-        </BaseMinimize>
-      </div>
- -->
     </div>
 
     <!-- 
@@ -103,9 +74,6 @@ import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
 import BaseTable from './../components/table/BaseTable.vue'
-import ContactTable from './../components/contacts/ContactTable.vue'
-import TaskTable from './../components/task/TaskTable.vue'
-import ContactCard from './../components/contacts/ContactCard.vue'
 import MessageTable from '../components/message/MessageTable.vue'
 
 import { useModal } from '../composables/useModal'
@@ -119,14 +87,6 @@ import { colorLog } from '../utils'
 export default defineComponent({
   name: 'TableLayout',
   props: {
-    contacts: {
-      type: Array,
-      required: true
-    },
-    tasks: {
-      type: Array,
-      required: true
-    },
     messages: {
       type: Array,
       required: true
@@ -150,15 +110,10 @@ export default defineComponent({
     BaseMinimize,
     BaseBox,
     BaseTable,
-    ContactTable,
-    TaskTable,
-    ContactCard,
     MessageTable
   },
   emits: [
     'update-values',
-    'update-contacts',
-    'update-tasks',
     'update-messages',
     'handle-delete',
     'handle-toggle-delete',
@@ -169,10 +124,6 @@ export default defineComponent({
     'handle-edit-init'
   ],
   setup(props, ctx) {
-    const contactDestination: Destination = '#delete-contact-modal'
-    const taskDestination: Destination = '#delete-task-modal'
-    const contactModal = useModal(contactDestination)
-    const taskModal = useModal(taskDestination)
     colorLog('table layout', 'green', 'yellow')
     console.log(props.tableItems)
     
@@ -184,35 +135,29 @@ export default defineComponent({
     // const onlyTaskShown = ref(false)
     const onlyTaskShown = ref(true)
     const minimized = reactive({
-      messageTable: true,
-      contactTable: false,
-      taskTable: false
+      message: false,
+      contact: true,
+      task: true
     })
     const handleMinimize = (e) => {
       // could add boolean checks for component type to further modify behavior
       switch(e.componentName) {
-        case 'Message Table':
-          minimized.messageTable = e.minimized
-          if (minimized.messageTable == true && minimized.contactTable == true) onlyTaskShown.value = true
+        case 'message Table':
+          minimized.message = e.minimized
+          if (minimized.message == true && minimized.contact == true) onlyTaskShown.value = true
           else onlyTaskShown.value = false
           break
-        case 'Contact Table':
-          minimized.contactTable = e.minimized
-          if (minimized.messageTable == true && minimized.contactTable == true) onlyTaskShown.value = true
+        case 'contact Table':
+          minimized.contact = e.minimized
+          if (minimized.message == true && minimized.contact == true) onlyTaskShown.value = true
           else onlyTaskShown.value = false
           break
-        case 'Task Table':
-          minimized.taskTable = e.minimized
+        case 'task Table':
+          minimized.task = e.minimized
           break
         break
       }
     }
-
-    //#region contactCardModal
-      const contactCardDestination: Destination = '#contact-card-modal'
-
-      const contactCardModal = useModal(contactCardDestination)
-    //#endregion
 
     //#region openCard
       const editItemDestination: Destination = '#edit-item-modal'
@@ -224,7 +169,7 @@ export default defineComponent({
         router.push({ name: '#edit-item-modal', params: { id: _id } })
       }
       const cardIsOpen = computed(() => {
-        return router.currentRoute.value.name === contactCardDestination
+        return router.currentRoute.value.name === editItemDestination
       })
     //#endregion
 
@@ -261,8 +206,6 @@ export default defineComponent({
       minimized,
       onlyTaskShown,
       handleMinimize,
-      contactModal,
-      taskModal,
       cardIsOpen,
       handleToggleEdit: (e) => ctx.emit('handle-toggle-edit', e),
       handleConfirmEdit: (e) => ctx.emit('handle-confirm-edit', e),

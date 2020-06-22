@@ -19,12 +19,8 @@
       <div class="column is-one-half">
         <TableLayout
           :table-items="tableItems"
-          :contacts="allContacts"
-          @update-contacts="onUpdateContacts"
-          :tasks="allTasks"
           :editModal="itemEditModal"
           :deleteModal="itemDeleteModal"
-          @update-tasks="onUpdateTasks"
           :messages="allMessages"
           @update-messages="onUpdateMessages"
           @handle-delete="handleDelete"
@@ -151,9 +147,9 @@ export default defineComponent({
     //#endregion
 
     const tableItems = reactive([
+      {itemType: 'message', idSymbol: '_id', items: allMessages.value},
       {itemType: 'task', idSymbol: '_id', items: allTasks.value},
       {itemType: 'contact', idSymbol: '_id', items: allContacts.value},
-      {itemType: 'message', idSymbol: '_id', items: allMessages.value}
     ])
 
     //#region cardModal
