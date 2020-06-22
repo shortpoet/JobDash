@@ -19,6 +19,7 @@
       :key="item.id"
       @handle-click="handleClick(item)"
     /> -->
+
 </template>
 
 <script lang="ts">
@@ -28,9 +29,13 @@ import BaseTableCellData from './../table/BaseTableCellData.vue'
 import BaseTableCellControl from './../table/BaseTableCellControl.vue'
 import TableCellControlDelete from './../table/TableCellControlDelete.vue'
 import TableCellDataEditable from './../table/TableCellDataEditable.vue'
+
 import { useDelete } from './../../composables/table/useDelete'
-import { ITableControl, ITableData, BaseTableData, BaseTableControl, ID, DELETE, EDIT, MESSAGE, LOCKED, ACTION_DELETE, ACTION_EDIT, ACTION_LOCKED } from '../../interfaces/table/table.interface'
+import { ITableControl, ITableData, BaseTableData, BaseTableControl, ID, DELETE, EDIT, MESSAGE, LOCKED, ACTION_DELETE, ACTION_EDIT, ACTION_LOCKED, ACTION_ID } from '../../interfaces/table/table.interface'
 import { colorLog } from '../../utils'
+import { Destination } from '../../interfaces/common/modal.interface'
+import { useModal } from '../../composables/useModal'
+import { useRouter } from 'vue-router'
 export default defineComponent({
   name: 'TableRowBody',
 
@@ -53,7 +58,11 @@ export default defineComponent({
     itemUnderEdit: {
       type: Boolean,
       default: false
-    }
+    },
+    itemType: {
+      type: String,
+      required: true
+    },
   },
 
   components: {
@@ -67,7 +76,8 @@ export default defineComponent({
     'handle-delete',
     'handle-toggle-delete',
     'handle-toggle-edit',
-    'handle-input-edit'
+    'handle-input-edit',
+    'handle-edit-modal'
   ],
 
   async setup(props, ctx){
@@ -140,10 +150,12 @@ export default defineComponent({
     }
 
   //#endregion
+
     // all controls emit click (i think)
     const handleClick = (e) => {
-      console.log(e)
-      console.log(e.action)
+      colorLog('handle click at table row body', 'blue', 'green')
+      // console.log(e)
+      // console.log(e.action)
       switch(e.action) {
         case ACTION_LOCKED:
           ctx.emit('handle-toggle-delete', e.item)
@@ -153,6 +165,10 @@ export default defineComponent({
           break
         case ACTION_EDIT:
           ctx.emit('handle-toggle-edit', {item: e.item, editableColumns: props.editableColumns})
+          break
+        case ACTION_ID:
+          console.log(e)
+          ctx.emit('handle-edit-modal', {item: e.item, editableColumns: props.editableColumns})
           break
       }
     }
@@ -167,7 +183,7 @@ export default defineComponent({
       handleDelete: (item) => ctx.emit('handle-delete', item),
       handleInputEdit,
       componentComputed,
-      propsComputed,
+      propsComputed
     }
 
   }

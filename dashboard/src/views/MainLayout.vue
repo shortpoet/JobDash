@@ -21,6 +21,7 @@
           :contacts="allContacts"
           @update-contacts="onUpdateContacts"
           :tasks="allTasks"
+          :editModal="itemEditModal"
           :deleteModal="itemDeleteModal"
           @update-tasks="onUpdateTasks"
           :messages="allMessages"
@@ -140,6 +141,13 @@ export default defineComponent({
       const onUpdateMessages= messageUse.onUpdateMessages
     //#endregion
 
+    //#region modal
+      const deleteItemDestination: Destination = '#delete-item-modal'
+      const itemDeleteModal = useModal(deleteItemDestination)
+      const editItemDestination: Destination = '#edit-item-modal'
+      const itemEditModal = useModal(editItemDestination)
+    //#endregion
+
     //#region cardModal
       const contactCardDestination: Destination = '#contact-card-modal'
       const taskCardDestination: Destination = '#task-card-modal'
@@ -168,10 +176,6 @@ export default defineComponent({
           type: isTask ? 'task' : 'contact'
         }
       })
-
-      const deleteItemDestination: Destination = '#delete-item-modal'
-      const itemDeleteModal = useModal(deleteItemDestination)
-
 
       const handleModal = () => {
         switch(router.currentRoute.value.name) {
@@ -243,48 +247,70 @@ export default defineComponent({
   //#endregion
 
   //#region edit
+    //#region table edit
+      let taskItemTouched = ref()
+      const taskEdit = useEdit(taskStore)
+      let itemUnderEdit = ref()
 
-    let taskItemTouched = ref()
-    const taskEdit = useEdit(taskStore)
-    let itemUnderEdit = ref()
+      const handleToggleEdit = (e) => {
+        // colorLog('toggle edited item at main layout', 'purple', 'green')
+        // console.log(e)
+        if (!itemUnderEdit.value) {
+          // if it is false but being emitted it wants this component to set it to true
+          itemUnderEdit.value = e.item          
+        } else {
+          itemUnderEdit.value = null
+          handleConfirmEdit(e)
+        }
+      }
 
-    const handleToggleEdit = (e) => {
-      // colorLog('toggle edited item at main layout', 'purple', 'green')
-      // console.log(e)
-      if (!itemUnderEdit.value) {
-        // if it is false but being emitted it wants this component to set it to true
-        itemUnderEdit.value = e.item          
-      } else {
-        itemUnderEdit.value = null
-        handleConfirmEdit(e)
+      const handleInputEdit = (e) => {
+        // console.log(e)
+        switch(e.itemType) {
+          case 'task':
+            // colorLog('edited item at main layout', 'purple', 'green')
+            const toggleEditable = taskEdit.toggleEditable
+            taskItemTouched.value = e.valueChanged
+            toggleEditable(taskItemTouched, e.value, e.propertyName)
+        }
       }
-    }
+      const handleConfirmEdit = (e) => {
+        // console.log(e)
+        switch(e.itemType) {
+          case 'task':
+            // colorLog('confirm edit item at main layout', 'yellow', 'blue')
+            const editItem = taskEdit.editItem
+            editItem(e.item, taskIdSymbol, onUpdateTasks, taskItemTouched)
+        }
+      }
+    //#endregion
 
-    const handleInputEdit = (e) => {
-      // console.log(e)
-      switch(e.itemType) {
-        case 'task':
-          // colorLog('edited item at main layout', 'purple', 'green')
-          const toggleEditable = taskEdit.toggleEditable
-          taskItemTouched.value = e.valueChanged
-          toggleEditable(taskItemTouched, e.value, e.propertyName)
-      }
-    }
-    const handleConfirmEdit = (e) => {
-      // console.log(e)
-      switch(e.itemType) {
-        case 'task':
-          // colorLog('confirm edit item at main layout', 'yellow', 'blue')
-          const editItem = taskEdit.editItem
-          editItem(e.item, taskIdSymbol, onUpdateTasks, taskItemTouched)
-      }
-    }
+    // //#region modal edit
+    //   const handleEditModal = (e) => {
+    //     switch(e.itemType) {
+    //       case 'task':
+    //         colorLog('handle edit modal at main layout', 'blue', 'green')
+    //         itemEditModal.showModal()
+    //         const idSymbol = '_id'
+    //         const itemType = 'task'
+    //         console.log(e.item[idSymbol])
+    //         router.push({
+    //           name: '#edit-item-modal',
+    //           path: `/${itemType}/${e.item[idSymbol]}`,
+    //           params: { id: e.item[idSymbol] } 
+    //         })
+    //     }
+    //   }
+    // //#endregion
+
   //#endregion
 
     return {
       error,
       showUIFull,
       contactCardModal,
+      // handleEditModal,
+      itemEditModal,
       itemDeleteModal,
       allContacts,
       allTasks,

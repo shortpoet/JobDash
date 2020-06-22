@@ -31,9 +31,11 @@
         :class="`${itemType}-row has-text-centered`"
         :item="item"
         :columns="configRef.columns"
+        :item-type="itemType"
         @handle-delete="handleDelete"
         @handle-input-edit="handleInputEdit"
         @handle-toggle-edit="handleToggleEdit"
+        @handle-edit-modal="handleEditModal"
         @handle-toggle-delete="handleToggleDelete"
         @handle-click="handleClick"
         @handle-edit-init="handleEditInit"
@@ -48,10 +50,15 @@
     <ModalWarning @delete-item="confirmDelete" :destination="'#delete-item-modal'" />
   </teleport>
 
-  <!-- <teleport :to="`#edit-${itemType}-modal`" v-if="contactCardModal.visible">
-    <router-view/>
-    <ContactCard @update-contacts="updateContacts" :destination="'#contact-card-modal'"/>
-  </teleport> -->
+  <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible">
+    <!-- <router-view/> -->
+    <BaseItemEditCard
+      @update-values="updateValues"
+      :editable-columns="editableColumnsComputed"
+      :item-type="itemType"
+      :item="item"
+    />
+  </teleport>
 
   <div />
 </template>
@@ -60,12 +67,15 @@
 import { defineComponent, computed, ref, watch, onMounted, Ref, onUpdated } from 'vue'
 import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig, ControlName } from './../../interfaces/table/table.interface'
 import BaseSwitchArray from './../common/BaseSwitchArray.vue'
+import BaseItemEditCard from './../common/BaseItemEditCard.vue'
 import ModalWarning from './../common/ModalWarning.vue'
 import TableRowHeader from './TableRowHeader.vue'
 import TableRowBody from './TableRowBody.vue'
 import BaseBox from './../common/BaseBox.vue'
 import { colorLog } from '../../utils'
-import { IModal } from '../../interfaces/common/modal.interface'
+import { IModal, Destination } from '../../interfaces/common/modal.interface'
+import { useRouter } from 'vue-router'
+import { useModal } from '../../composables/useModal'
 
 export default defineComponent({
   name: 'BaseTable',
@@ -86,6 +96,9 @@ export default defineComponent({
     deleteModal: {
       type: Object as () => IModal
     },
+    editModal: {
+      type: Object as () => IModal
+    },
     itemUnderEdit: {
       type: Object,
       required: false
@@ -97,43 +110,22 @@ export default defineComponent({
     BaseSwitchArray,
     TableRowHeader,
     TableRowBody,
-    ModalWarning
+    ModalWarning,
+    BaseItemEditCard
   },
 
   emits: [
-    'update-values',
     'handle-delete',
+    // 'handle-edit-modal',
     'handle-input-edit',
     'handle-toggle-edit',
     'handle-toggle-delete',
-    'confirm-delete', 
+    'confirm-delete',
+    'update-values'
   ],
 
   async setup(props, ctx){
     colorLog('base table', 'green', 'yellow')
-    const itemUnderEdit = ref()
-    const keyComputed = (item) => {
-      // colorLog('key computed', 'green', 'yellow')
-      // console.log(props.itemUnderEdit)
-      return !!props.itemUnderEdit
-        ? props.itemUnderEdit.itemId == item.itemId
-          ? `${item[props.idSymbol]}-edit`
-          : item[props.idSymbol]
-        : item[props.idSymbol]
-      // if (!!itemUnderEdit.value) {
-      //   if(itemUnderEdit.value.itemId == item.itemId) {
-      //     return `${item[props.idSymbol]}-edit`
-      //   }
-      // }
-      // return item[props.idSymbol]
-    }
-    const itemUnderEditComputed = (item) => {
-      return props.itemUnderEdit
-        ? props.itemUnderEdit.itemId == item.itemId
-          ? true
-          : false
-        : false
-    }
     
     onUpdated(() => {
       // colorLog('on updated base table', 'blue', 'yellow')
@@ -286,11 +278,60 @@ export default defineComponent({
     //#endregion
 
     //#region body
+      //#region edit
+        const itemUnderEdit = ref()
+        const keyComputed = (item) => {
+          // colorLog('key computed', 'green', 'yellow')
+          // console.log(props.itemUnderEdit)
+          return !!props.itemUnderEdit
+            ? props.itemUnderEdit.itemId == item.itemId
+              ? `${item[props.idSymbol]}-edit`
+              : item[props.idSymbol]
+            : item[props.idSymbol]
+          // if (!!itemUnderEdit.value) {
+          //   if(itemUnderEdit.value.itemId == item.itemId) {
+          //     return `${item[props.idSymbol]}-edit`
+          //   }
+          // }
+          // return item[props.idSymbol]
+        }
+        const itemUnderEditComputed = (item) => {
+          return props.itemUnderEdit
+            ? props.itemUnderEdit.itemId == item.itemId
+              ? true
+              : false
+            : false
+        }
+
+      //#endregion
+      
+      //#region modal edit
+        const editItemDestination: Destination = '#edit-item-modal'
+        const itemEditModal = useModal(editItemDestination)
+
+        const router = useRouter()
+
+        const handleEditModal = (e) => {
+          switch(props.itemType) {
+            case 'task':
+              colorLog('handle edit modal at table row body', 'blue', 'green')
+              itemEditModal.showModal()
+              const idSymbol = '_id'
+              const itemType = props.itemType
+              console.log(e.item[idSymbol])
+              router.push({
+                name: '#edit-item-modal',
+                path: `/${itemType}/${e.item[idSymbol]}`,
+                params: { id: e.item[idSymbol] } 
+              })
+          }
+        }
+      //#endregion
 
     //#endregion
+
     return {
       keyComputed,
-      // itemUnderEdit,
       itemUnderEditComputed,
       dataProperties,
       columnNames,
@@ -301,6 +342,8 @@ export default defineComponent({
       handleChosenControlChange,
       // controlSwitch,
       // columnSwitch
+      itemEditModal,
+      handleEditModal,
       handleInputEdit: (e) => ctx.emit(
         'handle-input-edit',
         {
@@ -314,10 +357,16 @@ export default defineComponent({
         // console.log(e)
         ctx.emit('handle-toggle-edit', {item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
       },
+      // handleEditModal: (e) => {
+      //   // console.log(e)
+        
+      //   // ctx.emit('handle-edit-modal', {item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
+      // },
       handleToggleDelete: (item) => ctx.emit('handle-toggle-delete', {item: item, itemType: props.itemType}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
-      editableColumnsComputed
+      editableColumnsComputed,
+      updateValues: () => ctx.emit('update-values')
     }
 
   }

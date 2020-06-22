@@ -59,8 +59,8 @@
               :items="tasks"
               :id-symbol="'_id'"
               :item-type="'task'"
+              :edit-modal="editModal"
               :delete-modal="deleteModal"
-              @update-values="onUpdateValues"
               @handle-delete="handleDelete"
               @handle-toggle-delete="handleToggleDelete"
               @handle-toggle-edit="handleToggleEdit"
@@ -131,6 +131,9 @@ export default defineComponent({
     deleteModal: {
       type: Object as () => IModal
     },
+    editModal: {
+      type: Object as () => IModal
+    },
     itemUnderEdit: {
       type: Object,
       required: false
@@ -154,6 +157,7 @@ export default defineComponent({
     'handle-toggle-delete',
     'handle-toggle-edit',
     'handle-input-edit',
+    // 'handle-edit-modal',
     'confirm-delete',
     'handle-edit-init'
   ],
@@ -248,6 +252,7 @@ export default defineComponent({
       taskModal,
       cardIsOpen,
       handleToggleEdit: (e) => ctx.emit('handle-toggle-edit', e),
+      // handleEditModal: (e) => ctx.emit('handle-edit-modal', e),
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
       handleToggleDelete: (e) => ctx.emit('handle-toggle-delete', e),
       handleDelete: (item) => ctx.emit('handle-delete', item),

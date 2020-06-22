@@ -36,20 +36,12 @@ export default defineComponent({
   },
   emits: ['handle-click'],
   async setup(props, ctx){
-    // console.log(props)
-    const propertyEdit = ref()
     const handleClick = (item) => {
       // colorLog('handle click base table cell control', 'orange', 'green')
-      if (props.props.action == 'edit') {
-        // colorLog('handle click is EDIT', 'purple', 'silver')
-        ctx.emit('handle-click', {item: props.props.propertyData, action: props.props.action})
-      } else {
-        ctx.emit('handle-click', {item: props.props.propertyData, action: props.props.action})
-      }
+      ctx.emit('handle-click', {item: props.props.propertyData, action: props.props.action})
     }
     return {
       handleClick,
-      propertyEdit
     }
 
   }

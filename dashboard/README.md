@@ -27,3 +27,9 @@ yarn lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+### Add New Modal
+    - add destination to type in modal.interface
+    - add modal to modal layout
+    - add teleport with target to destination and specific modal component/slot

@@ -31,10 +31,6 @@ export default defineComponent({
     //   type: Object,
     //   required: true
     // },
-    // locked: {
-    //   type: Boolean,
-    //   default: false
-    // }
   },
   emits: ['handle-click'],
   async setup(props, ctx){

@@ -32,7 +32,7 @@ export default defineComponent({
   },
   setup(props, ctx) {
 
-    
+    const editItemDestination: Destination = '#edit-item-modal'
     const deleteItemDestination: Destination = '#delete-item-modal'
     const contactDeleteDestination: Destination = '#delete-contact-modal'
     const taskDeleteDestination: Destination = '#delete-task-modal'
@@ -40,8 +40,17 @@ export default defineComponent({
     const taskCardDestination: Destination = '#task-card-modal'
     const messageDestination: Destination = '#message-modal'
 
-    const destinations: Destination[] = [deleteItemDestination, contactDeleteDestination, taskDeleteDestination, contactCardDestination, taskCardDestination, messageDestination]
-
+    const destinations: Destination[] = [
+      editItemDestination,
+      deleteItemDestination,
+      contactDeleteDestination,
+      taskDeleteDestination,
+      contactCardDestination,
+      taskCardDestination,
+      messageDestination
+    ]
+    
+    const itemEditModal = useModal(editItemDestination)
     const itemDeleteModal = useModal(deleteItemDestination)
     const contactDeleteModal = useModal(contactDeleteDestination)
     const taskDeleteModal = useModal(taskDeleteDestination)
@@ -55,6 +64,7 @@ export default defineComponent({
     return {
       thisModalVisibility,
       destinations,
+      itemEditModal,
       itemDeleteModal,
       contactDeleteModal,
       taskDeleteModal,
