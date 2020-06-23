@@ -88,3 +88,6 @@ export const colorLog = (message, color, background) => {
     console.log(`%c` + `${message}`, `color:` + `${color}`)
   }
 }
+
+// colorLog('message', 'blue', 'pink')
+// colorLog('message', 'yellow', 'green')

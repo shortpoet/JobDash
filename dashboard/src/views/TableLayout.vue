@@ -30,6 +30,8 @@
             :item-type="table.itemType"
             :column-names="table.columnNames"
             :control-names="table.controlNames"
+            @column-change="handleColumnChange"
+            @control-change="handleControlChange"
           />
           <BaseBox scrollable>
             <BaseTable
@@ -120,6 +122,11 @@ export default defineComponent({
     MessageTable
   },
   emits: [
+    // TODO
+      // ensure naming convention for emits
+      // use handle if passing on event
+      // otherwise if initiating event start with action verb 
+    // #TODO
     'update-values',
     'update-messages',
     'handle-delete',
@@ -128,7 +135,9 @@ export default defineComponent({
     'handle-input-edit',
     'handle-confirm-edit',
     'confirm-delete',
-    'handle-edit-init'
+    'handle-edit-init',
+    'handle-column-change',
+    'handle-control-change',
   ],
   setup(props, ctx) {
     colorLog('table layout', 'green', 'yellow')
@@ -214,6 +223,8 @@ export default defineComponent({
       onlyTaskShown,
       handleMinimize,
       cardIsOpen,
+      handleColumnChange: (e) => ctx.emit('handle-column-change', e),
+      handleControlChange: (e) => ctx.emit('handle-control-change', e),
       handleToggleEdit: (e) => ctx.emit('handle-toggle-edit', e),
       handleConfirmEdit: (e) => ctx.emit('handle-confirm-edit', e),
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),

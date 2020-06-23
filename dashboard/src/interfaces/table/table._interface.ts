@@ -4,6 +4,12 @@ export interface ITableColumn {
   displayOrder: number
 }
 
+export interface ITableDataInput {
+  propertyName: string
+  displayOrder: number
+  editable: boolean
+}
+
 //#region control
 
   export const ID: ControlName = 'Id'
@@ -110,24 +116,24 @@ export interface ITableColumn {
   // }
 
   export interface ITableConfigSettings {
-    data: (ITableData[])
-    controls: (ITableControl[])
+    data: (ITableDataInput[])
+    controls?: (ControlName[])
   }
 
-  export abstract class BaseTableConfigSettings implements ITableConfigSettings {
-    constructor (config: ITableConfigSettings) {
-      this.data = config.data
-      this.controls = config.controls
-    }
-    data: (ITableData[])
-    controls: (ITableControl[])
-  }
+  // export abstract class BaseTableConfigSettings implements ITableConfigSettings {
+  //   constructor (config: ITableConfigSettings) {
+  //     this.data = config.data
+  //     this.controls = config.controls
+  //   }
+  //   data: (ITableDataInput[])
+  //   controls: (ITableControl[])
+  // }
   
-  export class TableConfigSettings extends BaseTableConfigSettings {
-    constructor (config: ITableConfigSettings) {
-      super(config)
-    }
-  }
+  // export class TableConfigSettings extends BaseTableConfigSettings {
+  //   constructor (config: ITableConfigSettings) {
+  //     super(config)
+  //   }
+  // }
 //#endregion
 
 //#region table
@@ -135,39 +141,44 @@ export interface ITableColumn {
     columns: (ITableColumn[])
     controlNames: (ControlName[])
     columnNames: (string[])
+    controlColumns: (ITableColumn[])
+    dataColumns: (ITableColumn[])
   }
 
   export abstract class BaseTableConfig implements ITableConfig {
     constructor (config: ITableConfigSettings) {
-      console.log(config)
-
-      this.controlNames = []
-      this.columnNames = []
-      this.columnNames = config.data.map(control => control.displayName)
+      // console.log(config)
+      this.dataColumns = config.data.map(datum => new TableData(datum.propertyName, datum.editable, datum.displayOrder)),
+      this.columnNames = config.data.map(column => column.propertyName)
       if (config.controls) {
-        this.controlNames = config.controls.map(control => control.controlName)
+        this.controlColumns = config.controls.map(datum => new TableControl(datum))
+        this.controlNames = config.controls
+        this.controlNames = config.controls
         // colorLog('has controls', 'yellow', 'blue')
         if (this.controlNames.includes(ID)) {
           this.columns = [
-            ...config.controls.slice(0,1),
-            ...config.data,
-            ...config.controls.slice(1)
+            ...this.controlColumns.slice(0,1),
+            ...this.dataColumns,
+            ...this.controlColumns.slice(1)
           ]
         } else {
           this.columns = [
-            ...config.data,
-            ...config.controls
+            ...this.dataColumns,
+            ...this.controlColumns
           ]
         }
       } else {
         this.columns = [
-          ...config.data
+          ...this.dataColumns
         ]
       }
     }
     columns: (ITableColumn[])
     controlNames: (ControlName[])
     columnNames: (string[])
+    controlColumns: (ITableColumn[])
+    dataColumns: (ITableColumn[])
+
   }
 
   export class TableConfig extends BaseTableConfig {

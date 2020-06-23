@@ -52,6 +52,8 @@ export default defineComponent({
   },
 
   emits: [
+    'column-change',
+    'control-change',
   ],
 
   async setup(props, ctx){
@@ -64,18 +66,25 @@ export default defineComponent({
     //#region header
       //#region dataProperties
 
-        const chosenProperties = ref([
+        const chosenColumns = ref([
           ...props.columnNames
+        ])
+        const chosenControls = ref([
+          ...props.controlNames
         ])
         
         const handleChosenColumnChange = (e) => {
-          // colorLog("on chosen column change", "pink", "blue")
-          chosenProperties.value = e.chosenProperties
+          colorLog("on chosen COLUMN change", "pink", "blue")
+          chosenColumns.value = e.chosenProperties
+          ctx.emit('column-change', {columns: chosenColumns.value, itemType: props.itemType})
+        }
+        const handleChosenControlChange = (e) => {
+          colorLog("on chosen CONTROL change", "blue", "pink")
+          chosenControls.value = e.chosenProperties
+          ctx.emit('control-change', {controls: chosenControls.value, itemType: props.itemType})
         }
 
         
-        const chosenPropArray = computed (() => chosenProperties.value)
-
       //#endregion
 
 
@@ -93,7 +102,10 @@ export default defineComponent({
     //#endregion
 
     return {
-      chosenPropArray
+      chosenColumns,
+      chosenControls,
+      handleChosenColumnChange,
+      handleChosenControlChange
       // controlSwitch,
       // columnSwitch
     }

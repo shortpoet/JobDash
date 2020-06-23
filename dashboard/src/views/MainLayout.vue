@@ -18,7 +18,7 @@
       </div>
       <div class="column is-one-half">
         <TableLayout
-          :table-items="tableItems"
+          :table-items="configRef"
           :editModal="itemEditModal"
           :deleteModal="itemDeleteModal"
           :messages="allMessages"
@@ -32,6 +32,8 @@
           @confirm-delete="confirmDelete"
           @update-values="onUpdateValues"
           :item-under-edit="itemUnderEdit"
+          @handle-column-change="handleColumnChange"
+          @handle-control-change="handleControlChange"          
         />
       </div>
     </BaseMinimize>
@@ -46,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watch, nextTick, onUpdated, reactive, toRefs } from 'vue'
+import { defineComponent, computed, ref, watch, nextTick, onUpdated, reactive, toRefs, Ref, isRef } from 'vue'
 
 import CreateLayout from './CreateLayout.vue'
 import TableLayout from './TableLayout.vue'
@@ -73,7 +75,7 @@ import { useEdit } from '../composables/table/useEdit'
 import { useInitEdit } from '../composables/table/useInitEdit'
 import { colorLog } from '../utils'
 
-import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableData, TableConfig, ControlName, TableConfigSettings, ITableData, TableControl  } from './../interfaces/table/table._interface'
+import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableData, TableConfig, ControlName, ITableData, TableControl  } from './../interfaces/table/table._interface'
 
 import { taskProps, taskData, contactProps, contactData, messageProps, messageData } from './columns'
 import { taskControls, contactControls, messageControls } from './controls'
@@ -172,30 +174,88 @@ export default defineComponent({
 
     const dataArrays = [taskData, contactData, messageData]
 
-    const controlArrays = [taskControls, contactControls, messageControls]
+    const taskDataColsRef = ref(taskData)
+    const contactDataColsRef = ref(contactData)
+    const messageDataColsRef = ref(messageData)
 
-    console.log(dataArrays)
+    const taskControlsRef = ref(taskControls)
+    const contactControlsRef = ref(contactControls)
+    const messageControlsRef = ref(messageControls)
+
+    const controlArrays = toRefs([taskControls, contactControls, messageControls])
+
+    const dataMap = toRefs(reactive({
+      task: taskDataColsRef.value,
+      contact: contactDataColsRef.value,
+      message: messageDataColsRef.value
+    }))
+    const controlMap = toRefs(reactive({
+      task: taskControlsRef.value,
+      contact: contactControlsRef.value,
+      message: messageControlsRef.value
+    }))
+
+
+    const handleColumnChange = (e) => {
+      colorLog("handle col change", "white", "green")
+      console.log(e)
+      const key = e.itemType
+      dataMap[key] = ref(e.columns)
+      console.log(dataMap)
+    }
+    const handleControlChange = (e) => {
+      colorLog("handle control change", "white", "green")
+      console.log(e)
+      console.log(controlMap)
+      const key = e.itemType
+      controlArrays[2].value = e.controls
+      messageControlsRef.value = e.controls
+      // need to remap data to config schema in controls.ts
+      // controlMap[key] = ref(e.controls)
+    }
+
+    // console.log(dataArrays)
 
     const data: ITableData[] = []
 
-    const configSettings = (i) =>
-      new TableConfigSettings({
-        data: dataArrays[i].map(datum => new TableData(datum.propertyName, datum.editable, datum.displayOrder)),
-        controls: controlArrays[i].map(datum => new TableControl(datum))
-      })
+    // const configSettings = (i) =>
+    //   new TableConfigSettings({
+    //     data: dataArrays[i].map(datum => new TableData(datum.propertyName, datum.editable, datum.displayOrder)),
+    //     controls: controlArrays[i].map(datum => new TableControl(datum))
+    //   })
     
 
     // const { columns, controlNames, columnNames } = new TableConfig(configSettings(0))
 
-    const tableTypes = [
+    const tableTypes = reactive([
       {itemType: 'message', idSymbol: '_id', items: allMessages.value},
       {itemType: 'task', idSymbol: '_id', items: allTasks.value},
       {itemType: 'contact', idSymbol: '_id', items: allContacts.value},
-    ]
-    const tableItems = reactive([
+    ])
+    // const tableItems = reactive([
+    //   ...tableTypes.map((type, i) => {
+    //     const { columns, controlNames, columnNames } = new TableConfig({
+    //       data: dataMap[type.itemType], controls: controlMap[type.itemType]
+    //     })
+    //     return {
+    //       itemType: type.itemType,
+    //       idSymbol: type.idSymbol,
+    //       items: type.items,
+    //       columns: columns,
+    //       columnNames: columnNames,
+    //       controlNames: controlNames
+    //     }
+    //   })
+    // ])
+    const tableItems = (dataMap, controlMap) => {
+      colorLog("compute table items", "blue", "pink")
+      console.log(dataMap.message.value)
+      console.log(controlMap.message.value)
+      return [
       ...tableTypes.map((type, i) => {
-        console.log(configSettings(i))
-        const { columns, controlNames, columnNames } = new TableConfig(configSettings(i))
+        const { columns, controlNames, columnNames } = new TableConfig({
+          data: dataMap[type.itemType].value, controls: controlMap[type.itemType].value
+        })
         return {
           itemType: type.itemType,
           idSymbol: type.idSymbol,
@@ -205,7 +265,42 @@ export default defineComponent({
           controlNames: controlNames
         }
       })
-    ])
+    ]}
+    const configRef = ref()
+    // colorLog("#### UNREF ####", "orange", "purple")
+    // const unRef = (obj) => {
+    //   console.log(obj)
+    //   Object.entries(obj).forEach(entry => {
+    //     if (isRef(entry[1])) {
+    //       entry[1] = entry[1].value
+    //     }
+    //   })
+    //   console.log(obj)
+    //   return obj
+    // }
+    // const unwrap = v => (isRef(v) ? v.value : v)
+    watch(
+      () => messageControlsRef.value.length,
+      (value: number, previous:number) => {
+        console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+        configRef.value = tableItems(dataMap, controlMap)
+      },
+      {immediate: true}
+    )
+
+    configRef.value = tableItems(dataMap, controlMap)
+    Object.entries(dataMap).forEach(entry => {
+      console.log(entry[0])
+      console.log(entry[1].value)
+      watch(
+        () => entry[1].value.length,
+        (value: number, previous:number) => {
+          console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+          configRef.value = tableItems(dataMap, controlMap)
+        },
+        {immediate: true}
+      )
+    })
 
     //#region cardModal
       const contactCardDestination: Destination = '#contact-card-modal'
@@ -376,7 +471,10 @@ export default defineComponent({
   //#endregion
 
     return {
-      tableItems,
+      // tableItems,
+      configRef,
+      handleColumnChange,
+      handleControlChange,
       error,
       showUIFull,
       contactCardModal,
