@@ -112,7 +112,7 @@ export interface ITableHeader {
         return action
       }
       // must actually initialize the array or is undefined imagine that
-      console.log(this.columns)
+      // console.log(this.columns)
       this.columns = []
       config.columns.forEach((column, i) => {
         // console.log(column)

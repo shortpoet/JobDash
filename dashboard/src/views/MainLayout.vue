@@ -38,10 +38,10 @@
       </div>
     </BaseMinimize>
 
-    <BoardLayout
+    <!-- <BoardLayout
       :items="allTasks"
       :active-board="activeBoard"
-    />
+    /> -->
   </div>
   
   <div />
@@ -130,6 +130,8 @@ export default defineComponent({
       const allTasks = ref<Task[]>([])
 
       const taskUse = await useTask(taskStore, allTasks)
+
+      console.log(allTasks.value)
 
       const onUpdateTasks = taskUse.onUpdateTasks
 

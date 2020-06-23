@@ -153,7 +153,6 @@ export interface ITableDataInput {
       if (config.controls) {
         this.controlColumns = config.controls.map(datum => new TableControl(datum))
         this.controlNames = config.controls
-        this.controlNames = config.controls
         // colorLog('has controls', 'yellow', 'blue')
         if (this.controlNames.includes(ID)) {
           this.columns = [
