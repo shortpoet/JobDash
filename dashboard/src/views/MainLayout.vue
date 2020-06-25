@@ -90,28 +90,32 @@ export default defineComponent({
   emits: ['confirm-delete'],
   async setup(props, ctx) {
 
-    const activeBoard = ref('1')
-    const handleActiveBoardChange = (e) => {
-      activeBoard.value = e
-    }
-    const showUIFull = ref(true)
-    const showClear = ref(false)
+    //#region general
+      onUpdated(() => {
+        colorLog('on updated main layout', 'orange', 'yellow')
+      })
 
+      const error = ref(null)
 
-    onUpdated(() => {
-      colorLog('on updated main layout', 'orange', 'yellow')
-    })
+      onErrorCaptured(e => {
+        error.value = e
+        console.log(e)
+        return true
+      })
 
-    const error = ref(null)
+      const router = useRouter()
+      const store = useStore()
+    //#endregion
 
-    onErrorCaptured(e => {
-      error.value = e
-      console.log(e)
-      return true
-    })
+    // region board
+      const activeBoard = ref('1')
+      const handleActiveBoardChange = (e) => {
+        activeBoard.value = e
+      }
+      const showUIFull = ref(true)
+      const showClear = ref(false)
+    //#endregion
 
-    const router = useRouter()
-    const store = useStore()
 
     //#region new / contact
       const tableStore = store.modules[TABLE_STORE_LOCAL_SYMBOL]
@@ -120,9 +124,9 @@ export default defineComponent({
       const contARr = []
       contARr.push(cont)
       const allContacts = ref<Contact[]>(contARr)
-      const loading = ref(true)
+      const contactLoading = ref(true)
       allContacts.value = await contactStore.loadRecords('contact')
-      loading.value = false
+      contactLoading.value = false
 
     //#region task
       const taskStore: TaskStore = store.modules[TASK_STORE_SYMBOL]
@@ -130,7 +134,6 @@ export default defineComponent({
       const tasksLoading = ref(true)
       allTasks.value = await taskStore.loadRecords('task')
       tasksLoading.value = false
-
     //#endregion
 
     //#region message
@@ -274,32 +277,33 @@ export default defineComponent({
     //#endregion
 
     return {
-      // main
+      // general
+      error,
+      showUIFull,
+      showClear,
+      // table
       tables,
       testItems,
       testItemType,
       testColumnNames,
       ITEMS_ID_SYMBOL,
+      // values
+      onUpdateValues,
       // edit
       itemEditModal,
       editItemDestination,
       // contact
+      allContacts,
       onUpdateContacts,
+      contactLoading,
       // task
+      allTasks,
       onUpdateTasks,
       // message
-      onUpdateMessages,
-      // values
-      onUpdateValues,
-      loading,
-      error,
-      showUIFull,
-      itemDeleteModal,
-      allContacts,
-      allTasks,
       allMessages,
+      onUpdateMessages,
+      // board
       activeBoard,
-      showClear,
       handleActiveBoardChange,
     }
 
