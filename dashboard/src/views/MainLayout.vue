@@ -24,6 +24,9 @@
           :items="table.items"
           :item-type="table.itemType"
           :id-symbol="table.idSymbol"
+          :store="table.store"
+          :delete-confirm="deleteConfirm"
+          @update-values="onUpdateValues"
         />
       </div>
     </BaseMinimize>
@@ -33,6 +36,18 @@
       :active-board="activeBoard"
     /> -->
   </div>
+
+  <teleport :to="`#delete-item-modal`" v-if="itemDeleteModal.visible">
+    <ModalWarning @delete-item="confirmDelete" :destination="`#delete-item-modal`" />
+  </teleport>
+
+  <!-- <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible">
+    <BaseItemEditCard
+      @modal-confirm-edit="modalConfirmEdit"
+      :editable-columns="editableColumnsComputed"
+      :destination="editItemDestination"
+    />
+  </teleport> -->
   
   <div />
 </template>
@@ -48,6 +63,9 @@ import { useRouter } from 'vue-router'
 import { useStore, ITEMS_ID_SYMBOL, TABLE_STORE_LOCAL_SYMBOL, CONTACT_STORE_SYMBOL, CONTACT_ID_SYMBOL, TASK_STORE_SYMBOL, MESSAGE_STORE_SYMBOL, TASK_ID_SYMBOL, MESSAGE_ID_SYMBOL } from '../store'
 
 import { useModal } from '../composables/useModal'
+import BaseItemEditCard from './../components/common/BaseItemEditCard.vue'
+import ModalWarning from './../components/common/ModalWarning.vue'
+
 
 import TableLayout from './TableLayout.vue'
 
@@ -77,10 +95,20 @@ export default defineComponent({
     BaseMinimize,
     CreateLayout,
     TableLayout,
-    BoardLayout
+    BoardLayout,
+    ModalWarning,
+    BaseItemEditCard
   },
-  emits: ['update-values'],
+  emits: ['confirm-delete'],
   async setup(props, ctx) {
+
+    const activeBoard = ref('1')
+    const handleActiveBoardChange = (e) => {
+      activeBoard.value = e
+    }
+    const showUIFull = ref(true)
+    const showClear = ref(false)
+
 
     onUpdated(() => {
       colorLog('on updated main layout', 'orange', 'yellow')
@@ -97,7 +125,7 @@ export default defineComponent({
     const router = useRouter()
     const store = useStore()
 
-    //#region new
+    //#region new / contact
       const tableStore = store.modules[TABLE_STORE_LOCAL_SYMBOL]
       const contactStore: ContactStore = store.modules[CONTACT_STORE_SYMBOL]
       const cont = {} as Contact
@@ -108,7 +136,7 @@ export default defineComponent({
       allContacts.value = await contactStore.loadRecords('contact')
       loading.value = false
 
-    //#region taskUse
+    //#region task
       const taskStore: TaskStore = store.modules[TASK_STORE_SYMBOL]
       const allTasks = ref<Task[]>([])
       const tasksLoading = ref(true)
@@ -117,7 +145,7 @@ export default defineComponent({
 
     //#endregion
 
-    //#region messageUse
+    //#region message
       const messageStore: MessageStore = store.modules[MESSAGE_STORE_SYMBOL]
       const allMessages = ref<Message[]>([])
       const messagesLoading = ref(true)
@@ -125,13 +153,40 @@ export default defineComponent({
       messagesLoading.value = false
     //#endregion
 
-      const onUpdateContacts = async () => {
-        console.log('update')
-        console.log(allContacts.value.length)
-        await nextTick()
-        tables[1].value.items = await contactStore.updateRecords('contact')
+    //#region modal
+      const deleteItemDestination: Destination = '#delete-item-modal'
+      const itemDeleteModal = useModal(deleteItemDestination)
+      const editItemDestination: Destination = '#edit-item-modal'
+      const itemEditModal = useModal(editItemDestination)
+    //#endregion
+
+    const onUpdateContacts = async () => {
+      console.log('update contacts')
+      await nextTick()
+      // tables.filter(t => t.value.itemType == contactItemtype.value)[0].value.items = await contactStore.updateRecords('contact')
+      tables[0].value.items = await contactStore.updateRecords('contact')
+    }
+    const onUpdateTasks = async () => {
+      console.log('update tasks')
+      await nextTick()
+      // tables.filter(t => t.value.itemType == taskItemtype.value)[0].value.items = await taskStore.updateRecords('task')
+      tables[1].value.items = await taskStore.updateRecords('task')
+    }
+    const onUpdateMessages = async () => {
+      console.log('update messages')
+      await nextTick()
+      // tables.filter(t => t.value.itemType == messageItemtype.value)[0].value.items = await messageStore.updateRecords('message')
+      tables[2].value.items = await messageStore.updateRecords('message')
+    }
+    const onUpdateValues = (e) => {
+      colorLog('on update values - main layout', 'magenta', 'white')
+      console.log(e)
+      switch(e) {
+        case 'task':
+          onUpdateTasks();
+          break;
       }
-      console.log(allContacts.value)
+    }
 
 
     //#region table
@@ -146,9 +201,9 @@ export default defineComponent({
       // need to figure out rest of logic for empty array of items
       const testColumnNames = computed(() => testItems.value.length > 0 ? Object.keys(testItems.value[0]) : [])    
 
-      console.log(allContacts.value)
-      console.log(allTasks.value)
-      console.log(allMessages.value)
+      // console.log(allContacts.value)
+      // console.log(allTasks.value)
+      // console.log(allMessages.value)
       const tables = toRefs(reactive([
         // {
         //   columnNames: testColumnNames,
@@ -156,81 +211,74 @@ export default defineComponent({
         //   itemType: testItemType.value,
         //   idSymbol: ITEMS_ID_SYMBOL
         // },
-        {
-          columnNames: Object.keys(allContacts.value[0]),
-          items: allContacts.value,
-          itemType: contactItemtype.value,
-          idSymbol: CONTACT_ID_SYMBOL
-        },
-        {
-          columnNames: Object.keys(allTasks.value[0]),
-          items: allTasks.value,
-          itemType: taskItemtype.value,
-          idSymbol: TASK_ID_SYMBOL
-        },
-        {
-          columnNames: Object.keys(allMessages.value[0]),
-          items: allMessages.value,
-          itemType: messageItemtype.value,
-          idSymbol: MESSAGE_ID_SYMBOL
-        },
-      ]))
+          {
+            columnNames: Object.keys(allContacts.value[0]),
+            items: allContacts.value,
+            itemType: contactItemtype.value,
+            idSymbol: CONTACT_ID_SYMBOL,
+            store: contactStore,
+            // updateCallback: onUpdateContacts
+          },
+          {
+            columnNames: Object.keys(allTasks.value[0]),
+            items: allTasks.value,
+            itemType: taskItemtype.value,
+            idSymbol: TASK_ID_SYMBOL,
+            store: taskStore,
+            // updateCallback: onUpdateTasks
+          },
+          {
+            columnNames: Object.keys(allMessages.value[0]),
+            items: allMessages.value,
+            itemType: messageItemtype.value,
+            idSymbol: MESSAGE_ID_SYMBOL,
+            store: messageStore,
+          },
+        ]))
 
-    const activeBoard = ref('1')
-    const handleActiveBoardChange = (e) => {
-      activeBoard.value = e
-    }
-    const showUIFull = ref(true)
-    const showClear = ref(false)
+      const deleteConfirm = ref(false)
 
-
+      const confirmDelete = () => {
+        colorLog('confirm delete from main layout', 'magenta', 'yellow')
+        deleteConfirm.value = true; 
+        // deleteConfirm.value = false;
+      }
     
-    //#region modal
-      const deleteItemDestination: Destination = '#delete-item-modal'
-      const itemDeleteModal = useModal(deleteItemDestination)
-      const editItemDestination: Destination = '#edit-item-modal'
-      const itemEditModal = useModal(editItemDestination)
+      //#region tables dynamic - experimental
+        // const tableTypes = reactive([
+        //   {itemType: 'message', idSymbol: '_id', items: allMessages.value},
+        //   {itemType: 'task', idSymbol: '_id', items: allTasks.value},
+        //   {itemType: 'contact', idSymbol: '_id', items: allContacts.value},
+        // ])
+
+        // const tableItems = (dataMap, controlMap) => {
+        //   colorLog("compute table items", "blue", "pink")
+        //   console.log(dataMap.message.value)
+        //   console.log(controlMap.message.value)
+        //   return [
+        //   ...tableTypes.map((type, i) => {
+        //     console.log()
+        //     const { columns, controlNames, columnNames } = new TableConfig({
+        //       data: dataMap[type.itemType].value, controls: controlMap[type.itemType].value
+        //     })
+        //     return {
+        //       itemType: type.itemType,
+        //       idSymbol: type.idSymbol,
+        //       items: type.items,
+        //       columns: columns,
+        //       columnNames: columnNames,
+        //       controlNames: controlNames
+        //     }
+        //   })
+        // ]}
+        // const configRef = ref()
+      //#endregion
     //#endregion
-
-    const updateChosenProperties = (e) => {
-      colorLog('update chosen props', 'green', 'orange')
-      console.log(e)
-    }
-
-    // const tableTypes = reactive([
-    //   {itemType: 'message', idSymbol: '_id', items: allMessages.value},
-    //   {itemType: 'task', idSymbol: '_id', items: allTasks.value},
-    //   {itemType: 'contact', idSymbol: '_id', items: allContacts.value},
-    // ])
-
-    // const tableItems = (dataMap, controlMap) => {
-    //   colorLog("compute table items", "blue", "pink")
-    //   console.log(dataMap.message.value)
-    //   console.log(controlMap.message.value)
-    //   return [
-    //   ...tableTypes.map((type, i) => {
-    //     console.log()
-    //     const { columns, controlNames, columnNames } = new TableConfig({
-    //       data: dataMap[type.itemType].value, controls: controlMap[type.itemType].value
-    //     })
-    //     return {
-    //       itemType: type.itemType,
-    //       idSymbol: type.idSymbol,
-    //       items: type.items,
-    //       columns: columns,
-    //       columnNames: columnNames,
-    //       controlNames: controlNames
-    //     }
-    //   })
-    // ]}
-    // const configRef = ref()
-
-
-
-  //#endregion
 
     return {
       // main
+      deleteConfirm,
+      confirmDelete,
       tables,
       testItems,
       testItemType,
@@ -241,6 +289,12 @@ export default defineComponent({
       editItemDestination,
       // contact
       onUpdateContacts,
+      // task
+      onUpdateTasks,
+      // message
+      onUpdateMessages,
+      // values
+      onUpdateValues,
       loading,
       error,
       showUIFull,

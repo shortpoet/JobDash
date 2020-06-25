@@ -22,6 +22,8 @@
               :columns="columnsRef"
               :id-symbol="idSymbol"
               :item-type="itemType"
+              :column-names="columnNamesRef"
+              :control-names="controlNamesRef"
               @handle-delete="handleDelete"
               @handle-toggle-delete="handleToggleDelete"
               @handle-toggle-edit="handleToggleEdit"
@@ -29,14 +31,25 @@
               @handle-input-edit="handleInputEdit"
               @confirm-delete="confirmDelete"
               :item-under-edit="itemUnderEdit"
-              :column-names="columnNamesRef"
-              :control-names="controlNamesRef"
             />
           </BaseBox>
         </BaseMinimize>
       </div>
     </div>
   </section>
+
+  <!-- <teleport :to="`#delete-${itemType}-modal`" v-if="itemDeleteModal.visible">
+    <ModalWarning @delete-item="confirmDelete" :destination="`#delete-${itemType}-modal`" />
+  </teleport> -->
+
+  <!-- <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible">
+    <BaseItemEditCard
+      @modal-confirm-edit="modalConfirmEdit"
+      :editable-columns="editableColumnsComputed"
+      :destination="editItemDestination"
+    />
+  </teleport> -->
+
 </template>
 
 <script lang="ts">
@@ -46,6 +59,8 @@ import BaseMinimize from '../components/common/BaseMinimize.vue'
 import BaseBox from './../components/common/BaseBox.vue'
 import BaseTable from './../components/table/BaseTable.vue'
 import BaseTableControls from './../components/table/BaseTableControls.vue'
+import BaseItemEditCard from './../components/common/BaseItemEditCard.vue'
+import ModalWarning from './../components/common/ModalWarning.vue'
 
 import { useModal } from '../composables/useModal'
 
@@ -56,6 +71,7 @@ import { Tab } from '../interfaces/common/tab.interface'
 
 import { useRouter } from 'vue-router'
 import { colorLog } from '../utils'
+import { useDelete } from '../composables/table/useDelete'
 
 export default defineComponent({
   name: 'TableLayout',
@@ -80,16 +96,21 @@ export default defineComponent({
       type: Array as () => ControlName[],
       default: () => [CONTROL_ID, CONTROL_DELETE, CONTROL_EDIT, CONTROL_LOCKED, CONTROL_MESSAGE]
     },
-    itemUnderEdit: {
+    store: {
       type: Object,
       required: false
     },
+    deleteConfirm: {
+      type: Boolean
+    }
   },
   components: {
     BaseMinimize,
     BaseBox,
     BaseTableControls,
     BaseTable,
+    ModalWarning,
+    BaseItemEditCard
   },
   emits: [
     // TODO
@@ -108,85 +129,155 @@ export default defineComponent({
     'handle-edit-init',
     'handle-column-change',
     'handle-control-change',
+    'reset-delete'
   ],
   setup(props, ctx) {
     colorLog('table layout', 'green', 'yellow')
     // console.log(props.items)
-
+    // init refs at top so config and choice regions have access
     const chosenColumns: Ref<string[]> = ref([...props.columnNames])
     const chosenControls: Ref<ControlName[]> = ref([...props.controlNames])
-    const handleColumnChange = (e) => {
-      colorLog('handle column change', 'green', 'yellow')
-      console.log(e)
-      chosenColumns.value = e.columns
-    }
-    const tableSettings: ITableConfigSettings = {
-      data: chosenColumns.value,
-      controls: chosenControls.value
-    }
 
-    const tableConfig = new TableConfig(tableSettings)
+    //#region table config
+      const tableSettings: ITableConfigSettings = {
+        data: chosenColumns.value,
+        controls: chosenControls.value
+      }
 
-    const { columns, controlNames: controlNamesRef , columnNames: columnNamesRef } = tableConfig
-    const columnsRef = ref(columns)
+      const tableConfig = new TableConfig(tableSettings)
 
-    console.log(columnsRef)
+      const { columns, controlNames: controlNamesRef , columnNames: columnNamesRef } = tableConfig
+      const columnsRef = ref(columns)
+      // console.log(columnsRef)    
+    //#endregion
 
-    watch(
-      () => chosenColumns.value.length, 
-      (value: number, previous:number) => {
-          // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
-          columnsRef.value = []
-          columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value}).columns
-      },
-      // not sure if i want this called immediately
-      // makes update function run on load
-      {immediate: true}
-    )
-    const handleControlChange = (e) => {
-      colorLog('handle control change', 'green', 'yellow')
-      console.log(e)
-      chosenControls.value = e.controls
-    }
-    watch(
-      () => chosenControls.value.length, 
-      (value: number, previous:number) => {
-          // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
-          columnsRef.value = []
-          columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value}).columns
-      },
-      // not sure if i want this called immediately
-      // makes update function run on load
-      {immediate: true}
-    )
+    //#region choice
+      // columns
+      const handleColumnChange = (e) => {
+        colorLog('handle column change', 'green', 'yellow')
+        console.log(e)
+        chosenColumns.value = e.columns
+      }
+      watch(
+        () => chosenColumns.value.length, 
+        (value: number, previous:number) => {
+            // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+            columnsRef.value = []
+            columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value}).columns
+        },
+        // not sure if i want this called immediately
+        // makes update function run on load
+        {immediate: true}
+      )
+      // controls
+      const handleControlChange = (e) => {
+        colorLog('handle control change', 'green', 'yellow')
+        console.log(e)
+        chosenControls.value = e.controls
+      }
+      watch(
+        () => chosenControls.value.length, 
+        (value: number, previous:number) => {
+            // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+            columnsRef.value = []
+            columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value}).columns
+        },
+        // not sure if i want this called immediately
+        // makes update function run on load
+        {immediate: true}
+      )
+    //#endregion
 
-    const handleMinimize = (e) => {
-      console.log('handle minimize')
-      console.log(e)
-    }
-    
-    onUpdated(() => {
-      // colorLog('on updated table layout', 'green', 'yellow')
-      // console.log(props.taskEditRefs)
-    })
-
-
-    //#region openCard
+    //#region modal
+      const deleteItemDestination: Destination = '#delete-item-modal'
+      const itemDeleteModal = useModal(deleteItemDestination)
       const editItemDestination: Destination = '#edit-item-modal'
       const itemEditModal = useModal(editItemDestination)
 
-      const router = useRouter()
-      const openCard = (_id) => {
-        itemEditModal.showModal()
-        router.push({ name: '#edit-item-modal', params: { id: _id } })
-      }
-      const cardIsOpen = computed(() => {
-        return router.currentRoute.value.name === editItemDestination
-      })
     //#endregion
 
 
+    //#region delete
+
+      const taskIdSymbol = '_id'
+      const itemDelete = useDelete(props.store, ctx)
+
+      const handleToggleDelete = async (e) => {
+        colorLog('handle toggle delete at main layout', 'yellow', 'green')
+        console.log(e)
+        console.log(e.item.locked)
+        console.log(e.item)
+        if (e.item.locked == false) {
+          await props.store.toggleDeletable(e.item, true)
+          // refactor with new store
+          // onUpdateTasks()
+        } else {
+          await props.store.toggleDeletable(e.item, false)
+          // refactor with new store
+          // onUpdateTasks()
+        }
+        switch(e.itemType) {
+          case 'task':
+        }
+      }
+      const tableHasDeleteCandidate = ref(false)
+      const handleDelete = (e) => {
+        colorLog('handle delete from table layout', 'magenta', 'yellow')
+        console.log(e)
+        tableHasDeleteCandidate.value = itemDelete.handleConfirmDelete(e.item, itemDeleteModal, taskIdSymbol, props.itemType)
+        switch(e.itemType) {
+          case 'task':
+            // refactor with new store
+        }
+      }
+      const _confirmDelete = (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType})
+
+      const confirmDelete = () => {
+        // colorLog('confirm delete from table layout', 'yellow', 'magenta')
+        if (tableHasDeleteCandidate.value == true) {
+          itemDelete.deleteItem(itemDeleteModal, taskIdSymbol, props.itemType)
+          tableHasDeleteCandidate.value = false
+        }
+      }
+      watch(
+        () => props.deleteConfirm,
+        (value) => {
+          if (value == true) {
+            confirmDelete()
+          }
+        }
+        )
+    //#endregion
+    const itemUnderEdit = ref()
+    //#region future
+      const handleMinimize = (e) => {
+        // perhaps some kind of logic eventually emerges
+        // console.log('handle minimize')
+        // console.log(e)
+      }
+      
+      onUpdated(() => {
+        // colorLog('on updated table layout', 'green', 'yellow')
+        // console.log(props.taskEditRefs)
+      })
+    
+      //#region openCard
+
+        const router = useRouter()
+        const openCard = (_id) => {
+          itemEditModal.showModal()
+          router.push({ name: '#edit-item-modal', params: { id: _id } })
+        }
+        const cardIsOpen = computed(() => {
+          return router.currentRoute.value.name === editItemDestination
+        })
+      //#endregion
+    //#endregion
+
     return {
+      itemDeleteModal,
+      itemEditModal,
+      itemUnderEdit,
       columnsRef,
       controlNamesRef,
       columnNamesRef,
@@ -198,7 +289,7 @@ export default defineComponent({
       handleConfirmEdit: (e) => ctx.emit('handle-confirm-edit', e),
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
       handleToggleDelete: (e) => ctx.emit('handle-toggle-delete', e),
-      handleDelete: (item) => ctx.emit('handle-delete', item),
+      handleDelete,
       confirmDelete: (item) => ctx.emit('confirm-delete', item),
     }
 

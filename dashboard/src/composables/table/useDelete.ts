@@ -18,26 +18,28 @@ export function useDelete(store, ctx) {
     // const modal = modalMap.modalMap[destination]
   
 
-    const handleConfirmDelete = (item, modal, idSymbol, updateValuesCallback) => {
+    const handleConfirmDelete = (item, modal, idSymbol, itemType) => {
       colorLog('handle confirm delete from use delete', 'blue', 'green')
       console.log(item)
       if (item.locked) {
         deleteCandidate.value = item
         modal.showModal()
+        return true
       } else {
         deleteCandidate.value = item
-        deleteItem(modal, idSymbol, updateValuesCallback)
+        deleteItem(modal, idSymbol, itemType)
       }
     }
     
-    const deleteItem = async (modal, idSymbol, updateValuesCallback) => {
+    const deleteItem = async (modal, idSymbol, itemType) => {
       colorLog('delete item from use delete', 'blue', 'green')
       console.log(idSymbol)
+      console.log(deleteCandidate.value)
       modal.hideModal()
       const deletedId = await store.deleteRecord(deleteCandidate.value)
       // null check
       deleteCandidate.value[idSymbol] == deletedId ? deleteCandidate.value = null : ''
-      updateValuesCallback()
+      ctx.emit('update-values', itemType)
     }
     
     const toggleDeletable = async (item) => {

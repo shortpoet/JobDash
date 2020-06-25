@@ -30,18 +30,6 @@
 
   </table>
 
-  <teleport :to="`#delete-item-modal`" v-if="itemDeleteModal.visible">
-    <ModalWarning @delete-item="confirmDelete" :destination="'#delete-item-modal'" />
-  </teleport>
-
-  <!-- <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible">
-    <BaseItemEditCard
-      @modal-confirm-edit="modalConfirmEdit"
-      :editable-columns="editableColumnsComputed"
-      :destination="editItemDestination"
-    />
-  </teleport> -->
-
   <div />
 </template>
 
@@ -49,8 +37,6 @@
 import { defineComponent, computed, ref, watch, onMounted, Ref, onUpdated } from 'vue'
 import { ITableConfig, BaseTableConfig, TableConfig, ControlName } from './../../interfaces/table/table.interface'
 import BaseSwitchArray from './../common/BaseSwitchArray.vue'
-import BaseItemEditCard from './../common/BaseItemEditCard.vue'
-import ModalWarning from './../common/ModalWarning.vue'
 import TableRowHeader from './TableRowHeader.vue'
 import TableRowBody from './TableRowBody.vue'
 import BaseBox from './../common/BaseBox.vue'
@@ -61,7 +47,6 @@ import { useModal } from '../../composables/useModal'
 
 export default defineComponent({
   name: 'BaseTable',
-
   props: {
     chosenPropArray: {
       type: Array
@@ -93,16 +78,12 @@ export default defineComponent({
       type: Array
     }
   },
-
   components: {
     BaseBox,
     BaseSwitchArray,
     TableRowHeader,
     TableRowBody,
-    ModalWarning,
-    BaseItemEditCard
   },
-
   emits: [
     'handle-delete',
     'handle-confirm-edit',
@@ -110,9 +91,8 @@ export default defineComponent({
     'handle-toggle-edit',
     'handle-toggle-delete',
     'confirm-delete',
-    'update-values'
+    'update-values',
   ],
-
   setup(props, ctx){
     colorLog('base table', 'green', 'yellow')
     console.log(props.columns)
@@ -124,7 +104,6 @@ export default defineComponent({
     onUpdated(() => {
       // colorLog('on updated base table', 'blue', 'yellow')
     })
-
 
     //#region body
       //#region edit
@@ -202,7 +181,6 @@ export default defineComponent({
       },
       handleToggleDelete: (item) => ctx.emit('handle-toggle-delete', {item: item, itemType: props.itemType}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
-      confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
       updateValues: () => ctx.emit('update-values')
     }
 
