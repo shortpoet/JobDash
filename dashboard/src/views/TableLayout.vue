@@ -210,10 +210,11 @@ export default defineComponent({
         if (e.item.locked == false) {
           await props.store.toggleDeletable(e.item, true)
           // refactor with new store
-          // onUpdateTasks()
+          ctx.emit('update-values', props.itemType)
         } else {
           await props.store.toggleDeletable(e.item, false)
           // refactor with new store
+          ctx.emit('update-values', props.itemType)
           // onUpdateTasks()
         }
         switch(e.itemType) {
@@ -288,7 +289,7 @@ export default defineComponent({
       handleToggleEdit: (e) => ctx.emit('handle-toggle-edit', e),
       handleConfirmEdit: (e) => ctx.emit('handle-confirm-edit', e),
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
-      handleToggleDelete: (e) => ctx.emit('handle-toggle-delete', e),
+      handleToggleDelete,
       handleDelete,
       confirmDelete: (item) => ctx.emit('confirm-delete', item),
     }

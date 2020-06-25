@@ -157,7 +157,7 @@ export default defineComponent({
 
     // all controls emit click (i think)
     const handleClick = (e) => {
-      colorLog('handle click at table row body', 'blue', 'green')
+      colorLog('handle click at table row body', 'yellow', 'green')
       // console.log(e)
       // console.log(e.action)
       switch(e.action) {
