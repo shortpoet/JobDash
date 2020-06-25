@@ -48,7 +48,8 @@
 
   <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible && tableHasEditCandidate">
     <BaseItemEditCard
-      @modal-confirm-edit="modalConfirmEdit"
+      @modal-confirm-edit="handleConfirmEdit"
+      @modal-close="handleModalClose"
       :editable-columns="editableColumnNames"
       :destination="editItemDestination"
     />
@@ -57,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, reactive, onUpdated, Ref, watch, toRefs } from 'vue'
+import { defineComponent, computed, ref, reactive, onUpdated, Ref, watch, toRefs, nextTick } from 'vue'
 import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
@@ -293,7 +294,7 @@ export default defineComponent({
       //#region modal edit
 
         const tableHasEditCandidate = ref(false)
-        const handleEditModal = (e) => {
+        const handleEditModal = async (e) => {
           colorLog('handle edit modal at table layout', 'blue', 'green')
           console.log(props.itemType)
           console.log(e.itemType)
@@ -306,12 +307,17 @@ export default defineComponent({
             router.push({
               name: '#edit-item-modal',
               path: `/${itemType}/${e.item[idSymbol]}`,
-              params: { id: e.item[idSymbol], item: JSON.stringify(e.item) } 
+              params: { id: e.item[idSymbol], item: JSON.stringify(e.item), itemType: itemType } 
             })
           }
         }
 
-
+        const handleModalClose = () => {
+          itemEditModal.hideModal()
+          router.push('/')
+          tableHasEditCandidate.value = false
+        }
+        
       // const handleEditModal = (e) => {
       //   switch(e.itemType) {
       //     case 'task':
@@ -359,6 +365,9 @@ export default defineComponent({
       tableHasEditCandidate,
       itemDeleteModal,
       itemEditModal,
+      handleModalClose,
+      handleConfirmEdit,
+      editItemDestination,
       itemUnderEdit,
       columnsRef,
       controlNamesRef,

@@ -51,7 +51,7 @@ export default defineComponent({
     BaseInput,
   },
 
-  emits: ['modal-confirm-edit'],
+  emits: ['modal-confirm-edit', 'modal-close'],
 
   setup(props, ctx){
     
@@ -80,7 +80,7 @@ export default defineComponent({
       const itemEdit = ref()
       const loaded = ref(false)
 
-      const handleModalClose = () => {modal.hideModal(); router.push('/');}
+      const handleModalClose = () => ctx.emit('modal-close')
 
       // const { properties, refArray, itemTouched } = useInitEdit(props.editableColumns)
 
@@ -92,10 +92,10 @@ export default defineComponent({
       // needed to be wrapped in ref 
       let refArray = ref(props.editableColumns.map(prop => ref('')))
       let itemTouched
-
+      let params
       // params not available w/o timeout
       setTimeout(() => {
-        const params = router.currentRoute.value.params
+        params = router.currentRoute.value.params
         item.value = JSON.parse(params['item'].toString())
         const values = props.editableColumns.map(prop => item.value[prop])
         const edit = useInitEdit(values)
@@ -114,7 +114,7 @@ export default defineComponent({
         if (itemTouched.value == true) {
           props.editableColumns.forEach((col, i) => itemEdit.value[col] = refArray.value[i].value)
           itemTouched.value = false
-          ctx.emit('modal-confirm-edit', {item: itemEdit.value})
+          ctx.emit('modal-confirm-edit', {modal: true, item: itemEdit.value, itemType: params['itemType']})
         }
         handleModalClose()
       }
