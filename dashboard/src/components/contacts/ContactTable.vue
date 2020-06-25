@@ -48,10 +48,10 @@
         <BaseIcon color="blue" name="edit"></BaseIcon>        
       </td>
 
-      <td class="icon-cell" v-if="contact.locked" @click="toggleDeletable(contact)">
+      <td class="icon-cell" v-if="contact.locked" @click="toggleLocked(contact)">
         <BaseIcon color="gold" name="lock"></BaseIcon>
       </td>
-      <td class="icon-cell" v-else @click="toggleDeletable(contact)">
+      <td class="icon-cell" v-else @click="toggleLocked(contact)">
         <BaseIcon color="silver" name="unlock"></BaseIcon>
       </td>
 
@@ -261,12 +261,12 @@ export default defineComponent({
         }
       }
       
-      const toggleDeletable = async (contact: Contact) => {
+      const toggleLocked = async (contact: Contact) => {
         if (contact.locked == false) {
-          await contactStore.toggleDeletable(contact, true)
+          await contactStore.toggleLocked(contact, true)
           ctx.emit('update-contacts')
         } else {
-          await contactStore.toggleDeletable(contact, false)
+          await contactStore.toggleLocked(contact, false)
           ctx.emit('update-contacts')
         }
       }
@@ -370,7 +370,7 @@ export default defineComponent({
       contactCardModal,
       deleteContact,
       toggleEditable,
-      toggleDeletable,
+      toggleLocked,
       handleConfirmDelete
     }
 

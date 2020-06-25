@@ -38,9 +38,9 @@
     /> -->
   </div>
 
-  <teleport :to="`#delete-item-modal`" v-if="itemDeleteModal.visible">
+  <!-- <teleport :to="`#delete-item-modal`" v-if="itemDeleteModal.visible">
     <ModalWarning @delete-item="confirmDelete" :destination="`#delete-item-modal`" />
-  </teleport>
+  </teleport> -->
 
   <!-- <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible">
     <BaseItemEditCard

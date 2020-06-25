@@ -68,9 +68,9 @@ export class TableStoreLocal extends StoreLocal implements IStoreLocal<ITableIte
     this.state.records.all[item[this.idSymbol]].editable = editable
   }
   
-  toggleDeletable(item: ITableItem, deletable: boolean) {
+  toggleLocked(item: ITableItem, locked: boolean) {
     console.log('toggle editable from table store')
-    this.state.records.all[item[this.idSymbol]].locked = deletable
+    this.state.records.all[item[this.idSymbol]].locked = locked
   }  
 }
 

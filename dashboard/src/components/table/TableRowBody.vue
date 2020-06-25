@@ -75,7 +75,7 @@ export default defineComponent({
 
   emits: [
     'handle-delete',
-    'handle-toggle-delete',
+    'handle-toggle-locked',
     'handle-toggle-edit',
     'handle-input-edit',
     'handle-edit-modal'
@@ -162,7 +162,7 @@ export default defineComponent({
       // console.log(e.action)
       switch(e.action) {
         case ACTION_LOCKED:
-          ctx.emit('handle-toggle-delete', e.item)
+          ctx.emit('handle-toggle-locked', e.item)
           break
         case ACTION_DELETE:
           ctx.emit('handle-delete', e.item)

@@ -99,10 +99,10 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
     // contact.editable = editable
   }
   
-  toggleDeletable(oldContact: Contact, deletable: boolean) {
-    // console.log('toggle deletable')
+  toggleLocked(oldContact: Contact, locked: boolean) {
+    // console.log('toggle locked')
     // without this line I was getting the bug where I had to click twice
-    this.state.records.all[oldContact._id].locked = deletable
+    this.state.records.all[oldContact._id].locked = locked
     const newContact: Contact = {
       _id: oldContact._id,
       itemId: oldContact._id,
@@ -112,7 +112,7 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
       created: oldContact.created,
       edited: oldContact.edited,
       editable: oldContact.editable,
-      locked: deletable
+      locked: locked
     }
     this.editRecord(oldContact, newContact)
   }

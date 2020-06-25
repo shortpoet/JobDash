@@ -95,12 +95,12 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
     // task.editable = editable
   }
   
-  toggleDeletable(oldTask: Task, deletable: boolean) {
+  toggleLocked(oldTask: Task, locked: boolean) {
     // without this line I was getting the bug where I had to click twice
     // now not anymore
     // TBD
     // console.log(oldTask)
-    // this.state.records.all[oldTask._id].locked = deletable
+    // this.state.records.all[oldTask._id].locked = locked
 
     const newTask: Task = {
       _id: oldTask._id,
@@ -112,7 +112,7 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
       created: oldTask.created,
       edited: oldTask.edited,
       editable: oldTask.editable,
-      locked: deletable
+      locked: locked
     }
     this.editRecord(oldTask, newTask)
   }  

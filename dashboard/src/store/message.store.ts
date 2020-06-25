@@ -111,9 +111,9 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
     // message.editable = editable
   }
   
-  toggleDeletable(oldMessage: Message, deletable: boolean) {
+  toggleLocked(oldMessage: Message, locked: boolean) {
     // without this line I was getting the bug where I had to click twice
-    this.state.records.all[oldMessage._id].locked = deletable
+    this.state.records.all[oldMessage._id].locked = locked
 
     const newMessage: Message = {
       _id: oldMessage._id,
@@ -125,7 +125,7 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
       created: oldMessage.created,
       edited: oldMessage.edited,
       editable: oldMessage.editable,
-      locked: deletable
+      locked: locked
     }
     this.editRecord(oldMessage, newMessage)
   }  

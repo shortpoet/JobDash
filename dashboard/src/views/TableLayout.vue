@@ -28,7 +28,7 @@
               :control-names="controlNamesRef"
               :editable-columns="editableColumnNames"
               @handle-delete="handleDelete"
-              @handle-toggle-delete="handleToggleDelete"
+              @handle-toggle-locked="handleToggleLocked"
               @handle-toggle-edit="handleToggleEdit"
               @handle-confirm-edit="handleConfirmEdit"
               @handle-input-edit="handleInputEdit"
@@ -42,9 +42,9 @@
     </div>
   </section>
 
-  <!-- <teleport :to="`#delete-${itemType}-modal`" v-if="itemDeleteModal.visible">
-    <ModalWarning @delete-item="confirmDelete" :destination="`#delete-${itemType}-modal`" />
-  </teleport> -->
+  <teleport :to="`#delete-item-modal`" v-if="itemDeleteModal.visible && tableHasDeleteCandidate">
+    <ModalWarning @delete-item="confirmDelete" :destination="`#delete-item-modal`" />
+  </teleport>
 
   <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible && tableHasEditCandidate">
     <BaseItemEditCard
@@ -211,28 +211,29 @@ export default defineComponent({
       const itemDeleteModal = useModal(deleteItemDestination)
       const editItemDestination: Destination = '#edit-item-modal'
       const itemEditModal = useModal(editItemDestination)
-
     //#endregion
-
 
     //#region delete
       const taskIdSymbol = '_id'
       const itemDelete = useDelete(props.store, ctx)
 
-      const handleToggleDelete = async (e) => {
+      const handleToggleLocked = async (e) => {
         // colorLog('handle toggle delete at main layout', 'yellow', 'green')
         if (e.item.locked == false) {
-          await props.store.toggleDeletable(e.item, true)
+          await props.store.toggleLocked(e.item, true)
           ctx.emit('update-values', props.itemType)
         } else {
-          await props.store.toggleDeletable(e.item, false)
+          await props.store.toggleLocked(e.item, false)
           ctx.emit('update-values', props.itemType)
         }
       }
       const tableHasDeleteCandidate = ref(false)
       const handleDelete = (e) => {
         // colorLog('handle delete from table layout', 'magenta', 'yellow')
-        tableHasDeleteCandidate.value = itemDelete.handleConfirmDelete(e.item, itemDeleteModal, taskIdSymbol, props.itemType)
+        if (props.itemType == e.itemType) {
+          tableHasDeleteCandidate.value = true
+          itemDelete.handleConfirmDelete(e.item, itemDeleteModal, taskIdSymbol, props.itemType)
+        }
       }
 
       const confirmDelete = () => {
@@ -292,18 +293,17 @@ export default defineComponent({
         }
       //#endregion
       //#region modal edit
-
         const tableHasEditCandidate = ref(false)
         const handleEditModal = async (e) => {
           colorLog('handle edit modal at table layout', 'blue', 'green')
-          console.log(props.itemType)
-          console.log(e.itemType)
+          // console.log(props.itemType)
+          // console.log(e.itemType)
           if (props.itemType == e.itemType) {
             tableHasEditCandidate.value = true
             itemEditModal.showModal()
             const idSymbol = '_id'
             const itemType = props.itemType
-            console.log(e.item[idSymbol])
+            // console.log(e.item[idSymbol])
             router.push({
               name: '#edit-item-modal',
               path: `/${itemType}/${e.item[idSymbol]}`,
@@ -316,24 +316,7 @@ export default defineComponent({
           itemEditModal.hideModal()
           router.push('/')
           tableHasEditCandidate.value = false
-        }
-        
-      // const handleEditModal = (e) => {
-      //   switch(e.itemType) {
-      //     case 'task':
-      //       colorLog('handle edit modal at main layout', 'blue', 'green')
-      //       itemEditModal.showModal()
-      //       const idSymbol = '_id'
-      //       const itemType = 'task'
-      //       console.log(e.item[idSymbol])
-      //       router.push({
-      //         name: '#edit-item-modal',
-      //         path: `/${itemType}/${e.item[idSymbol]}`,
-      //         params: { id: e.item[idSymbol] } 
-      //       })
-      //   }
-      // }
-
+        }        
     //#endregion
 
     //#region future
@@ -360,11 +343,13 @@ export default defineComponent({
         })
       //#endregion
     //#endregion
-    console.log(editableColumnNames)
+
     return {
       tableHasEditCandidate,
+      tableHasDeleteCandidate,
       itemDeleteModal,
       itemEditModal,
+      confirmDelete,
       handleModalClose,
       handleConfirmEdit,
       editItemDestination,
@@ -380,11 +365,9 @@ export default defineComponent({
       handleEditableChange,
       handleToggleEdit,
       handleEditModal,
-      // handleConfirmEdit: (e) => ctx.emit('handle-confirm-edit', e),
       handleInputEdit,
-      handleToggleDelete,
+      handleToggleLocked,
       handleDelete,
-      confirmDelete: (item) => ctx.emit('confirm-delete', item),
     }
 
   }

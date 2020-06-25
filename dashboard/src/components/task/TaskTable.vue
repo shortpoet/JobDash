@@ -50,10 +50,10 @@
         <BaseIcon color="blue" name="edit"></BaseIcon>        
       </td>
 
-      <td class="icon-cell" v-if="task.locked" @click="toggleDeletable(task)">
+      <td class="icon-cell" v-if="task.locked" @click="toggleLocked(task)">
         <BaseIcon color="gold" name="lock"></BaseIcon>
       </td>
-      <td class="icon-cell" v-else @click="toggleDeletable(task)">
+      <td class="icon-cell" v-else @click="toggleLocked(task)">
         <BaseIcon color="silver" name="unlock"></BaseIcon>
       </td>
 
@@ -209,15 +209,15 @@ export default defineComponent({
         }
       }
       
-      const toggleDeletable = async (task: Task) => {
+      const toggleLocked = async (task: Task) => {
         // console.log('task table')
         // console.log(task.locked)
         if (task.locked == false) {
-          await taskStore.toggleDeletable(task, true)
+          await taskStore.toggleLocked(task, true)
           ctx.emit('update-tasks')
           // console.log(task.locked)
         } else {
-          await taskStore.toggleDeletable(task, false)
+          await taskStore.toggleLocked(task, false)
           ctx.emit('update-tasks')
           // console.log(task.locked)
         }
@@ -283,7 +283,7 @@ export default defineComponent({
       updateTasks,
       deleteTask,
       toggleEditable,
-      toggleDeletable,
+      toggleLocked,
       handleConfirmDelete
     }
 

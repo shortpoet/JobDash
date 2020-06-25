@@ -24,7 +24,7 @@ export function useDelete(store, ctx) {
       if (item.locked) {
         deleteCandidate.value = item
         modal.showModal()
-        return true
+        // return true
       } else {
         deleteCandidate.value = item
         deleteItem(modal, idSymbol, itemType)
@@ -40,15 +40,15 @@ export function useDelete(store, ctx) {
       ctx.emit('update-values', itemType)
     }
     
-    const toggleDeletable = async (item) => {
-      // console.log('use delete toggle deletable')
+    const toggleLocked = async (item) => {
+      // console.log('use delete toggle locked')
       // console.log(item.locked)
       if (item.locked == false) {
-        await store.toggleDeletable(item, true)
+        await store.toggleLocked(item, true)
         ctx.emit('update-values')
         // console.log(item.locked)
       } else {
-        await store.toggleDeletable(item, false)
+        await store.toggleLocked(item, false)
         ctx.emit('update-values')
         // console.log(item.locked)
       }

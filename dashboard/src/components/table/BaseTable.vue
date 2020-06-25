@@ -20,7 +20,7 @@
         @handle-input-edit="handleInputEdit"
         @handle-toggle-edit="handleToggleEdit"
         @handle-edit-modal="handleEditModal"
-        @handle-toggle-delete="handleToggleDelete"
+        @handle-toggle-locked="handleToggleLocked"
         @handle-click="handleClick"
         @handle-edit-init="handleEditInit"
         :editable-columns="editableColumns"
@@ -93,7 +93,7 @@ export default defineComponent({
     'handle-input-edit',
     'handle-edit-modal',
     'handle-toggle-edit',
-    'handle-toggle-delete',
+    'handle-toggle-locked',
     'confirm-delete',
     'update-values',
   ],
@@ -187,7 +187,7 @@ export default defineComponent({
         // console.log(e)        
         ctx.emit('handle-confirm-edit', {modal: true, item: e.item, itemType: props.itemType})
       },
-      handleToggleDelete: (item) => ctx.emit('handle-toggle-delete', {item: item, itemType: props.itemType}),
+      handleToggleLocked: (item) => ctx.emit('handle-toggle-locked', {item: item, itemType: props.itemType}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       updateValues: () => ctx.emit('update-values')
     }

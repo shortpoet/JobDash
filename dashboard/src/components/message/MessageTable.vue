@@ -51,10 +51,10 @@
         <BaseIcon color="blue" name="edit"></BaseIcon>        
       </td>
 
-      <td class="icon-cell" v-if="message.locked" @click="toggleDeletable(message)">
+      <td class="icon-cell" v-if="message.locked" @click="toggleLocked(message)">
         <BaseIcon color="gold" name="lock"></BaseIcon>
       </td>
-      <td class="icon-cell" v-else @click="toggleDeletable(message)">
+      <td class="icon-cell" v-else @click="toggleLocked(message)">
         <BaseIcon color="silver" name="unlock"></BaseIcon>
       </td>
 
@@ -211,15 +211,15 @@ export default defineComponent({
         }
       }
       
-      const toggleDeletable = async (message: Message) => {
+      const toggleLocked = async (message: Message) => {
         // console.log('message table')
         // console.log(message.locked)
         if (message.locked == false) {
-          await messageStore.toggleDeletable(message, true)
+          await messageStore.toggleLocked(message, true)
           ctx.emit('update-messages')
           // console.log(message.locked)
         } else {
-          await messageStore.toggleDeletable(message, false)
+          await messageStore.toggleLocked(message, false)
           ctx.emit('update-messages')
           // console.log(message.locked)
         }
@@ -285,7 +285,7 @@ export default defineComponent({
       updateMessages,
       deleteMessage,
       toggleEditable,
-      toggleDeletable,
+      toggleLocked,
       handleConfirmDelete
     }
 
