@@ -1,17 +1,31 @@
 .main-layout {
-  .ui-collapse {
-    background-color: $royal-purple;
-    display: flex;
-    justify-content: space-between;
-    padding: .15rem 0rem .25rem 1rem;
-    border-radius: $task-border-radius;
-    color: white;
-    // margin here to offset bulma columns -.75rem default
-    // so clickable area
-    margin: 0rem 0rem .75rem 0rem;
-    cursor: pointer;
-    .ui-collapse-icon {
+  .minimize-container{
+    .ui-collapse {
+      background-color: $royal-purple;
+      display: flex;
+      justify-content: space-between;
+      padding: .15rem 0rem .25rem 1rem;
+      border-radius: $task-border-radius;
+      color: white;
+      // margin here to offset bulma columns -.75rem default
+      // so clickable area
+      margin: 0rem 0rem .75rem 0rem;
+      cursor: pointer;
+      .ui-collapse-icon {
+      }
     }
+    .columns {
+      .column.tabs-column {
+        max-width: 25rem;
+        section.tabs-section {
+        }
+      }
+    }
+
+  }
+  .minimize-container-vertical {
+    display: flex;
+    flex-direction: row;
   }
 }
 

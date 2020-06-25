@@ -1,12 +1,13 @@
 <template>
-  <div class="ui-collapse" @click="handleChange">
-    <p>{{ componentName }}</p>
-    <BaseIcon class="ui-collapse-icon" :name="'minus'" :color="'white'"/>
+  <div class="minimize-container">
+    <div class="ui-collapse" @click="handleChange">
+      <p>{{ componentName }}</p>
+      <BaseIcon class="ui-collapse-icon" :name="'minus'" :color="'white'"/>
+    </div>
+    <div :class="`${classProp}`"  v-if="showComponent">
+      <slot />
+    </div>
   </div>
-  <div :class="`${classProp}`"  v-if="showComponent">
-    <slot />
-  </div>
-  <div/>
 </template>
 
 <script lang="ts">

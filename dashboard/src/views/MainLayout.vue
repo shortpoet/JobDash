@@ -9,14 +9,14 @@
       :class-prop="'columns'"
       :component-name="'Create and Tables'"
     >
-      <div class="column is-two-fifths">
+      <div class="column tabs-column">
         <CreateLayout
           @update-contacts="onUpdateContacts"    
           @update-tasks="onUpdateTasks"
         />
         <!-- <TabsLayout @tab-change="tabChange"/> -->
       </div>
-      <div class="column is-three-fifths">
+      <div class="column">
         <TableLayout
           v-for="(table, i) in tables"
           :destination="editItemDestination"
@@ -160,34 +160,38 @@ export default defineComponent({
       const itemEditModal = useModal(editItemDestination)
     //#endregion
 
-    const onUpdateContacts = async () => {
-      console.log('update contacts')
-      await nextTick()
-      // tables.filter(t => t.value.itemType == contactItemtype.value)[0].value.items = await contactStore.updateRecords('contact')
-      tables[0].value.items = await contactStore.updateRecords('contact')
-    }
-    const onUpdateTasks = async () => {
-      console.log('update tasks')
-      await nextTick()
-      // tables.filter(t => t.value.itemType == taskItemtype.value)[0].value.items = await taskStore.updateRecords('task')
-      tables[1].value.items = await taskStore.updateRecords('task')
-    }
-    const onUpdateMessages = async () => {
-      console.log('update messages')
-      await nextTick()
-      // tables.filter(t => t.value.itemType == messageItemtype.value)[0].value.items = await messageStore.updateRecords('message')
-      tables[2].value.items = await messageStore.updateRecords('message')
-    }
-    const onUpdateValues = (e) => {
-      colorLog('on update values - main layout', 'magenta', 'white')
-      console.log(e)
-      switch(e) {
-        case 'task':
-          onUpdateTasks();
-          break;
+    //#region update values
+      const onUpdateContacts = async () => {
+        console.log('update contacts')
+        await nextTick()
+        // tables.filter(t => t.value.itemType == contactItemtype.value)[0].value.items = await contactStore.updateRecords('contact')
+        tables[0].value.items = await contactStore.updateRecords('contact')
       }
-    }
-
+      const onUpdateTasks = async () => {
+        console.log('update tasks')
+        await nextTick()
+        // tables.filter(t => t.value.itemType == taskItemtype.value)[0].value.items = await taskStore.updateRecords('task')
+        tables[1].value.items = await taskStore.updateRecords('task')
+      }
+      const onUpdateMessages = async () => {
+        console.log('update messages')
+        await nextTick()
+        // tables.filter(t => t.value.itemType == messageItemtype.value)[0].value.items = await messageStore.updateRecords('message')
+        tables[2].value.items = await messageStore.updateRecords('message')
+      }
+      const onUpdateValues = (e) => {
+        colorLog('on update values - main layout', 'magenta', 'white')
+        console.log(e)
+        switch(e) {
+          case 'task':
+            onUpdateTasks();
+            break;
+          case 'contact':
+            onUpdateContacts();
+            break;
+        }
+      }
+    //#endregion
 
     //#region table
       const testItems = ref([])
