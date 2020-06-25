@@ -8,6 +8,7 @@
     <BaseMinimize
       :class-prop="'columns'"
       :component-name="'Create and Tables'"
+      minimized
     >
       <div class="column tabs-column">
         <CreateLayout
@@ -26,31 +27,17 @@
           :id-symbol="table.idSymbol"
           :store="table.store"
           :editable-columns="table.editableColumns"
-          :delete-confirm="deleteConfirm"
           @update-values="onUpdateValues"
         />
       </div>
     </BaseMinimize>
 
-    <!-- <BoardLayout
+    <BoardLayout
       :items="allTasks"
       :active-board="activeBoard"
-    /> -->
-  </div>
-
-  <!-- <teleport :to="`#delete-item-modal`" v-if="itemDeleteModal.visible">
-    <ModalWarning @delete-item="confirmDelete" :destination="`#delete-item-modal`" />
-  </teleport> -->
-
-  <!-- <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible">
-    <BaseItemEditCard
-      @modal-confirm-edit="modalConfirmEdit"
-      :editable-columns="editableColumnsComputed"
-      :destination="editItemDestination"
     />
-  </teleport> -->
+  </div>
   
-  <div />
 </template>
 
 <script lang="ts">
@@ -254,14 +241,6 @@ export default defineComponent({
           },
         ]))
 
-      const deleteConfirm = ref(false)
-
-      const confirmDelete = async () => {
-        colorLog('confirm delete from main layout', 'magenta', 'yellow')
-        deleteConfirm.value = true;
-        await nextTick()
-        deleteConfirm.value = false;
-      }
     
       //#region tables dynamic - experimental
         // const tableTypes = reactive([
@@ -296,8 +275,6 @@ export default defineComponent({
 
     return {
       // main
-      deleteConfirm,
-      confirmDelete,
       tables,
       testItems,
       testItemType,

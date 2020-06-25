@@ -103,14 +103,12 @@ export default defineComponent({
       default: () => [CONTROL_ID, CONTROL_DELETE, CONTROL_EDIT, CONTROL_LOCKED, CONTROL_MESSAGE]
     },
     editableColumns: {
-      type: Array as () => string[]
+      type: Array as () => string[],
+      required: true
     },
     store: {
       type: Object,
       required: false
-    },
-    deleteConfirm: {
-      type: Boolean
     }
   },
   components: {
@@ -243,14 +241,6 @@ export default defineComponent({
           tableHasDeleteCandidate.value = false
         }
       }
-      watch(
-        () => props.deleteConfirm,
-        (value) => {
-          if (value == true) {
-            confirmDelete()
-          }
-        }
-        )
     //#endregion
     
     //#region edit
