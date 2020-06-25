@@ -10,14 +10,14 @@
       :component-name="'Create and Tables'"
       minimized
     >
-      <div class="column tabs-column">
+      <div class="column tabs-column is-one-fifth">
         <CreateLayout
           @update-contacts="onUpdateContacts"    
           @update-tasks="onUpdateTasks"
         />
         <!-- <TabsLayout @tab-change="tabChange"/> -->
       </div>
-      <div class="column">
+      <div class="column is-four-fifths">
         <TableLayout
           v-for="(table, i) in tables"
           :destination="editItemDestination"
@@ -119,22 +119,32 @@ export default defineComponent({
       const cont = {} as Contact
       const contARr = []
       contARr.push(cont)
+
       const allContacts = ref<Contact[]>(contARr)
       const contactLoading = ref(true)
       allContacts.value = await contactStore.loadRecords('contact')
       contactLoading.value = false
 
     //#region task
+      const ta = {} as Task
+      const taARr = []
+      taARr.push(ta)
+
       const taskStore: TaskStore = store.modules[TASK_STORE_SYMBOL]
-      const allTasks = ref<Task[]>([])
+      const allTasks = ref<Task[]>(taARr)
       const tasksLoading = ref(true)
       allTasks.value = await taskStore.loadRecords('task')
       tasksLoading.value = false
     //#endregion
 
     //#region message
+      const me = {} as Message
+      const meARr = []
+      meARr.push(me)
+      console.log(me)
+
       const messageStore: MessageStore = store.modules[MESSAGE_STORE_SYMBOL]
-      const allMessages = ref<Message[]>([])
+      const allMessages = ref<Message[]>(meARr)
       const messagesLoading = ref(true)
       allMessages.value = await messageStore.loadRecords('message')
       messagesLoading.value = false
@@ -203,7 +213,7 @@ export default defineComponent({
         //   idSymbol: ITEMS_ID_SYMBOL
         // },
           {
-            columnNames: Object.keys(allContacts.value[0]),
+            columnNames: allContacts.value[0] ? Object.keys(allContacts.value[0]) : [],
             items: allContacts.value,
             itemType: contactItemtype.value,
             idSymbol: CONTACT_ID_SYMBOL,
@@ -215,7 +225,7 @@ export default defineComponent({
             ]
           },
           {
-            columnNames: Object.keys(allTasks.value[0]),
+            columnNames: allTasks.value[0] ? Object.keys(allTasks.value[0]) : [],
             items: allTasks.value,
             itemType: taskItemtype.value,
             idSymbol: TASK_ID_SYMBOL,
@@ -227,7 +237,7 @@ export default defineComponent({
             ]
           },
           {
-            columnNames: Object.keys(allMessages.value[0]),
+            columnNames: allMessages.value[0] ? Object.keys(allMessages.value[0]) : [],
             items: allMessages.value,
             itemType: messageItemtype.value,
             idSymbol: MESSAGE_ID_SYMBOL,
