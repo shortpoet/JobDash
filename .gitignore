@@ -2,6 +2,9 @@
 node_modules
 /dist
 
+# tmp files, e.g. MongoDB data
+tmp.nosync/
+
 # local env files
 .env.local
 .env.*.local
