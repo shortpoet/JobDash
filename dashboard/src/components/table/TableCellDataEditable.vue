@@ -38,7 +38,7 @@ export default defineComponent({
     // }
   },
   emits: ['handle-input-edit'],
-  async setup(props, ctx){
+  setup(props, ctx){
     
     // colorLog('table data edit', 'red', 'yellow')
     const initialValue = ref(props.props.propertyData[props.props.propertyName])

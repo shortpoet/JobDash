@@ -28,7 +28,6 @@ import MessageWriter from './../../components/common/MessageWriter.vue'
 
 import { Contact } from '../../interfaces/contact/contact.interface'
 
-import useContact from '../../composables/useContact'
 import { useModal } from '../../composables/useModal'
 import { useUpdateValues } from '../../composables/useUpdateValues'
 
@@ -105,8 +104,7 @@ export default defineComponent({
           contactEdit.value.email = emailEdit.value
           await contactStore.editRecord(
             contact.value, 
-            contactEdit.value,
-            '_id'
+            contactEdit.value
           )
           contactTouched.value = false
           ctx.emit('update-contacts')

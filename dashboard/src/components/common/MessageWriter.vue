@@ -40,7 +40,7 @@ import { defineComponent, ref, toRefs } from 'vue'
 import moment from 'moment'
 
 import { MessageStore } from '../../store/message.store'
-import { useStore } from '../../store'
+import { useStore, MESSAGE_STORE_SYMBOL } from '../../store'
 import { ContactStore } from '../../store/contact.store'
 
 import { Contact } from '../../interfaces/contact/contact.interface'
@@ -49,7 +49,6 @@ import { Destination } from '../../interfaces/common/modal.interface'
 
 import { useUpdateValues } from '../../composables/useUpdateValues'
 import { useModal } from '../../composables/useModal'
-import  useMessage from '../../composables/useMessage'
 export default defineComponent({
   name: 'MessageWriter',
   props: {
@@ -65,9 +64,13 @@ export default defineComponent({
   async setup(props, ctx) {
 
     const store = useStore()
-    const messageStore: MessageStore = store.modules['messageStore']
-    const allMessagesRef = ref<Message[]>()
-    const messageUse = await useMessage(messageStore, allMessagesRef)
+    //#region messageUse
+      const messageStore: MessageStore = store.modules[MESSAGE_STORE_SYMBOL]
+      const allMessages = ref<Message[]>([])
+      const messagesLoading = ref(true)
+      allMessages.value = await messageStore.loadRecords('message')
+      messagesLoading.value = false
+    //#endregion
     // console.log('messages')
     // console.log(allMessagesRef.value)
     // const contactStore: ContactStore = store.modules['contactStore']
@@ -105,7 +108,6 @@ export default defineComponent({
         messageEdit.value.edited = moment()
         await messageStore.createRecord(
           messageEdit.value,
-          '_id',
           true
         )
         // delete placeholder with '-1' _id

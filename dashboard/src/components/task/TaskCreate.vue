@@ -25,7 +25,6 @@ import BaseInput from './../../components/common/BaseInput.vue'
 import { Task } from '../../interfaces/task/task.interface'
 import { Contact } from '../../interfaces/contact/contact.interface'
 
-import useTask from '../../composables/useTask'
 
 export default defineComponent({
   name: 'TaskCreate',
@@ -54,12 +53,13 @@ export default defineComponent({
       // }
 
       const allTasks = ref<Task[]>([])
+      const loading = ref(true)
+      allTasks.value = await taskStore.loadRecords('task')
+      loading.value = false
 
       // is this correct usage of provide/inject
       // const taskUse = await useTask(iTaskStore, allTasks)
-      const taskUse = await useTask(taskStore, allTasks)
 
-      const onUpdateTasks = taskUse.onUpdateTasks
     //#endregion
 
     //#region contactUse

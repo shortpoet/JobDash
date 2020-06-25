@@ -3,6 +3,7 @@ import axios from "axios"
 import { Contact } from "../interfaces/contact/contact.interface"
 import { ContactDTO } from "../interfaces/contact/contactDTO.interface"
 import { StateMap, Store, StoreState, IStore, StoreAxios } from "./store.interface"
+import { ITableItem } from "../interfaces/table/table.item.interface"
 
 interface ContactStateMap extends StateMap {
   ids: string[]
@@ -12,7 +13,6 @@ interface ContactStateMap extends StateMap {
 
 interface ContactStoreState extends StoreState{
   records: StateMap,
-  // contacts: StateMap
 }
 
 const initialContactsStateMap = () : ContactStateMap => ({
@@ -25,14 +25,13 @@ const initialContactsStateMap = () : ContactStateMap => ({
 
 const initialContactStoreState = () : ContactStoreState => ({
   records: initialContactsStateMap(),
-  // contacts: initialContactsStateMap()
 })
 
 
 export class ContactStore extends StoreAxios<Contact> implements IStore<Contact> {
   protected state: ContactStoreState
-  constructor(initialState: ContactStoreState) {
-    super(initialState)
+  constructor(idSymbol: string, initialState: ContactStoreState) {
+    super(idSymbol, initialState)
     // this.state['contacts'] = this.state.records
     // this.state = reactive(initialState)
   }
@@ -43,20 +42,20 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
   }
 
   async createRecord(contact: Contact) {
-    super.createRecord(contact, '_id')
+    super.createRecord(contact)
     const response = await axios.post<ContactDTO>('http://localhost:3000/contact/create', contact)
     this.fetchRecords()
   }
 
   async deleteRecord(contact: Contact): Promise<string> {
-    super.deleteRecord(contact, '_id')
+    super.deleteRecord(contact)
     const response = await axios.delete<ContactDTO>(`http://localhost:3000/contact/delete?contact_id=${contact._id}`)
     return response.data.contact._id
   }
 
   
-  async editRecord(oldContact: Contact, newContact: Contact, idSymbol: (string | number)) {
-    super.editRecord(oldContact, newContact, '_id')
+  async editRecord(oldContact: Contact, newContact: Contact) {
+    super.editRecord(oldContact, newContact)
     // console.log('writing to db')
 
     const response = await axios.put<ContactDTO>(
@@ -67,10 +66,20 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
 
   async fetchRecords() {
     // get is generic so can specify type
-    const data = await this._fetchRecords('http://localhost:3000/contact/contacts')
+    const data = await super._fetchRecords('http://localhost:3000/contact/contacts')
     // console.log('fetch records')
-    this.addRecords(data, '_id')
+    this.addRecords(data)
     this.state.records.loaded = true
+  }
+
+  public async loadRecords (caller: string): Promise<any[]> {
+    console.log(`load records for ${caller}`)
+    if (!this.state.records.loaded) {
+      console.log('fetching - not yet loaded')
+      await this.fetchRecords()
+    }
+    console.log('loading')
+    return super.updateRecords(caller);
   }
 
   toggleEditable(contact: Contact, editable: boolean) {
@@ -105,22 +114,25 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
       editable: oldContact.editable,
       locked: deletable
     }
-    this.editRecord(oldContact, newContact, '_id')
+    this.editRecord(oldContact, newContact)
   }
 }
 
-const contactStore = new ContactStore(initialContactStoreState())
-contactStore.getState()
+// const contactStore = new ContactStore(initialContactStoreState())
+// contactStore.getState()
 
-export const provideContactStore = () =>  {
-  provide('contactStore', contactStore)
+const CONTACT_STORE = 'contactStore'
+
+
+export const provideContactStore = (idSymbol) =>  {
+  provide(CONTACT_STORE, new ContactStore(idSymbol, initialContactStoreState()))
 }
 
 
-export const createContactStore = () => {
-  const contactStore = new ContactStore(initialContactStoreState())
-  contactStore.getState()
-  return contactStore
+export const createContactStore = (idSymbol) => {
+  const store = new ContactStore(idSymbol, initialContactStoreState())
+  store.getState()
+  return store
 }
 
 export const useContactStore = (): ContactStore => {
@@ -129,8 +141,8 @@ export const useContactStore = (): ContactStore => {
   // inject this via 'store' string
   // search for closest component that called provideStore with same string 
   // and return that value
-  const contactStore = inject<ContactStore>('contactStore')
-  return contactStore
+  const store = inject<ContactStore>(CONTACT_STORE)
+  return store
 }
 
 export interface IContactStore {

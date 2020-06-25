@@ -76,7 +76,6 @@ import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import moment from 'moment'
 import { useStore } from '../../store'
 import { useRouter } from 'vue-router'
-import { StoreConstructor } from '../../store/store.interface'
 import { TaskStore } from '../../store/task.store'
 import { useUpdateValues } from '../../composables/useUpdateValues'
 
@@ -91,7 +90,6 @@ import { Field } from '../../interfaces/common/field.interface'
 import { Destination } from '../../interfaces/common/modal.interface'
 
 import { useModal } from '../../composables/useModal'
-import useTask from '../../composables/useTask'
 
 
 export default defineComponent({

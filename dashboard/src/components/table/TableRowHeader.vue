@@ -5,7 +5,8 @@
       :key="i"
       :props="propsComputed(column)"
       :is="componentComputed(column)"
-    />
+    >
+    </component>
     <!-- <TableCellHeaderData
       v-for="prop in dataProperties" 
       :key="prop"
@@ -23,7 +24,7 @@
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import TableCellHeaderData from './TableCellHeaderData.vue'
 import TableCellHeaderControl from './TableCellHeaderControl.vue'
-import { ITableControl, ITableData, BaseTableConfig, BaseTableControl, BaseTableData } from './../../interfaces/table/table.interface'
+import { ITableColumn, ITableColumnData, ITableColumnControl, BaseTableColumnControl, BaseTableColumnData } from './../../interfaces/table/table.interface'
 
 export default defineComponent({
   name: 'TableRowHeader',
@@ -38,7 +39,7 @@ export default defineComponent({
       required: true
     },
     columns: {
-      type: Array as () => (ITableControl|ITableData)[]
+      type: Array as () => ITableColumn[]
     }
   },
 
@@ -48,23 +49,23 @@ export default defineComponent({
   },
 
 
-  async setup(props, ctx){
-    const componentComputed = (column: (ITableControl|ITableData)) => {
-      if (column instanceof BaseTableControl) {
+  setup(props, ctx){
+    const componentComputed = (column: ITableColumn) => {
+      if (column instanceof BaseTableColumnControl) {
         return 'TableCellHeaderControl'
       }
-      else if (column instanceof BaseTableData) {
+      else if (column instanceof BaseTableColumnData) {
         return 'TableCellHeaderData'
       }
     }
-    const propsComputed = (column: (ITableControl|ITableData)) => {
-      if (column instanceof BaseTableControl) {
+    const propsComputed = (column: ITableColumn) => {
+      if (column instanceof BaseTableColumnControl) {
         return {
           displayName: column.displayName,
           action: column.action
         }
       }
-      else if (column instanceof BaseTableData) {
+      else if (column instanceof BaseTableColumnData) {
         return {
           propertyName: column.propertyName
         }

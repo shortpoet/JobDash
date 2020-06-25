@@ -8,6 +8,23 @@ import { Task } from '../interfaces/task/task.interface'
 import { Message } from '../interfaces/message/message.interface'
 import { createBoardStore } from './board.store'
 import { IBoardColumn } from '../interfaces/board/board.column.interface'
+import { TableItem } from '../interfaces/table/table.item.interface'
+import { createTableStoreLocal } from './table.store'
+
+export const ITEMS_ID_SYMBOL = 'id'
+export const CONTACT_ID_SYMBOL = '_id'
+export const TASK_ID_SYMBOL = '_id'
+export const MESSAGE_ID_SYMBOL = '_id'
+
+const STORE = 'store'
+
+export const ITEMS_COLLECTION_NAME = 'items'
+
+export const TABLE_STORE_LOCAL_SYMBOL = 'tableStoreLocal'
+
+export const CONTACT_STORE_SYMBOL = 'contactStore'
+export const TASK_STORE_SYMBOL = 'taskStore'
+export const MESSAGE_STORE_SYMBOL = 'messageStore'
 
 const initialStateMap = () : StateMap => ({
   ids: [
@@ -21,30 +38,42 @@ const initialStoreState = (): StoreState => ({
   records: initialStateMap()
 })
 
-const store = new Store(initialStoreState())
-
-const contactStore = createContactStore()
-contactStore.getState()
-const taskStore = createTaskStore()
-taskStore.getState()
-const messageStore = createMessageStore()
-messageStore.getState()
-
-const boardStore = createBoardStore()
-boardStore.getState()
+const store = new Store(ITEMS_ID_SYMBOL, initialStoreState())
 
 store.modules = {}
-store.modules['contactStore'] = contactStore
-store.modules['taskStore'] = taskStore
-store.modules['messageStore'] = messageStore
-store.modules['boardStore'] = boardStore
+const tableStoreLocal = createTableStoreLocal(ITEMS_ID_SYMBOL, ITEMS_COLLECTION_NAME)
+tableStoreLocal.getState()
+
+const contactStore = createContactStore(CONTACT_ID_SYMBOL)
+contactStore.getState()
+const taskStore = createContactStore(TASK_ID_SYMBOL)
+taskStore.getState()
+const messageStore = createContactStore(MESSAGE_ID_SYMBOL)
+messageStore.getState()
+
+store.modules[TABLE_STORE_LOCAL_SYMBOL] = tableStoreLocal
+store.modules[CONTACT_STORE_SYMBOL] = contactStore
+store.modules[TASK_STORE_SYMBOL] = contactStore
+store.modules[MESSAGE_STORE_SYMBOL] = contactStore
 
 export const provideStore = () => {
-  provide('store', store)
+  provide(STORE, store)
 }
 
-export const useStore = (): StoreAxios<Contact|Task|Message|IBoardColumn> => {
-  const store = inject<StoreAxios<Contact|Task|Message|IBoardColumn>>('store')
+export const useStore = (): StoreAxios<Contact>|Store<TableItem> => {
+  const store = inject<StoreAxios<Contact|Task|Message>|Store<TableItem>>(STORE)
   return store
 }
 
+// const taskStore = createTaskStore()
+// taskStore.getState()
+// const messageStore = createMessageStore()
+// messageStore.getState()
+
+// const boardStore = createBoardStore()
+// boardStore.getState()
+
+// store.modules = {}
+// store.modules['taskStore'] = taskStore
+// store.modules['messageStore'] = messageStore
+// store.modules['boardStore'] = boardStore

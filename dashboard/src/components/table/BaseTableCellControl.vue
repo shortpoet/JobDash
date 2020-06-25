@@ -35,7 +35,7 @@ export default defineComponent({
     // }
   },
   emits: ['handle-click'],
-  async setup(props, ctx){
+  setup(props, ctx){
     const handleClick = (item) => {
       // colorLog('handle click base table cell control', 'orange', 'green')
       ctx.emit('handle-click', {item: props.props.propertyData, action: props.props.action})

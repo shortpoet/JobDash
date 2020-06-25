@@ -22,7 +22,6 @@ import BaseModal from './../components/common/BaseModal.vue'
 import { useModal } from '../composables/useModal'
 
 import { Destination } from '../interfaces/common/modal.interface'
-import { Task } from '../interfaces/task/task.interface'
 
 export default defineComponent({
   name: 'MainLayout',

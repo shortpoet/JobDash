@@ -1,5 +1,5 @@
 import { Moment } from "moment";
-import { TableItem } from "../common/table.item.interface";
+import { TableItem } from "../table/table.item.interface";
 import { Contact } from "../contact/contact.interface";
 
 export interface Message extends TableItem {

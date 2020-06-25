@@ -1,7 +1,7 @@
 
 import { Contact } from '../contact/contact.interface';
 import { Moment } from "moment";
-import { TableItem } from '../common/table.item.interface';
+import { TableItem } from '../table/table.item.interface';
 
 export interface Task extends TableItem {
   _id: string;
@@ -12,6 +12,6 @@ export interface Task extends TableItem {
   contact: Contact;
   created: Moment;
   edited: Moment;
-  editable: Boolean;
-  locked: Boolean;
+  editable: boolean;
+  locked: boolean;
 }

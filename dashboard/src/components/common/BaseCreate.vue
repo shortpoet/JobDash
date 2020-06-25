@@ -69,10 +69,54 @@ export default defineComponent({
       }
     }
 
+    // from main layout in refactor
+    //#region create section
+      // const editableColumns = ref([
+      //   // 'id',
+      //   'Name',
+      //   'Category'
+      // ])
+      // const handleItemCreate = (e) => {
+      //   // tableStore.createRecord(e.item)
+      //   // tables[0].value.items = tableStore.getRecordsFromStore()
+      //   // testItems.value = tableStore.getRecordsFromStore()
+      // }
+    //#endregion
+
+    //#region edit
+      // const editItemDestination: Destination = '#edit-item-modal'
+      // const itemEditModal = useModal(editItemDestination)
+      // const modalConfirmEdit = (e) => {
+      //   console.log(e)
+      // }
+      // const router = useRouter()
+
+      // const handleEditModal = (item) => {
+      //   colorLog('handle edit modal at table row body', 'blue', 'green')
+      //   console.log(item)
+      //   itemEditModal.showModal()
+      //   console.log(item[ITEMS_ID_SYMBOL])
+      //   router.push({
+      //     name: editItemDestination,
+      //     path: `/${testItemType.value}/${item[ITEMS_ID_SYMBOL]}`,
+      //     params: { id: item[ITEMS_ID_SYMBOL], item: JSON.stringify(item) } 
+      //   })
+      // }
+    //#endregion
+
+
     return{
       cItemType,
       refArray,
-      submit
+      submit,
+      // // create
+      // editableColumns,
+      // handleItemCreate,
+      // // edit
+      // itemEditModal,
+      // handleEditModal,
+      // editItemDestination,
+
     }
 
   }

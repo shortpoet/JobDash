@@ -5,21 +5,23 @@
       :boxed="false"
       :orientation="'horizontal'"
       :type="'columns'"
+      :item-type="itemType"
       @chosen-properties="handleChosenColumnChange"
-    />
+    ></BaseSwitchArray>
     <BaseSwitchArray
       :options="controlNames"
       :boxed="false"
       :orientation="'horizontal'"
       :type="'controls'"
+      :item-type="itemType"
       @chosen-properties="handleChosenControlChange"
-    />
+    ></BaseSwitchArray>
   </BaseBox>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch, onMounted, Ref, onUpdated } from 'vue'
-import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig, ControlName } from './../../interfaces/table/table.interface'
+import { ITableConfig, BaseTableConfig, TableConfig, ControlName } from './../../interfaces/table/table.interface'
 
 import BaseSwitchArray from './../common/BaseSwitchArray.vue'
 import BaseBox from './../common/BaseBox.vue'
@@ -56,7 +58,7 @@ export default defineComponent({
     'control-change',
   ],
 
-  async setup(props, ctx){
+  setup(props, ctx){
     colorLog('base table', 'green', 'yellow')
     
     onUpdated(() => {

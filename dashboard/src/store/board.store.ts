@@ -37,8 +37,8 @@ const initialBoardStoreState = () : BoardStoreState => ({
 
 export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardItem> {
   protected state: BoardStoreState
-  constructor(initialState: BoardStoreState) {
-    super(initialState)
+  constructor(idSymbol: string, initialState: BoardStoreState) {
+    super(idSymbol, initialState)
     // this.state['boards'] = this.state.records
     // this.state = reactive(initialState)
   }
@@ -66,12 +66,12 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
   }
 
   async createRecord(board: IBoardItem) {
-    super.createRecord(board, ID_SYMBOL)
+    super.createRecord(board)
     // const response = await axios.post<BoardDTO>('http://localhost:3000/board/create', board)
   }
 
   async deleteRecord(board: IBoardItem) {
-    super.deleteRecord(board, ID_SYMBOL)
+    super.deleteRecord(board)
     // const response = await axios.delete<BoardDTO>(`http://localhost:3000/board/delete?board_id=${board._id}`)
     // return response.data.board._id
   }
@@ -80,7 +80,7 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
   async editRecord(oldItem: IBoardItem, newItem: IBoardItem) {
     // console.log(oldItem.columnOrder)
     // console.log(newItem.columnOrder)
-    super.editRecord(oldItem, newItem, ID_SYMBOL)
+    super.editRecord(oldItem, newItem)
     // console.log('writing to db')
 
     // const response = await axios.put<BoardDTO>(
@@ -94,13 +94,13 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
 
     // console.log('fetch records at board store')
     // console.log(data)
-    this.addRecords(data, ID_SYMBOL)
+    this.addRecords(data)
     this.state.records.loaded = true
   }
 
 }
 
-const boardStore = new BoardStore(initialBoardStoreState())
+const boardStore = new BoardStore(ID_SYMBOL, initialBoardStoreState())
 boardStore.getState()
 
 export const provideBoardStore = () =>  {
@@ -109,7 +109,7 @@ export const provideBoardStore = () =>  {
 
 
 export const createBoardStore = () => {
-  const boardStore = new BoardStore(initialBoardStoreState())
+  const boardStore = new BoardStore(ID_SYMBOL, initialBoardStoreState())
   boardStore.getState()
   return boardStore
 }

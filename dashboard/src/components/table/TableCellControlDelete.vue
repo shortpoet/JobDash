@@ -33,7 +33,7 @@ export default defineComponent({
     // },
   },
   emits: ['handle-click'],
-  async setup(props, ctx){
+  setup(props, ctx){
     const propertyEdit = ref()
     const handleClick = (item) => {
       colorLog('handle click table cell control delete', 'orange', 'green')

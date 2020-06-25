@@ -28,8 +28,8 @@ const initialMessageStoreState = () : MessageStoreState => ({
 
 export class MessageStore extends StoreAxios<Message> implements IStore<Message> {
   protected state: MessageStoreState
-  constructor(initialState: MessageStoreState) {
-    super(initialState)
+  constructor(idSymbol: string, initialState: MessageStoreState) {
+    super(idSymbol, initialState)
   }
 
   public getLastId(): Message['_id'] {
@@ -37,16 +37,10 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
     return last ? last._id : '-1'
   }
 
-  async createRecord(message: Message, idSymbol:(string | number) = '_id', pushToDb: boolean = true) {
-    // console.log('create record - message')
-    // console.log(message)
-    // console.log(idSymbol)
-    // console.log(pushToDb)
-    super.createRecord(message, '_id')
+  async createRecord(message: Message, pushToDb: boolean = true) {
+    super.createRecord(message)
     if(pushToDb) {
-      // console.log('writing to db')
       const response = await axios.post<MessageDTO>('http://localhost:3000/message/create', message)
-      console.log(response)
       this.fetchRecords()
     }
   }
@@ -66,13 +60,13 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
   
   
   async deleteRecord(message: Message): Promise<string> {
-    super.deleteRecord(message, '_id')
+    super.deleteRecord(message)
     const response = await axios.delete<MessageDTO>(`http://localhost:3000/message/delete?message_id=${message._id}`)
     return response.data.message._id
   }
   
-  async editRecord(oldMessage: Message, newMessage: Message, idSymbol: (string | number)) {
-    super.editRecord(oldMessage, newMessage, '_id')
+  async editRecord(oldMessage: Message, newMessage: Message) {
+    super.editRecord(oldMessage, newMessage)
     // console.log('writing to db')
     const response = await axios.put<MessageDTO>(
       `http://localhost:3000/message/update?message_id=${oldMessage._id}`,
@@ -87,7 +81,17 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
       message.contact = message.contact[0]
       return message
     })
-    this.addRecords(messages, '_id')
+    this.addRecords(messages)
+    this.state.records.loaded = true
+  }
+  public async loadRecords (caller: string): Promise<any[]> {
+    console.log(`load records for ${caller}`)
+    if (!this.state.records.loaded) {
+      console.log('fetching - not yet loaded')
+      await this.fetchRecords()
+    }
+    console.log('loading')
+    return super.updateRecords(caller);
   }
 
   toggleEditable(message: Message, editable: boolean) {
@@ -123,26 +127,28 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
       editable: oldMessage.editable,
       locked: deletable
     }
-    this.editRecord(oldMessage, newMessage, '_id')
+    this.editRecord(oldMessage, newMessage)
   }  
 }
 
-const messageStore = new MessageStore(initialMessageStoreState())
-messageStore.getState()
+// const messageStore = new MessageStore(initialMessageStoreState())
+// messageStore.getState()
 
-export const provideMessageStore = () =>  {
-  provide('messageStore', messageStore)
+const MESSAGE_STORE = 'messageStore'
+
+export const provideMessageStore = (idSymbol) =>  {
+  provide(MESSAGE_STORE, new MessageStore(idSymbol, initialMessageStoreState()))
 }
 
 
-export const createMessageStore = () => {
-  const messageStore = new MessageStore(initialMessageStoreState())
+export const createMessageStore = (idSymbol) => {
+  const messageStore = new MessageStore(idSymbol, initialMessageStoreState())
   messageStore.getState()
   return messageStore
 }
 
 export const useMessageStore = (): MessageStore => {
-  const messageStore = inject<MessageStore>('messageStore')
+  const messageStore = inject<MessageStore>(MESSAGE_STORE)
   return messageStore
 }
 

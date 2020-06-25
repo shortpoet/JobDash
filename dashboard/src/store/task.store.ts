@@ -29,8 +29,8 @@ const initialTaskStoreState = () : TaskStoreState => ({
 
 export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   protected state: TaskStoreState
-  constructor(initialState: TaskStoreState) {
-    super(initialState)
+  constructor(idSymbol: string, initialState: TaskStoreState) {
+    super(idSymbol, initialState)
   }
 
   public getLastId(): Task['_id'] {
@@ -39,20 +39,19 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   }
 
   async createRecord(task: Task) {
-    super.createRecord(task, '_id')
+    super.createRecord(task)
     const response = await axios.post<TaskDTO>('http://localhost:3000/task/create', task)
     this.fetchRecords()
   }
   
   async deleteRecord(task: Task): Promise<string> {
-    colorLog('delete record from task store', 'orange', 'violet')
-    super.deleteRecord(task, '_id')
+    super.deleteRecord(task)
     const response = await axios.delete<TaskDTO>(`http://localhost:3000/task/delete?task_id=${task._id}`)
     return response.data.task._id
   }
   
-  async editRecord(oldTask: Task, newTask: Task, idSymbol: (string | number)) {
-    super.editRecord(oldTask, newTask, '_id')
+  async editRecord(oldTask: Task, newTask: Task) {
+    super.editRecord(oldTask, newTask)
     console.log('writing to db')
     const response = await axios.put<TaskDTO>(
       `http://localhost:3000/task/update?task_id=${oldTask._id}`,
@@ -61,16 +60,22 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
   }
 
   async fetchRecords() {
-    // get is generic so can specify type
-    // const response = await axios.get<Task[]>('http://localhost:3000/task/tasks', {headers: {cache: 'no-store'}})
     const data = await this._fetchRecords('http://localhost:3000/task/tasks')
-
-    // console.log(response)
     let tasks: Task[] = data.map((task: Task)=> {
       task.contact = task.contact[0]
       return task
     })
-    this.addRecords(tasks, '_id')
+    this.addRecords(tasks)
+    this.state.records.loaded = true
+  }
+  public async loadRecords (caller: string): Promise<any[]> {
+    console.log(`load records for ${caller}`)
+    if (!this.state.records.loaded) {
+      console.log('fetching - not yet loaded')
+      await this.fetchRecords()
+    }
+    console.log('loading')
+    return super.updateRecords(caller);
   }
 
   toggleEditable(task: Task, editable: boolean) {
@@ -109,26 +114,28 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
       editable: oldTask.editable,
       locked: deletable
     }
-    this.editRecord(oldTask, newTask, '_id')
+    this.editRecord(oldTask, newTask)
   }  
 }
 
-const taskStore = new TaskStore(initialTaskStoreState())
-taskStore.getState()
+// const taskStore = new TaskStore(initialTaskStoreState())
+// taskStore.getState()
 
-export const provideTaskStore = () =>  {
-  provide('taskStore', taskStore)
+const TASK_STORE = 'taskStore'
+
+export const provideMessageStore = (idSymbol) =>  {
+  provide(TASK_STORE, new TaskStore(idSymbol, initialTaskStoreState()))
 }
 
 
-export const createTaskStore = () => {
-  const taskStore = new TaskStore(initialTaskStoreState())
+export const createTaskStore = (idSymbol) => {
+  const taskStore = new TaskStore(idSymbol, initialTaskStoreState())
   taskStore.getState()
   return taskStore
 }
 
 export const useTaskStore = (): TaskStore => {
-  const taskStore = inject<TaskStore>('taskStore')
+  const taskStore = inject<TaskStore>(TASK_STORE)
   return taskStore
 }
 

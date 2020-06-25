@@ -27,7 +27,6 @@ import BaseInput from './../../components/common/BaseInput.vue'
 
 import { Task } from '../../interfaces/task/task.interface'
 
-import useTask from '../../composables/useTask'
 import { useModal } from '../../composables/useModal'
 import { useUpdateValues } from '../../composables/useUpdateValues'
 

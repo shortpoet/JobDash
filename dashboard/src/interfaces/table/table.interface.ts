@@ -1,80 +1,17 @@
 
-export interface ITableHeader {
+export interface ITableColumn {
   displayName: string
+  displayOrder: number
 }
 
+
 //#region control
-  export interface ITableControl extends ITableHeader {
-    displayName: string
-    action: string
 
-  }
-  export abstract class BaseTableControl implements ITableControl {
-    constructor (displayName: string, action: string) {}
-    displayName: string
-    action: string
-  }
-  class TableControl extends BaseTableControl {
-    constructor (displayName: string, action: string) {
-      super(displayName, action);
-      this.displayName = displayName;
-      this.action = action;
-    }
-    displayName: string
-    action: string
-  }
-//#endregion
-
-//#region data
-
-  export interface ITableData extends ITableHeader {
-    propertyName: string
-    displayName: string
-    editable: boolean
-  }
-
-  export abstract class BaseTableData implements ITableData {
-    constructor (propertyName: string, editable: boolean) {}
-    propertyName: string
-    displayName: string
-    editable: boolean
-  }
-  class TableData extends BaseTableData {
-    constructor (propertyName: string, editable: boolean) {
-      super(propertyName, editable);
-      this.propertyName = propertyName;
-      this.displayName = propertyName.charAt(0).toUpperCase() + propertyName.slice(1);
-      this.editable = editable
-    }
-    propertyName: string
-    displayName: string
-    editable: boolean
-  }
-//#endregion
-
-//#region table
-  export interface ITableConfig {
-    columns: (ITableHeader[]),
-  }
-
-  export interface ITableConfigSettings {
-    columns: (ControlName[]|string[])
-    editable: (boolean[])
-  }
-
-
-  export abstract class BaseTableConfig implements ITableConfig {
-    constructor (config: ITableConfigSettings) {}
-    columns: (ITableHeader[])
-    editable: (boolean[])
-
-  }
-
-  export const ID: ControlName = 'Id'
-  export const DELETE: ControlName = 'Delete'
-  export const EDIT: ControlName = 'Edit'
-  export const LOCKED: ControlName = 'Locked'
-  export const MESSAGE: ControlName = 'Message'
+  export const CONTROL_ID: ControlName = 'Id'
+  export const CONTROL_DELETE: ControlName = 'Delete'
+  export const CONTROL_EDIT: ControlName = 'Edit'
+  export const CONTROL_LOCKED: ControlName = 'Locked'
+  export const CONTROL_MESSAGE: ControlName = 'Message'
 
   export const ACTION_ID: ActionName = 'open-link'
   export const ACTION_DELETE: ActionName = 'delete'
@@ -85,43 +22,162 @@ export interface ITableHeader {
   export type ControlName = 'Id' | 'Delete' | 'Edit' | 'Locked' | 'Message'
   export type ActionName = 'open-link' | 'delete' | 'edit' | 'toggle-delete' | 'send-message'
 
-  export class TableConfig extends BaseTableConfig {
-    columns: (ITableHeader[])
-    constructor(config: ITableConfigSettings) {
-      const controlNames: ControlName[] = [ID, DELETE, EDIT, LOCKED, MESSAGE]
-      super(config);
-      const getAction = (column) => {
-        let action
-        switch (column) {
-          case ID:
-            action = 'open-link'
-            break;
-          case DELETE:
-            action = 'delete'
-            break;
-          case EDIT:
-            action = 'edit'
-            break;
-          case LOCKED:
-            action = 'toggle-delete'
-            break;
-          case MESSAGE:
-            action = 'send-message'
-            break;
-          }
-        return action
-      }
-      // must actually initialize the array or is undefined imagine that
-      // console.log(this.columns)
-      this.columns = []
-      config.columns.forEach((column, i) => {
-        // console.log(column)
-        if (controlNames.includes(column)) {
-          this.columns.push(new TableControl(column, getAction(column)))
-        } else {
-          this.columns.push(new TableData(column, config.editable[i]))
+  export interface ITableColumnControl extends ITableColumn {
+    controlName: ControlName
+    displayName: string
+    action: string
+    displayOrder: number
+  }
+
+  export abstract class BaseTableColumnControl implements ITableColumnControl {
+    constructor (controlName: ControlName) {
+      switch (controlName) {
+        case CONTROL_ID:
+          this.action = 'open-link'
+          this.controlName = controlName;
+          this.displayName = controlName;
+          this.displayOrder = 0;    
+          break;
+        case CONTROL_DELETE:
+          this.action = 'delete'
+          this.controlName = controlName;
+          this.displayName = controlName;
+          this.displayOrder = 1;    
+          break;
+        case CONTROL_EDIT:
+          this.action = 'edit'
+          this.controlName = controlName;
+          this.displayName = controlName;
+          this.displayOrder = 2;    
+          break;
+        case CONTROL_LOCKED:
+          this.action = 'toggle-delete'
+          this.controlName = controlName;
+          this.displayName = controlName;
+          this.displayOrder = 3;    
+          break;
+        case CONTROL_MESSAGE:
+          this.action = 'send-message'
+          this.controlName = controlName;
+          this.displayName = controlName;
+          this.displayOrder = 4;    
+          break;
         }
-      })
+    }
+    controlName: ControlName
+    displayName: string
+    action: string
+    displayOrder: number
+  }
+  export class TableColumnControl extends BaseTableColumnControl {
+    constructor (controlName: ControlName) {
+      super(controlName);
+    }
+  }
+//#endregion
+
+//#region data
+
+  export interface ITableColumnData extends ITableColumn {
+    propertyName: string
+    editable: boolean
+    displayOrder: number
+  }
+
+  export abstract class BaseTableColumnData implements ITableColumnData {
+    constructor (
+      propertyName: string,
+      editable: boolean,
+      displayOrder: number
+      ) {
+      this.propertyName = propertyName;
+      this.displayName = propertyName.charAt(0).toUpperCase() + propertyName.slice(1);
+      this.editable = editable
+      this.displayOrder = displayOrder;
+    }
+    propertyName: string
+    displayName: string
+    editable: boolean
+    displayOrder: number
+  }
+  
+  export class TableColumnData extends BaseTableColumnData {
+    constructor (propertyName: string, editable: boolean, displayOrder: number) {
+      super(propertyName, editable, displayOrder);
+    }
+  }
+//#endregion
+
+//#region config settings
+
+  export interface ITableConfigSettings {
+    data: (string[])
+    controls?: (ControlName[])
+  }
+
+//#endregion
+
+//#region table
+  export interface ITableConfig {
+    columns: (ITableColumn[])
+    controlNames: (ControlName[])
+    columnNames: (string[])
+    controlColumns: (ITableColumnControl[])
+    dataColumns: (ITableColumnData[])
+  }
+
+  export abstract class BaseTableConfig implements ITableConfig {
+    constructor (config: ITableConfigSettings) {
+      // console.log(config)
+      this.dataColumns = config.data.map((datum, i) => new TableColumnData(datum, true, i)),
+      this.columnNames = config.data
+      if (config.controls) {
+        this.controlColumns = config.controls.map(datum => new TableColumnControl(datum))
+        this.controlNames = config.controls
+        // colorLog('has controls', 'yellow', 'blue')
+        if (this.controlNames.includes(CONTROL_ID)) {
+          this.columns = [
+            ...this.controlColumns.slice(0,1),
+            ...this.dataColumns,
+            ...this.controlColumns.slice(1)
+          ]
+        } else {
+          this.columns = [
+            ...this.dataColumns,
+            ...this.controlColumns
+          ]
+        }
+      } else {
+        this.columns = [
+          ...this.dataColumns
+        ]
+      }
+    }
+    columns: (ITableColumn[])
+    controlNames: (ControlName[])
+    columnNames: (string[])
+    controlColumns: (ITableColumnControl[])
+    dataColumns: (ITableColumnData[])
+
+  }
+
+  export class TableConfig extends BaseTableConfig {
+    constructor(config: ITableConfigSettings) {
+      super(config)
+    }
+    getAllProperties = () => {
+      const columns = this.columns
+      const controlNames = this.controlNames
+      const columnNames = this.columnNames
+      const controlColumns = this.controlColumns
+      const dataColumns = this.dataColumns
+      return {
+        columns,
+        controlNames,
+        columnNames,
+        controlColumns,
+        dataColumns
+      }
     }
   }
   //#endregion

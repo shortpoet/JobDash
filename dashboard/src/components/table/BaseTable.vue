@@ -1,27 +1,10 @@
 <template>
-  <!-- <BaseBox class="base-table-controls-box">
-    <BaseSwitchArray
-      :options="columnNames"
-      :boxed="false"
-      :orientation="'horizontal'"
-      :type="'columns'"
-      @chosen-properties="handleChosenColumnChange"
-    />
-    <BaseSwitchArray
-      :options="controlNames"
-      :boxed="false"
-      :orientation="'horizontal'"
-      :type="'controls'"
-      @chosen-properties="handleChosenControlChange"
-    />
-  </BaseBox> -->
-
   <table class="table is-hoverable">
     <thead>
       <TableRowHeader
-        :columns="configRef.columns"
-        :data-properties="dataProperties"
-        :control-types="controlTypes"
+        :columns="columns"
+        :data-properties="columnNames"
+        :control-types="controlNames"
       />
     </thead>
 
@@ -31,7 +14,7 @@
         :key="keyComputed(item)" 
         :class="`${itemType}-row has-text-centered`"
         :item="item"
-        :columns="configRef.columns"
+        :columns="columns"
         :item-type="itemType"
         @handle-delete="handleDelete"
         @handle-input-edit="handleInputEdit"
@@ -40,32 +23,31 @@
         @handle-toggle-delete="handleToggleDelete"
         @handle-click="handleClick"
         @handle-edit-init="handleEditInit"
-        :editable-columns="editableColumnsComputed"
+        :editable-columns="columnNames"
         :item-under-edit="itemUnderEditComputed(item)"
       />
     </tbody>
 
   </table>
 
-  <teleport :to="`#delete-item-modal`" v-if="deleteModal.visible">
+  <teleport :to="`#delete-item-modal`" v-if="itemDeleteModal.visible">
     <ModalWarning @delete-item="confirmDelete" :destination="'#delete-item-modal'" />
   </teleport>
 
-  <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible">
-    <!-- <router-view/> -->
+  <!-- <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible">
     <BaseItemEditCard
       @modal-confirm-edit="modalConfirmEdit"
       :editable-columns="editableColumnsComputed"
       :destination="editItemDestination"
     />
-  </teleport>
+  </teleport> -->
 
   <div />
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch, onMounted, Ref, onUpdated } from 'vue'
-import { ITableConfig, BaseTableConfig, ID, DELETE, EDIT, LOCKED, MESSAGE, TableConfig, ControlName } from './../../interfaces/table/table.interface'
+import { ITableConfig, BaseTableConfig, TableConfig, ControlName } from './../../interfaces/table/table.interface'
 import BaseSwitchArray from './../common/BaseSwitchArray.vue'
 import BaseItemEditCard from './../common/BaseItemEditCard.vue'
 import ModalWarning from './../common/ModalWarning.vue'
@@ -97,15 +79,18 @@ export default defineComponent({
       type: String,
       required: true
     },
-    deleteModal: {
-      type: Object as () => IModal
-    },
-    editModal: {
-      type: Object as () => IModal
-    },
     itemUnderEdit: {
       type: Object,
       required: false
+    },
+    columns: {
+      type: Array
+    },
+    columnNames: {
+      type: Array
+    },
+    controlNames: {
+      type: Array
     }
   },
 
@@ -128,153 +113,18 @@ export default defineComponent({
     'update-values'
   ],
 
-  async setup(props, ctx){
+  setup(props, ctx){
     colorLog('base table', 'green', 'yellow')
-    
+    console.log(props.columns)
+    const deleteItemDestination: Destination = '#delete-item-modal'
+    const itemDeleteModal = useModal(deleteItemDestination)
+    const editItemDestination: Destination = '#edit-item-modal'
+    const itemEditModal = useModal(editItemDestination)
+
     onUpdated(() => {
       // colorLog('on updated base table', 'blue', 'yellow')
     })
 
-    //#region header
-      //#region dataProperties
-        const columnNames = [
-          ...Object.keys(props.items[0]),
-        ]
-
-        const chosenProperties = ref([
-          ...columnNames.slice(2,5)
-        ])
-        
-        const handleChosenColumnChange = (e) => {
-          // colorLog("on chosen column change", "pink", "blue")
-          chosenProperties.value = e.chosenProperties
-        }
-
-        
-        const chosenPropArray = computed (() => chosenProperties.value)
-
-        const dataProperties = computed((() => Object.keys(props.items[0]).filter(prop => chosenPropArray.value.includes(prop))))
-        // need watch because of class instantiation
-        watch(
-          () => dataProperties.value.length, 
-          (value: number, previous:number) => {
-              // console.log(`Watch dataProperties.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
-              configRef.value = configComputed(dataProperties.value)
-          },
-          // not sure if i want this called immediately
-          // makes update function run on load
-          {immediate: false}
-        )
-      //#endregion
-
-      //#region control
-        const controlTypes =  [
-          { displayName: ID, action: 'open-link' },
-          { displayName: DELETE, action: 'delete' },
-          { displayName: EDIT, action: 'edit' },
-          { displayName: LOCKED, action: 'toggle-delete' },
-          { displayName: MESSAGE, action: 'send-message' },
-        ]
-
-        const controlNames: ControlName[] = [
-          ID,
-          DELETE,
-          EDIT,
-          LOCKED,
-          MESSAGE
-        ]
-
-        const chosenControls = ref([
-          ...controlNames
-        ])
-        const handleChosenControlChange = (e) => {
-          // colorLog("on chosen control change", "orange", "purple")
-          chosenControls.value = e.chosenProperties
-        }
-
-        const controls: Ref<ControlName[]> = computed((() => {
-          // colorLog('controls computed', 'purple', 'orange')
-          const names: ControlName[] = [] as ControlName[]
-          controlNames.forEach(control => {
-            if(chosenControls.value.includes(control)) {
-              let controlName: ControlName
-              switch(control) {
-                case 'Id':
-                  controlName = ID
-                  break
-                case 'Delete':
-                  controlName = DELETE
-                  break
-                case 'Edit':
-                  controlName = EDIT
-                  break
-                case 'Locked':
-                  controlName = LOCKED
-                  break
-                case 'Message':
-                  controlName = MESSAGE
-                  break
-              }
-              names.push(controlName)
-            }
-          })
-          return names
-        }))
-        watch(
-          () => controls.value.length, 
-          (value: number, previous:number) => {
-              // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
-              configRef.value = configComputed(dataProperties.value, controls.value)
-          },
-          // not sure if i want this called immediately
-          // makes update function run on load
-          {immediate: false}
-        )
-      //#endregion
-
-      //#region config
-        const editableColumnsComputed = computed(() => {colorLog('cols comp', 'yellow', 'red');return [...dataProperties.value.map(prop => prop.toLowerCase().match(/id$/) ? false : prop)]})
-        const editableColumns = (dataProperties) => [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : prop)]
-        const configComputed = (dataProperties, controls?: ControlName[]) => {
-          // colorLog('config computed', 'yellow', 'green')
-          if (controls) {
-            // colorLog('has controls', 'yellow', 'blue')
-            if (controls.includes(ID)) {
-              return new TableConfig({
-                columns: [
-                  ...controls.slice(0, 1),
-                  ...dataProperties,
-                  ...controls.slice(1),
-                ],
-                editable: [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : true)]
-              })
-            } else {
-              return new TableConfig({
-                columns: [
-                  ...dataProperties,
-                  ...controls
-                ],
-                editable: [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : true)]
-              })
-            }
-          } else {
-            return new TableConfig({
-              columns: [
-                ID,
-                ...dataProperties,
-                DELETE,
-                EDIT,
-                LOCKED,
-                MESSAGE
-              ],
-              editable: [...dataProperties.map(prop => prop.toLowerCase().match(/id$/) ? false : true)]
-            })
-          }
-        }
-        const configRef = ref<ITableConfig>()
-        configRef.value = configComputed(dataProperties.value)
-      //#endregion
-    //#endregion
 
     //#region body
       //#region edit
@@ -305,8 +155,6 @@ export default defineComponent({
       //#endregion
       
       //#region modal edit
-        const editItemDestination: Destination = '#edit-item-modal'
-        const itemEditModal = useModal(editItemDestination)
 
         const router = useRouter()
 
@@ -328,20 +176,11 @@ export default defineComponent({
       //#endregion
 
     //#endregion
-
     return {
       keyComputed,
       itemUnderEditComputed,
-      dataProperties,
-      columnNames,
-      controlNames,
-      controlTypes,
-      configRef,
-      handleChosenColumnChange,
-      handleChosenControlChange,
-      // controlSwitch,
-      // columnSwitch
       itemEditModal,
+      itemDeleteModal,
       handleEditModal,
       editItemDestination,
       handleInputEdit: (e) => ctx.emit(
@@ -364,7 +203,6 @@ export default defineComponent({
       handleToggleDelete: (item) => ctx.emit('handle-toggle-delete', {item: item, itemType: props.itemType}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
       confirmDelete: (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType}),
-      editableColumnsComputed,
       updateValues: () => ctx.emit('update-values')
     }
 

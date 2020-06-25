@@ -63,12 +63,11 @@ import { useEdit } from '../composables/table/useEdit'
 import { useInitEdit } from '../composables/table/useInitEdit'
 import { colorLog } from '../utils'
 import { ContactStore } from '../store/contact.store'
-import { taskProps, taskData, contactData, contactProps, messageProps, messageData } from './columns'
-import { taskControls, contactControls, messageControls } from './controls'
-import { TableConfig } from '../interfaces/table/table.interface'
 import { TaskStore } from '../store/task.store'
 import { MessageStore } from '../store/message.store'
 import { Message } from '../interfaces/message/message.interface'
+import { taskProps, contactProps, messageProps, taskData, contactData, messageData } from './columns'
+import { taskControls, contactControls, messageControls } from './controls'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -104,26 +103,10 @@ export default defineComponent({
       const contARr = []
       contARr.push(cont)
       const allContacts = ref<Contact[]>(contARr)
-      const loading = ref(true)
+      const contacsLoading = ref(true)
       allContacts.value = await contactStore.loadRecords('contact')
-      loading.value = false
+      contacsLoading.value = false
 
-    //#region taskUse
-      const taskStore: TaskStore = store.modules[TASK_STORE_SYMBOL]
-      const allTasks = ref<Task[]>([])
-      const tasksLoading = ref(true)
-      allTasks.value = await taskStore.loadRecords('task')
-      tasksLoading.value = false
-
-    //#endregion
-
-    //#region messageUse
-      const messageStore: MessageStore = store.modules[MESSAGE_STORE_SYMBOL]
-      const allMessages = ref<Message[]>([])
-      const messagesLoading = ref(true)
-      allMessages.value = await messageStore.loadRecords('message')
-      messagesLoading.value = false
-    //#endregion
 
       const onUpdateContacts = async () => {
         console.log('update')
@@ -196,15 +179,24 @@ export default defineComponent({
     const showClear = ref(false)
 
 
-    //#region contactUse
-      // const contactStore = store.modules['contactStore']
-
-      // const allContacts = ref<Contact[]>([])
-
-
-      // const onUpdateContacts = contactUse.onUpdateContacts
-    //#endregion
     
+    //#region taskUse
+      const taskStore: TaskStore = store.modules[TASK_STORE_SYMBOL]
+      const allTasks = ref<Task[]>([])
+      const tasksLoading = ref(true)
+      allTasks.value = await taskStore.loadRecords('task')
+      tasksLoading.value = false
+
+    //#endregion
+
+    //#region messageUse
+      const messageStore: MessageStore = store.modules[MESSAGE_STORE_SYMBOL]
+      const allMessages = ref<Message[]>([])
+      const messagesLoading = ref(true)
+      allMessages.value = await messageStore.loadRecords('message')
+      messagesLoading.value = false
+    //#endregion
+
     //#region modal
       const deleteItemDestination: Destination = '#delete-item-modal'
       const itemDeleteModal = useModal(deleteItemDestination)
@@ -222,7 +214,7 @@ export default defineComponent({
     }
 
     
-    // const propArrays = [taskProps, contactProps, messageProps]
+    const propArrays = [taskProps, contactProps, messageProps]
 
     // const dataArrays: ITableData[][] = propArrays.map(arr => ([
     //   ...arr.map((prop, i) => <ITableData> ({
@@ -232,47 +224,47 @@ export default defineComponent({
     //   }))
     // ]))
 
-    // const dataArrays = [taskData, contactData, messageData]
+    const dataArrays = [taskData, contactData, messageData]
 
-    // const taskDataColsRef = ref(taskData)
-    // const contactDataColsRef = ref(contactData)
-    // const messageDataColsRef = ref(messageData)
+    const taskDataColsRef = ref(taskData)
+    const contactDataColsRef = ref(contactData)
+    const messageDataColsRef = ref(messageData)
 
-    // const taskControlsRef = ref(taskControls)
-    // const contactControlsRef = ref(contactControls)
-    // const messageControlsRef = ref(messageControls)
+    const taskControlsRef = ref(taskControls)
+    const contactControlsRef = ref(contactControls)
+    const messageControlsRef = ref(messageControls)
 
-    // const controlArrays = toRefs([taskControls, contactControls, messageControls])
+    const controlArrays = toRefs([taskControls, contactControls, messageControls])
 
-    // const dataMap = toRefs(reactive({
-    //   task: taskDataColsRef.value,
-    //   contact: contactDataColsRef.value,
-    //   message: messageDataColsRef.value
-    // }))
-    // const controlMap = toRefs(reactive({
-    //   task: taskControlsRef.value,
-    //   contact: contactControlsRef.value,
-    //   message: messageControlsRef.value
-    // }))
+    const dataMap = toRefs(reactive({
+      task: taskDataColsRef.value,
+      contact: contactDataColsRef.value,
+      message: messageDataColsRef.value
+    }))
+    const controlMap = toRefs(reactive({
+      task: taskControlsRef.value,
+      contact: contactControlsRef.value,
+      message: messageControlsRef.value
+    }))
 
 
-    // const handleColumnChange = (e) => {
-    //   colorLog("handle col change", "white", "green")
-    //   console.log(e)
-    //   const key = e.itemType
-    //   dataMap[key] = ref(e.columns)
-    //   console.log(dataMap)
-    // }
-    // const handleControlChange = (e) => {
-    //   colorLog("handle control change", "white", "green")
-    //   console.log(e)
-    //   console.log(controlMap)
-    //   const key = e.itemType
-    //   controlArrays[2].value = e.controls
-    //   messageControlsRef.value = e.controls
-    //   // need to remap data to config schema in controls.ts
-    //   // controlMap[key] = ref(e.controls)
-    // }
+    const handleColumnChange = (e) => {
+      colorLog("handle col change", "white", "green")
+      console.log(e)
+      const key = e.itemType
+      dataMap[key] = ref(e.columns)
+      console.log(dataMap)
+    }
+    const handleControlChange = (e) => {
+      colorLog("handle control change", "white", "green")
+      console.log(e)
+      console.log(controlMap)
+      const key = e.itemType
+      controlArrays[2].value = e.controls
+      messageControlsRef.value = e.controls
+      // need to remap data to config schema in controls.ts
+      // controlMap[key] = ref(e.controls)
+    }
 
     // console.log(dataArrays)
 
@@ -312,7 +304,6 @@ export default defineComponent({
       console.log(controlMap.message.value)
       return [
       ...tableTypes.map((type, i) => {
-        console.log()
         const { columns, controlNames, columnNames } = new TableConfig({
           data: dataMap[type.itemType].value, controls: controlMap[type.itemType].value
         })
@@ -339,28 +330,28 @@ export default defineComponent({
     //   return obj
     // }
     // const unwrap = v => (isRef(v) ? v.value : v)
-    // watch(
-    //   () => messageControlsRef.value.length,
-    //   (value: number, previous:number) => {
-    //     console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
-    //     configRef.value = tableItems(dataMap, controlMap)
-    //   },
-    //   {immediate: true}
-    // )
+    watch(
+      () => messageControlsRef.value.length,
+      (value: number, previous:number) => {
+        console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+        configRef.value = tableItems(dataMap, controlMap)
+      },
+      {immediate: true}
+    )
 
-    // configRef.value = tableItems(dataMap, controlMap)
-    // Object.entries(dataMap).forEach(entry => {
-    //   console.log(entry[0])
-    //   console.log(entry[1].value)
-    //   watch(
-    //     () => entry[1].value.length,
-    //     (value: number, previous:number) => {
-    //       console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
-    //       configRef.value = tableItems(dataMap, controlMap)
-    //     },
-    //     {immediate: true}
-    //   )
-    // })
+    configRef.value = tableItems(dataMap, controlMap)
+    Object.entries(dataMap).forEach(entry => {
+      console.log(entry[0])
+      console.log(entry[1].value)
+      watch(
+        () => entry[1].value.length,
+        (value: number, previous:number) => {
+          console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+          configRef.value = tableItems(dataMap, controlMap)
+        },
+        {immediate: true}
+      )
+    })
 
     //#region cardModal
       const contactCardDestination: Destination = '#contact-card-modal'
@@ -445,12 +436,10 @@ export default defineComponent({
         console.log(e.item)
         if (e.item.locked == false) {
           await taskStore.toggleDeletable(e.item, true)
-          // refactor with new store
-          // onUpdateTasks()
+          onUpdateTasks()
         } else {
           await taskStore.toggleDeletable(e.item, false)
-          // refactor with new store
-          // onUpdateTasks()
+          onUpdateTasks()
         }
       }
     }
@@ -458,15 +447,13 @@ export default defineComponent({
       // console.log(e)
       switch(e.itemType) {
         case 'task':
-          // refactor with new store
-          // taskDelete.handleConfirmDelete(e.item, itemDeleteModal, taskIdSymbol, onUpdateTasks)
+          taskDelete.handleConfirmDelete(e.item, itemDeleteModal, taskIdSymbol, onUpdateTasks)
       }
     }
     const confirmDelete = (e) => {
       switch(e.itemType) {
         case 'task':
-          // refactor with new store
-          // taskDelete.deleteItem(itemDeleteModal, taskIdSymbol, onUpdateTasks)
+          taskDelete.deleteItem(itemDeleteModal, taskIdSymbol, onUpdateTasks)
       }
     }
   //#endregion
@@ -508,8 +495,8 @@ export default defineComponent({
             e.modal
               ? taskItemTouched.value = true
               : taskItemTouched.value = taskItemTouched.value
-            // refactor with new store        
-            // editItem(e.item, taskIdSymbol, onUpdateTasks, taskItemTouched)
+              
+            editItem(e.item, taskIdSymbol, onUpdateTasks, taskItemTouched)
         }
       }
     //#endregion
@@ -562,9 +549,8 @@ export default defineComponent({
       allTasks,
       allMessages,
       // onUpdateContacts,
-      // refactor with new store
-      // onUpdateTasks,
-      // onUpdateMessages,
+      onUpdateTasks,
+      onUpdateMessages,
       // targetsLoadedRef,
       activeBoard,
       showClear,

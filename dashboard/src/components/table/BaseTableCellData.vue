@@ -36,7 +36,7 @@ export default defineComponent({
     // }
   },
 
-  async setup(props, ctx){
+  setup(props, ctx){
     const propertyEdit = ref()
     const handleInput = () => {
       ctx.emit('handle-input')

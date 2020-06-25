@@ -4,19 +4,19 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
-import { ITableData } from '../../interfaces/table/table.interface'
+import { ITableColumnData } from '../../interfaces/table/table.interface'
 
 export default defineComponent({
   name: 'TableCellHeaderData',
 
   props: {
     props: {
-      type: Object as () => ITableData,
+      type: Object as () => ITableColumnData,
       required: true
     }
   },
 
-  async setup(props, ctx){
+  setup(props, ctx){
     
     return {
     }

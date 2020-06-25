@@ -1,45 +1,27 @@
 <template>
   <section class="section table-section">
-    <div class="table-container" :style="onlyTaskShown ? 'height: auto; padding: 0rem;' : ''">
-      
-      <div class="table-minimize-container message-table-minimize-container">
-        <BaseMinimize
-          :class-prop="'message-table-container'"
-          :component-name="'Message Table'"
-          @minimize-change="handleMinimize"
-          
-        >
-          <BaseBox scrollable>
-            <MessageTable 
-              :messages="messages" 
-              @update-messages="onUpdateMessages"
-            />
-          </BaseBox>
-        </BaseMinimize>
-      </div>
-
+    <div class="table-container">
       <div class="table-minimize-container task-table-minimize-container">
         <BaseMinimize
-          v-for="table in tableItems"
-          :class-prop="`${table.itemType}-table-container`"
-          :component-name="`${table.itemType} Table`"
+          :class-prop="`${itemType}-table-container`"
+          :component-name="`${itemType} Table`"
           @minimize-change="handleMinimize"
-          :minimized="minimized[table.itemType]"
+          :minimized="false"
         >
           <BaseTableControls
-            :item-type="table.itemType"
-            :column-names="table.columnNames"
-            :control-names="table.controlNames"
+            :item-type="itemType"
+            :column-names="columnNames"
+            :control-names="controlNames"
             @column-change="handleColumnChange"
             @control-change="handleControlChange"
-          />
+          >
+          </BaseTableControls>
           <BaseBox scrollable>
             <BaseTable
-              :items="table.items"
-              :id-symbol="table.idSymbol"
-              :item-type="table.itemType"
-              :edit-modal="editModal"
-              :delete-modal="deleteModal"
+              :items="items"
+              :columns="columnsRef"
+              :id-symbol="idSymbol"
+              :item-type="itemType"
               @handle-delete="handleDelete"
               @handle-toggle-delete="handleToggleDelete"
               @handle-toggle-edit="handleToggleEdit"
@@ -47,44 +29,27 @@
               @handle-input-edit="handleInputEdit"
               @confirm-delete="confirmDelete"
               :item-under-edit="itemUnderEdit"
+              :column-names="columnNamesRef"
+              :control-names="controlNamesRef"
             />
           </BaseBox>
         </BaseMinimize>
       </div>
-
-
     </div>
-
-    <!-- 
-      Errors:
-        - Failed to locate Teleport target with selector "#contact-card-modal". 
-        - Invalid Teleport target on mount: null
-      when using the computed value.  i guess it tries to compute before dom is available
-    <teleport to="#contact-card-modal" v-if="cardIsOpen">
-      <router-view/>
-      <ContactCard @save-item="'editContact'" :destination="'#contact-card-modal'"/>
-    </teleport> 
-    -->
-
-      <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts" @update-tasks="onUpdateTasks"/> -->
-      <!-- <ContactTable :contacts="allContacts" @update-contacts="onUpdateContacts"/> -->
-      <!-- <TaskTable :tasks="allTasks" @update-tasks="onUpdateTasks"/> -->
-      <!-- <ContactTable @update-contacts="onUpdateContacts"/> -->
-      <!-- <TaskTable  @update-tasks="onUpdateTasks"/> -->
-
   </section>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, reactive, onUpdated } from 'vue'
+import { defineComponent, computed, ref, reactive, onUpdated, Ref, watch, toRefs } from 'vue'
 import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
 import BaseTable from './../components/table/BaseTable.vue'
 import BaseTableControls from './../components/table/BaseTableControls.vue'
-import MessageTable from '../components/message/MessageTable.vue'
 
 import { useModal } from '../composables/useModal'
+
+import { ITableColumnData, ITableConfigSettings, ControlName, CONTROL_ID, CONTROL_DELETE, CONTROL_EDIT, CONTROL_LOCKED, CONTROL_MESSAGE, TableConfig } from './../interfaces/table/table.interface'
 
 import { Destination, IModal } from '../interfaces/common/modal.interface'
 import { Tab } from '../interfaces/common/tab.interface'
@@ -95,31 +60,36 @@ import { colorLog } from '../utils'
 export default defineComponent({
   name: 'TableLayout',
   props: {
-    messages: {
-      type: Array,
+    items: {
+      type: Array as () => object[],
       required: true
     },
-    tableItems: {
-      type: Array as () => object[],
-      // required: true
+    itemType: {
+      type: String,
+      required: true
     },
-    deleteModal: {
-      type: Object as () => IModal
+    idSymbol: {
+      type: String,
+      required: true
     },
-    editModal: {
-      type: Object as () => IModal
+    columnNames: {
+      type: Array as () => string[],
+      required: true
+    },
+    controlNames: {
+      type: Array as () => ControlName[],
+      default: () => [CONTROL_ID, CONTROL_DELETE, CONTROL_EDIT, CONTROL_LOCKED, CONTROL_MESSAGE]
     },
     itemUnderEdit: {
       type: Object,
       required: false
-    }
+    },
   },
   components: {
     BaseMinimize,
     BaseBox,
     BaseTableControls,
     BaseTable,
-    MessageTable
   },
   emits: [
     // TODO
@@ -141,39 +111,65 @@ export default defineComponent({
   ],
   setup(props, ctx) {
     colorLog('table layout', 'green', 'yellow')
-    console.log(props.tableItems)
+    // console.log(props.items)
+
+    const chosenColumns: Ref<string[]> = ref([...props.columnNames])
+    const chosenControls: Ref<ControlName[]> = ref([...props.controlNames])
+    const handleColumnChange = (e) => {
+      colorLog('handle column change', 'green', 'yellow')
+      console.log(e)
+      chosenColumns.value = e.columns
+    }
+    const tableSettings: ITableConfigSettings = {
+      data: chosenColumns.value,
+      controls: chosenControls.value
+    }
+
+    const tableConfig = new TableConfig(tableSettings)
+
+    const { columns, controlNames: controlNamesRef , columnNames: columnNamesRef } = tableConfig
+    const columnsRef = ref(columns)
+
+    console.log(columnsRef)
+
+    watch(
+      () => chosenColumns.value.length, 
+      (value: number, previous:number) => {
+          // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+          columnsRef.value = []
+          columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value}).columns
+      },
+      // not sure if i want this called immediately
+      // makes update function run on load
+      {immediate: true}
+    )
+    const handleControlChange = (e) => {
+      colorLog('handle control change', 'green', 'yellow')
+      console.log(e)
+      chosenControls.value = e.controls
+    }
+    watch(
+      () => chosenControls.value.length, 
+      (value: number, previous:number) => {
+          // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+          columnsRef.value = []
+          columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value}).columns
+      },
+      // not sure if i want this called immediately
+      // makes update function run on load
+      {immediate: true}
+    )
+
+    const handleMinimize = (e) => {
+      console.log('handle minimize')
+      console.log(e)
+    }
     
     onUpdated(() => {
       // colorLog('on updated table layout', 'green', 'yellow')
       // console.log(props.taskEditRefs)
     })
 
-    // const onlyTaskShown = ref(false)
-    const onlyTaskShown = ref(true)
-    const minimized = reactive({
-      message: false,
-      contact: true,
-      task: true
-    })
-    const handleMinimize = (e) => {
-      // could add boolean checks for component type to further modify behavior
-      switch(e.componentName) {
-        case 'message Table':
-          minimized.message = e.minimized
-          if (minimized.message == true && minimized.contact == true) onlyTaskShown.value = true
-          else onlyTaskShown.value = false
-          break
-        case 'contact Table':
-          minimized.contact = e.minimized
-          if (minimized.message == true && minimized.contact == true) onlyTaskShown.value = true
-          else onlyTaskShown.value = false
-          break
-        case 'task Table':
-          minimized.task = e.minimized
-          break
-        break
-      }
-    }
 
     //#region openCard
       const editItemDestination: Destination = '#edit-item-modal'
@@ -189,42 +185,15 @@ export default defineComponent({
       })
     //#endregion
 
-    //#region dynamic component
-      const tabs = ref<Tab[]>()
-      const activeTab = ref<Tab>()
-
-      tabs.value = [
-        {id: 1, name: 'Contact', component: 'ContactTable'},
-        {id: 2, name: 'Task', component: 'TaskTable'}
-      ]
-
-      activeTab.value = tabs.value[0];
-
-      const tabChange = (e) => {
-        // console.log(e)
-        activeTab.value = tabs.value.filter(t => t.name == e)[0]
-      }
-
-      const selectedComponent = computed(() => {
-        // console.log('selected component')
-        // console.log(activeTab.value.component)
-        // switch(activeTab.value.component) {
-        //   case 'TaskTable':
-        //     return TaskTable
-        //     break
-        //   case 'ContactTable':
-        //     return ContactTable
-        // }
-      })
-    //#endregion
 
     return {
-      minimized,
-      onlyTaskShown,
+      columnsRef,
+      controlNamesRef,
+      columnNamesRef,
       handleMinimize,
       cardIsOpen,
-      handleColumnChange: (e) => ctx.emit('handle-column-change', e),
-      handleControlChange: (e) => ctx.emit('handle-control-change', e),
+      handleColumnChange,
+      handleControlChange,
       handleToggleEdit: (e) => ctx.emit('handle-toggle-edit', e),
       handleConfirmEdit: (e) => ctx.emit('handle-confirm-edit', e),
       handleInputEdit: (e) => ctx.emit('handle-input-edit', e),

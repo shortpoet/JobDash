@@ -8,7 +8,8 @@
       @handle-delete="handleDelete"
       @handle-click="handleClick"
       @handle-input-edit="handleInputEdit"
-    />
+    >
+    </component>
   </tr>
     <!-- <BaseTableCellData
       v-for="item in items"
@@ -31,7 +32,7 @@ import TableCellControlDelete from './../table/TableCellControlDelete.vue'
 import TableCellDataEditable from './../table/TableCellDataEditable.vue'
 
 import { useDelete } from './../../composables/table/useDelete'
-import { ITableControl, ITableData, BaseTableData, BaseTableControl, ID, DELETE, EDIT, MESSAGE, LOCKED, ACTION_DELETE, ACTION_EDIT, ACTION_LOCKED, ACTION_ID } from '../../interfaces/table/table.interface'
+import { ITableColumn, ITableColumnData, ITableColumnControl, BaseTableColumnControl, BaseTableColumnData, ControlName, CONTROL_ID, CONTROL_DELETE, CONTROL_EDIT, CONTROL_LOCKED, CONTROL_MESSAGE, ACTION_ID, ACTION_DELETE, ACTION_EDIT, ACTION_LOCKED, ACTION_MESSAGE } from './../../interfaces/table/table.interface'
 import { colorLog } from '../../utils'
 import { Destination } from '../../interfaces/common/modal.interface'
 import { useModal } from '../../composables/useModal'
@@ -45,7 +46,7 @@ export default defineComponent({
       required: true
     },
     columns: {
-      type: Array as () => (ITableControl|ITableData)[]
+      type: Array as () => (ITableColumn)[]
     },
     class: {
       type: String,
@@ -80,7 +81,7 @@ export default defineComponent({
     'handle-edit-modal'
   ],
 
-  async setup(props, ctx){
+  setup(props, ctx){
     // colorLog('table row body', 'red', 'yellow')
     // console.log(props.editableColumns)
     onUpdated(() => {
@@ -88,16 +89,16 @@ export default defineComponent({
       // console.log(props.editableColumns)
     })
   //#region component and props
-    const componentComputed = (column: (ITableControl|ITableData)) => {
-      // console.log(column.displayName)
-      if (column instanceof BaseTableControl) {
+    const componentComputed = (column: ITableColumn) => {
+      // console.log(column.constructor)
+      if (column instanceof BaseTableColumnControl) {
         if (column.displayName == 'Locked') {
           return 'TableCellControlDelete'
         } else {
           return 'BaseTableCellControl'
         }
       }
-      else if (column instanceof BaseTableData) {
+      else if (column instanceof BaseTableColumnData) {
         if (props.editableColumns.includes(column.propertyName)) {
           return 'TableCellDataEditable'
         }
@@ -107,23 +108,23 @@ export default defineComponent({
     const getIconConfig = (column): Record<string, string> => {
       let out = {}
       switch (column.displayName) {
-        case ID:
+        case CONTROL_ID:
           out['color'] = 'purple'
           out['controlIcon'] = 'external-link'
           break
-        case DELETE:
+        case CONTROL_DELETE:
           out['color'] = 'red'
           out['controlIcon'] = 'trash-2'
           break
-        case EDIT:
+        case CONTROL_EDIT:
           out['color'] = 'blue'
           out['controlIcon'] = 'edit'
           break
-        case LOCKED:
+        case CONTROL_LOCKED:
           out['color'] = 'yellow'
           out['controlIcon'] = ''
           break
-        case MESSAGE:
+        case CONTROL_MESSAGE:
           out['color'] = 'green'
           out['controlIcon'] = 'mail'
           break
@@ -131,8 +132,8 @@ export default defineComponent({
       return out
     }
     // colorLog('table row body', 'orange', 'green')
-    const propsComputed = (column: (ITableControl|ITableData)) => {
-      if (column instanceof BaseTableControl) {
+    const propsComputed = (column: ITableColumn) => {
+      if (column instanceof BaseTableColumnControl) {
         return {
           displayName: column.displayName,
           color: getIconConfig(column).color,
@@ -142,7 +143,7 @@ export default defineComponent({
           editableColumns: props.editableColumns
         }
       }
-      else if (column instanceof BaseTableData) {
+      else if (column instanceof BaseTableColumnData) {
         return {
           propertyName: column.propertyName,
           propertyData: props.item,

@@ -1,5 +1,6 @@
 import { readonly, reactive } from "vue"
 import axios from 'axios'
+
 export interface StateMap {
   ids: string[]
   all: Record<string, any>
@@ -10,9 +11,9 @@ export interface StoreState {
   records: StateMap
 }
 
-export interface StoreConstructor<T> {
-  new (initialState: StoreState): IStore<T>
-}
+// export interface StoreConstructor<T> {
+//   new (initialState: StoreState): IStore<T>
+// }
 
 // https://levelup.gitconnected.com/introduction-to-typescript-interfaces-enforcing-class-implementation-b41f9e290bf9
 // https://medium.com/@erickwendel/generic-repository-with-typescript-and-node-js-731c10a1b98e
@@ -21,38 +22,61 @@ export interface StoreConstructor<T> {
 //   return new ctor(initialState);
 // }
 
+const initialStateMap = () : StateMap => ({
+  ids: [
+  ],
+  all: {
+  },
+  loaded: false
+})
+
+const initialStoreState = () : StoreState => ({
+  records: initialStateMap()
+})
+
 export interface IStore<T> {
+  idSymbol: string;
+  modules?: Record<string, any>
   getState(): StoreState;
   getRecordById<T>(id: string | number): T;
   getRecordById(id: string | number): any; 
-  createRecord(record: any, idSymbol:(string | number)): void;
-  addRecords(records: any[], idSymbol:(string | number)): void;
+  createRecord(record: any, pushToDb: Boolean): void;
+  createRecord(record: any): void;
+  addRecords(records: any[]): void;
+  fetchRecords(records: any[]): void;
+  // loadRecords(caller: string): void;
+  updateRecords(caller: string): Promise<any[]>;
+
 }
 
 export abstract class BaseStore<T> implements IStore<T> {
-  constructor (initialState: StoreState) {}
+  constructor (
+    idSymbol: string,
+    initialState: StoreState = initialStoreState()
+  ) {
+    this.state = reactive(initialState)
+    this.idSymbol = idSymbol
+    this.getState()
+  }
+  protected state: StoreState
+  idSymbol: string
+  modules: Record<string, any>
   abstract getState(): StoreState;
   abstract getRecordById<T>(id: string | number): T;
   abstract getRecordById(id: string | number): any;
   abstract getLast<T>(): T; 
   abstract getLast(): any; 
-  abstract createRecord(record: any, idSymbol:(string | number)): void;
-  abstract createRecord(record: any, idSymbol:(string | number), pushToDb: Boolean): void;
-  abstract addRecords(records: any[], idSymbol:(string | number)): void;
-}
-
-export interface IStoreAxios<T> extends IStore<T> {
-  _fetchRecords(url: string): Promise<T[]>
+  abstract createRecord(record: any, pushToDb: Boolean): void;
+  abstract createRecord(record: any): void;
+  abstract addRecords(records: any[]): void;
+  abstract fetchRecords(records: any[]): void;
+  // abstract loadRecords(caller: string): void;
+  abstract async updateRecords(caller: string): Promise<any[]>;
 }
 
 export class Store<T> extends BaseStore<T> {
-
-  protected state: StoreState
-  modules: Record<string, any>
-
-  constructor(initialState: StoreState) {
-    super(initialState)
-    this.state = reactive(initialState)
+  constructor(idSymbol:string, initialState: StoreState) {
+    super(idSymbol, initialState)
   }
 
   public getState(): StoreState {
@@ -80,45 +104,85 @@ export class Store<T> extends BaseStore<T> {
     return lastId ? this.state.records.all[lastId] : null
   }
   
-  public createRecord(record: any, idSymbol:(string | number)): void {
+  // createRecord(record: any, pushToDb: Boolean): Promise<void>
+  public createRecord(record: any): void {
     // console.log('create record - interface')
-    const id = record[idSymbol]
+    // console.log(record)
+    // console.log(this.idSymbol)
+    const id = record[this.idSymbol]
     this.state.records.all[id] = record
     this.state.records.ids.push(id.toString())
   }
 
-  public deleteRecord(record: any, idSymbol:(string | number)): void {
-    const id = record[idSymbol]
+  public deleteRecord(record: any): void {
+    const id = record[this.idSymbol]
     delete this.state.records.all[id]
-    const index = this.state.records.ids.indexOf(idSymbol.toString())
+    const index = this.state.records.ids.indexOf(this.idSymbol.toString())
     this.state.records.ids.splice(index, 1)
   }
-  public editRecord(oldRecord: any, newRecord: any, idSymbol:(string | number)): void {
-    const id = oldRecord[idSymbol]
+  public editRecord(oldRecord: any, newRecord: any): void {
+    const id = oldRecord[this.idSymbol]
     this.state.records.all[id] = newRecord
   }
 
-  public addRecords(records: any[], idSymbol:(string | number)) {
+  public addRecords(records: any[]) {
     // to avoid mutating at all costs can do reduce
     for (const record of records) {
       // do a check to account for duplicates
-      if (!this.state.records.ids.includes(record[idSymbol])) {
-        this.state.records.ids.push(record[idSymbol])
+      if (!this.state.records.ids.includes(record[this.idSymbol])) {
+        this.state.records.ids.push(record[this.idSymbol])
       }
       // using number as key to JS object, it implicitly assumes it is a string and calls .toString() automatically
       // need to first extract id because concatenating them errors
       // this.state.records.all[record][idSymbol]
-      const id = record[idSymbol]
+      const id = record[this.idSymbol]
       this.state.records.all[id] = record
     }
     this.state.records.loaded = true
   }
+
+  public async updateRecords (caller: string): Promise<any[]> {
+    console.log(`update records for ${caller}`)
+    return this.state.records.ids.reduce<any[]>((accumulator, id) => {
+      const record = this.state.records.all[id]
+      return accumulator.concat(record)
+    }, [])
+  }
+
+  public fetchRecords(records: any[]): void {
+    this.addRecords(records)
+    this.state.records.loaded = true
+  }
+
+  // public loadRecords(caller: string): void {
+  //   throw new Error("Method not implemented.")
+  // }
+
+
+//   public loadRecords = async (caller: string): Promise<any[]> => {
+//   console.log(`load records for ${caller}`)
+//   if (!this.state.records.loaded) {
+//     console.log('fetching - not yet loaded')
+//     await this.fetchRecords()
+//   }
+//   console.log('loading')
+//   return store.getState().records.ids.reduce<any[]>((accumulator, id) => {
+//     const record = store.getState().records.all[id]
+//     return accumulator.concat(record)
+//   }, [])
+// }
+
+
 }
 
-export abstract class StoreAxios<T> extends Store<T> implements IStoreAxios<T> {
-  async _fetchRecords(url: string): Promise<T[]> {
+export interface IStoreAxios<ITableItem> extends IStore<ITableItem> {
+  _fetchRecords(url: string): Promise<ITableItem[]>
+}
+
+export abstract class StoreAxios<ITableItem> extends Store<ITableItem> implements IStoreAxios<ITableItem> {
+  async _fetchRecords(url: string): Promise<ITableItem[]> {
     // get is generic so can specify type
-    const response = await axios.get<T[]>(url, {headers: {cache: 'no-store'}})
+    const response = await axios.get<ITableItem[]>(url, {headers: {cache: 'no-store'}})
     return response.data
   }
 }

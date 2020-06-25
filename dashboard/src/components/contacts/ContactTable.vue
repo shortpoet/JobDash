@@ -86,7 +86,7 @@ import moment from 'moment'
 import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 
 import { useRouter } from 'vue-router'
-import { useStore } from '../../store'
+import { useStore, MESSAGE_STORE_SYMBOL } from '../../store'
 import { ContactStore } from '../../store/contact.store'
 import { MessageStore } from '../../store/message.store'
 
@@ -151,10 +151,11 @@ export default defineComponent({
     //#endregion
 
     //#region messageUse
-      const messageStore: MessageStore = store.modules['messageStore']
-      // const allMessagesRef = ref<Message[]>()
-      // const messageUse = await useMessage(messageStore, allMessagesRef)
-      // const toggleEditable
+      const messageStore: MessageStore = store.modules[MESSAGE_STORE_SYMBOL]
+      const allMessages = ref<Message[]>([])
+      const messagesLoading = ref(true)
+      allMessages.value = await messageStore.loadRecords('message')
+      messagesLoading.value = false
     //#endregion
 
     //#region openContactCard
