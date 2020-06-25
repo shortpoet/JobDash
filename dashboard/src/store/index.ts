@@ -6,7 +6,8 @@ import { Store, StateMap, StoreState, StoreAxios } from './store.interface'
 import { Contact } from '../interfaces/contact/contact.interface'
 import { Task } from '../interfaces/task/task.interface'
 import { Message } from '../interfaces/message/message.interface'
-import { createBoardStore } from './board.store'
+import { IBoard } from '../interfaces/board/board.interface'
+import { createBoardStore, BOARD_STORE_SYMBOL } from './board.store'
 import { IBoardColumn } from '../interfaces/board/board.column.interface'
 import { TableItem } from '../interfaces/table/table.item.interface'
 import { createTableStoreLocal } from './table.store'
@@ -50,18 +51,21 @@ const taskStore = createTaskStore(TASK_ID_SYMBOL)
 taskStore.getState()
 const messageStore = createMessageStore(MESSAGE_ID_SYMBOL)
 messageStore.getState()
+const boardStore = createBoardStore()
+boardStore.getState()
 
 store.modules[TABLE_STORE_LOCAL_SYMBOL] = tableStoreLocal
 store.modules[CONTACT_STORE_SYMBOL] = contactStore
 store.modules[TASK_STORE_SYMBOL] = taskStore
 store.modules[MESSAGE_STORE_SYMBOL] = messageStore
+store.modules[BOARD_STORE_SYMBOL] = boardStore
 
 export const provideStore = () => {
   provide(STORE, store)
 }
 
-export const useStore = (): StoreAxios<Contact>|Store<TableItem> => {
-  const store = inject<StoreAxios<Contact|Task|Message>|Store<TableItem>>(STORE)
+export const useStore = (): StoreAxios<Contact|Task|Message|IBoard>|Store<TableItem> => {
+  const store = inject<StoreAxios<Contact|Task|Message|IBoard>|Store<TableItem>>(STORE)
   return store
 }
 

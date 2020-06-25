@@ -30,7 +30,7 @@ import BoardColumn from './BoardColumn.vue'
 import { IBoardColumn } from '../../interfaces/board/board.column.interface'
 import { BoardStore } from '../../store/board.store'
 import { useStore } from '../../store'
-import useBoardMove from '../../composables/useBoardMove'
+import useBoardMove from '../../composables/board/useBoardMove'
 import { colorLog } from '../../utils'
 export default defineComponent({
   name: 'TaskBoard',

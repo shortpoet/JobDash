@@ -25,7 +25,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue'
 
-import useBoardMove from './../../composables/useBoardMove'
+import useBoardMove from './../../composables/board/useBoardMove'
 
 import BoardItem from './BoardItem.vue'
 

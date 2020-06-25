@@ -6,9 +6,9 @@ import { IBoardItem } from "../interfaces/board/board.item.interface"
 
 // using 'category' here (logically, in hindsight) only returned the first item for each category
 type IdSymbol = 'itemId'
-const ID_SYMBOL: IdSymbol = 'itemId'
+export const BOARD_ID_SYMBOL: IdSymbol = 'itemId'
 type StoreSymbol = 'boardStore'
-const BOARD_STORE: StoreSymbol = 'boardStore'
+export const BOARD_STORE_SYMBOL: StoreSymbol = 'boardStore'
 
 interface BoardStateMap extends StateMap {
   ids: string[]
@@ -88,7 +88,7 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
     //   newBoard
     // )
   }
-  async fetchRecords(data?) {
+  async fetchRecords(data) {
     // get is generic so can specify type
     // const data = await this._fetchRecords('http://localhost:3000/contact/contacts')
 
@@ -100,16 +100,16 @@ export class BoardStore extends StoreAxios<IBoardItem> implements IStore<IBoardI
 
 }
 
-const boardStore = new BoardStore(ID_SYMBOL, initialBoardStoreState())
-boardStore.getState()
+// const boardStore = new BoardStore(BOARD_ID_SYMBOL, initialBoardStoreState())
+// boardStore.getState()
 
 export const provideBoardStore = () =>  {
-  provide(BOARD_STORE, boardStore)
+  provide(BOARD_STORE_SYMBOL, new BoardStore(BOARD_ID_SYMBOL, initialBoardStoreState()))
 }
 
 
 export const createBoardStore = () => {
-  const boardStore = new BoardStore(ID_SYMBOL, initialBoardStoreState())
+  const boardStore = new BoardStore(BOARD_ID_SYMBOL, initialBoardStoreState())
   boardStore.getState()
   return boardStore
 }
@@ -120,7 +120,7 @@ export const useBoardStore = (): BoardStore => {
   // inject this via 'store' string
   // search for closest component that called provideStore with same string 
   // and return that value
-  const boardStore = inject<BoardStore>(BOARD_STORE)
+  const boardStore = inject<BoardStore>(BOARD_STORE_SYMBOL)
   return boardStore
 }
 

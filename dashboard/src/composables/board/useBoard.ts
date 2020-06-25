@@ -1,11 +1,11 @@
-import { IBoardColumn } from "../interfaces/board/board.column.interface"
-import { IBoardItem } from "../interfaces/board/board.item.interface"
-import { IBoard } from "../interfaces/board/board.interface"
-import { useStorage } from './useStorage'
-import { BoardStore } from "../store/board.store"
+import { IBoardColumn } from "./../../interfaces/board/board.column.interface"
+import { IBoardItem } from "./../../interfaces/board/board.item.interface"
+import { IBoard } from "./../../interfaces/board/board.interface"
+import { useStorage } from './../useStorage'
+import { BoardStore } from "./../../store/board.store"
 import { ref, computed, Ref, watch } from "vue"
-import { flattenSort, colorLog } from './../utils'
-import { IBoardable } from "../interfaces/board/boardable.interface"
+import { flattenSort, colorLog } from './../../utils'
+import { IBoardable } from "./../../interfaces/board/boardable.interface"
 
 const BOARD = 'board'
 //#region storage
@@ -308,10 +308,13 @@ const BOARD = 'board'
         initColumns(newInitItems, activeBoard)
         // refactor with new store
         // const storedItems = await loadRecords(boardStore, BOARD, newInitItems)
-        // const itemsToLoad = storedItems.concat(newInitItems)
-        // await resetColumns(columns)
-        // saveBoardToStorage(activeBoard, activeBoard.id)
-        // columns.value = reloadBoard(boardStore, activeBoard, itemsToLoad)
+        boardStore.fetchRecords(newInitItems)
+        const storedItems = await boardStore.updateRecords('board')
+
+        const itemsToLoad = storedItems.concat(newInitItems)
+        await resetColumns(columns)
+        saveBoardToStorage(activeBoard, activeBoard.id)
+        columns.value = reloadBoard(boardStore, activeBoard, itemsToLoad)
     }
     if (boardHasLessCategory) {
       colorLog('board has LESS category', BOOLCOLOR, BOOLBACK)
@@ -322,7 +325,10 @@ const BOARD = 'board'
       const newInitItems = initNewItems(boardStore, newItemsToAdd, idSymbol, activeBoard)
       // refactor with new store
       // const storedItems = await loadRecords(boardStore, BOARD, newInitItems)
-      // columns.value = reloadBoard(boardStore, activeBoard, storedItems)
+      boardStore.fetchRecords(newInitItems)
+      const storedItems = await boardStore.updateRecords('board')
+
+      columns.value = reloadBoard(boardStore, activeBoard, storedItems)
     }
     if (boardHasLessItem) {
       colorLog('board has LESS item', BOOLCOLOR, BOOLBACK)
@@ -331,10 +337,10 @@ const BOARD = 'board'
         boardStore.deleteRecord(item)
       })
       // refactor with new store
-      // const newStoredItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
-      // saveBoardToStorage(activeBoard, activeBoard.id)
-      // columns.value = reloadBoard(boardStore, activeBoard, newStoredItems)
-      // console.log(columns.value)
+      const newStoredItems: IBoardItem[] = await boardStore.updateRecords('board')
+      saveBoardToStorage(activeBoard, activeBoard.id)
+      columns.value = reloadBoard(boardStore, activeBoard, newStoredItems)
+      console.log(columns.value)
     }
 
   }
@@ -348,10 +354,16 @@ const BOARD = 'board'
 
 const BOOLCOLOR = 'red'
 const BOOLBACK  = 'white'
-export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore: BoardStore, items: IBoardable[], idSymbol: string, activeBoardId: string) {
-
+export default async function useBoard(
+  columns: Ref<IBoardColumn[]>,
+  boardStore: BoardStore,
+  items: IBoardable[],
+  idSymbol: string,
+  activeBoardId: string
+) {
   console.log('use board')
   console.log(items.length)
+  console.log(boardStore)
   //#region init refs
     // a ref to a board object
     const storedBoard = ref<IBoard>()
@@ -369,27 +381,32 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     const boardItems = columnMapToItemArray(activeBoard.columns)
     // refactor with new store
     // const storedItems = await loadRecords(boardStore, BOARD, boardItems)
-    
-    // columns.value = reloadBoard(boardStore, activeBoard, storedItems)
+    boardStore.fetchRecords(boardItems)
+    const storedItems = await boardStore.updateRecords('board')
 
-    // if (boardHasDiff) {
-    //   handleDiff(activeBoard, columns, boardStore, items, idSymbol, activeBoardId)
-    // }
+    columns.value = reloadBoard(boardStore, activeBoard, storedItems)
 
-    // else if (!boardHasDiff) {
-    //   colorLog('board has NO diff', BOOLCOLOR, BOOLBACK)
-    //   // diff is based on length of input (iboardable) and items (iboarditems)
-    //   // case where board move happens there is no diff
-    //   storedBoard.value = activeBoard
-    //   // flatten column object into item array
-    //   const storedBoardItems = columnMapToItemArray(storedBoard.value.columns)
-    //   // must load items into store | or | set loaded state to true
-    //   const storedItems = await loadRecords(boardStore, BOARD, storedBoardItems)
-    //   saveBoardToStorage(activeBoard, activeBoard.id)
+    if (boardHasDiff) {
+      handleDiff(activeBoard, columns, boardStore, items, idSymbol, activeBoardId)
+    }
 
-    //   // must load items into column.value for return of useBoard
-    //   columns.value = reloadBoardColumnsNoItems(boardStore, activeBoard)
-    // }
+    else if (!boardHasDiff) {
+      colorLog('board has NO diff', BOOLCOLOR, BOOLBACK)
+      // diff is based on length of input (iboardable) and items (iboarditems)
+      // case where board move happens there is no diff
+      storedBoard.value = activeBoard
+      // flatten column object into item array
+      const storedBoardItems = columnMapToItemArray(storedBoard.value.columns)
+      // must load items into store | or | set loaded state to true
+      boardStore.fetchRecords(storedBoardItems)
+      const storedItems = await boardStore.updateRecords('board')
+
+      // const storedItems = await loadRecords(boardStore, BOARD, storedBoardItems)
+      saveBoardToStorage(activeBoard, activeBoard.id)
+
+      // must load items into column.value for return of useBoard
+      columns.value = reloadBoardColumnsNoItems(boardStore, activeBoard)
+    }
   } 
 
   else if (!hasActiveBoard) {
@@ -398,8 +415,11 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     // initItems is called from initial items prop
     const boardItems: IBoardItem[] = initItems(items, idSymbol)
     // refactor with new store
+    boardStore.fetchRecords(boardItems)
+    const storedItems = await boardStore.updateRecords('board')
+
     // const storedItems = await loadRecords(boardStore, BOARD, boardItems)
-    // columns.value = loadBoard(boardStore, activeBoard, storedItems)
+    columns.value = loadBoard(boardStore, activeBoard, storedItems)
   }
 
   const onBoardMove = async () => {
@@ -411,12 +431,12 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     // which is only reason to have async
     // probably refactor
     // refactor with new store
-    // const newItems: IBoardItem[] = await updateRecords(boardStore, BOARD)
-    // // need to wait for columns to be zeroed out so vue reactivity picks up on change in length of array
-    // // because only updating the order
-    // await resetColumns(columns)
-    // saveBoardToStorage(activeBoard, activeBoard.id)
-    // columns.value = loadBoard(boardStore, activeBoard, newItems)
+    const newItems: IBoardItem[] = await boardStore.updateRecords('board')
+    // need to wait for columns to be zeroed out so vue reactivity picks up on change in length of array
+    // because only updating the order
+    await resetColumns(columns)
+    saveBoardToStorage(activeBoard, activeBoard.id)
+    columns.value = loadBoard(boardStore, activeBoard, newItems)
   }
 
   const onUpdateBoard = async (items: IBoardable[]) => {
@@ -442,7 +462,7 @@ export default async function useBoard(columns: Ref<IBoardColumn[]>, boardStore:
     const outItem: IBoardable = items.filter(_item => _item.itemId == item.itemId)[0]
     return outItem
   }
-
+  console.log(columns.value)
   return {
     columns,
     onUpdateBoard,

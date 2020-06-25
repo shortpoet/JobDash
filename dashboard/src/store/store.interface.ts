@@ -179,7 +179,7 @@ export interface IStoreAxios<ITableItem> extends IStore<ITableItem> {
   _fetchRecords(url: string): Promise<ITableItem[]>
 }
 
-export abstract class StoreAxios<ITableItem> extends Store<ITableItem> implements IStoreAxios<ITableItem> {
+export abstract class StoreAxios<ITableItem> extends Store<ITableItem> implements IStoreAxios<ITableItem>, IStore<ITableItem> {
   async _fetchRecords(url: string): Promise<ITableItem[]> {
     // get is generic so can specify type
     const response = await axios.get<ITableItem[]>(url, {headers: {cache: 'no-store'}})

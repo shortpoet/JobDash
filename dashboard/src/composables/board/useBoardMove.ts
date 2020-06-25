@@ -1,7 +1,7 @@
-import { IBoardColumn } from "../interfaces/board/board.column.interface"
-import { IBoardItem } from "../interfaces/board/board.item.interface"
-import { BoardStore } from "../store/board.store"
-import { colorLog } from "../utils"
+import { IBoardColumn } from "./../../interfaces/board/board.column.interface"
+import { IBoardItem } from "./../../interfaces/board/board.item.interface"
+import { BoardStore } from "./../../store/board.store"
+import { colorLog } from "./../../utils"
 
 export default function useBoardMove(boardStore: BoardStore, ctx) {
   // console.log('use board move')

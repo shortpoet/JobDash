@@ -42,39 +42,37 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch, nextTick, onUpdated, reactive, toRefs, Ref, isRef } from 'vue'
-
-import CreateLayout from './CreateLayout.vue'
-import BoardLayout from './BoardLayout.vue'
-import BaseMinimize from '../components/common/BaseMinimize.vue'
 import { onErrorCaptured } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore, ITEMS_ID_SYMBOL, TABLE_STORE_LOCAL_SYMBOL, CONTACT_STORE_SYMBOL, CONTACT_ID_SYMBOL, TASK_STORE_SYMBOL, MESSAGE_STORE_SYMBOL, TASK_ID_SYMBOL, MESSAGE_ID_SYMBOL } from '../store'
 
-import { useModal } from '../composables/useModal'
-import BaseItemEditCard from './../components/common/BaseItemEditCard.vue'
-import ModalWarning from './../components/common/ModalWarning.vue'
+import { BoardStore } from '../store/board.store'
+import { ContactStore } from '../store/contact.store'
+import { TaskStore } from '../store/task.store'
+import { MessageStore } from '../store/message.store'
 
+import { colorLog } from '../utils'
 
+import CreateLayout from './CreateLayout.vue'
+import BoardLayout from './BoardLayout.vue'
+import BaseMinimize from '../components/common/BaseMinimize.vue'
 import TableLayout from './TableLayout.vue'
+
+import { useModal } from '../composables/useModal'
+import useBoard from '../composables/board/useBoard'
+import { useDelete } from '../composables/table/useDelete'
+import { useEdit } from '../composables/table/useEdit'
+import { useInitEdit } from '../composables/table/useInitEdit'
 
 
 import { Destination } from '../interfaces/common/modal.interface'
 import { Contact } from '../interfaces/contact/contact.interface'
 import { Task } from '../interfaces/task/task.interface'
-import { BoardStore } from '../store/board.store'
 import { IBoardColumn } from '../interfaces/board/board.column.interface'
-import useBoard from '../composables/useBoard'
-import { useDelete } from '../composables/table/useDelete'
-import { useEdit } from '../composables/table/useEdit'
-import { useInitEdit } from '../composables/table/useInitEdit'
-import { colorLog } from '../utils'
-import { ContactStore } from '../store/contact.store'
-import { taskProps, taskData, contactData, contactProps, messageProps, messageData } from './columns'
-import { taskControls, contactControls, messageControls } from './controls'
 import { TableConfig } from '../interfaces/table/table.interface'
-import { TaskStore } from '../store/task.store'
-import { MessageStore } from '../store/message.store'
 import { Message } from '../interfaces/message/message.interface'
+// import { taskProps, taskData, contactData, contactProps, messageProps, messageData } from './columns'
+// import { taskControls, contactControls, messageControls } from './controls'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -84,8 +82,6 @@ export default defineComponent({
     CreateLayout,
     TableLayout,
     BoardLayout,
-    ModalWarning,
-    BaseItemEditCard
   },
   emits: ['confirm-delete'],
   async setup(props, ctx) {
@@ -117,7 +113,7 @@ export default defineComponent({
     //#endregion
 
 
-    //#region new / contact
+    //#region contact / default value for ref / test table store local
       const tableStore = store.modules[TABLE_STORE_LOCAL_SYMBOL]
       const contactStore: ContactStore = store.modules[CONTACT_STORE_SYMBOL]
       const cont = {} as Contact
