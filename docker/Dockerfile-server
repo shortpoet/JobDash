@@ -1,0 +1,7 @@
+FROM node:12
+
+WORKDIR /app/server
+
+COPY server/package.json server/yarn.lock /tmp/server-install/
+
+RUN set -xe && cd /tmp/server-install/ && npm install
