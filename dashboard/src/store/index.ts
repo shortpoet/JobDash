@@ -46,15 +46,15 @@ tableStoreLocal.getState()
 
 const contactStore = createContactStore(CONTACT_ID_SYMBOL)
 contactStore.getState()
-const taskStore = createContactStore(TASK_ID_SYMBOL)
+const taskStore = createTaskStore(TASK_ID_SYMBOL)
 taskStore.getState()
-const messageStore = createContactStore(MESSAGE_ID_SYMBOL)
+const messageStore = createMessageStore(MESSAGE_ID_SYMBOL)
 messageStore.getState()
 
 store.modules[TABLE_STORE_LOCAL_SYMBOL] = tableStoreLocal
 store.modules[CONTACT_STORE_SYMBOL] = contactStore
-store.modules[TASK_STORE_SYMBOL] = contactStore
-store.modules[MESSAGE_STORE_SYMBOL] = contactStore
+store.modules[TASK_STORE_SYMBOL] = taskStore
+store.modules[MESSAGE_STORE_SYMBOL] = messageStore
 
 export const provideStore = () => {
   provide(STORE, store)

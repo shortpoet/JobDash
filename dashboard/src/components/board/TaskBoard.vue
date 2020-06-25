@@ -52,7 +52,7 @@ export default defineComponent({
 
   emits: ['dragstart', 'draggable', 'update-board', 'board-move'],
 
-  async setup(props, ctx) {
+  setup(props, ctx) {
     // colorLog('task board', 'green', 'yellow')
     const boardStore: BoardStore = useStore().modules['boardStore']
     const move = useBoardMove(boardStore, ctx)

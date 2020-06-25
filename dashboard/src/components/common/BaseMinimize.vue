@@ -33,7 +33,7 @@ export default defineComponent({
     BaseIcon
   },
   emits: ['minimize-change'],
-  async setup(props, ctx) {
+  setup(props, ctx) {
     const showComponent = ref(!props.minimized)
     const handleChange = () => {
       showComponent.value = !showComponent.value

@@ -120,6 +120,25 @@ export default defineComponent({
       }
     //#endregion
 
+    // //#region modal edit
+    //   const handleEditModal = (e) => {
+    //     switch(e.itemType) {
+    //       case 'task':
+    //         colorLog('handle edit modal at main layout', 'blue', 'green')
+    //         itemEditModal.showModal()
+    //         const idSymbol = '_id'
+    //         const itemType = 'task'
+    //         console.log(e.item[idSymbol])
+    //         router.push({
+    //           name: '#edit-item-modal',
+    //           path: `/${itemType}/${e.item[idSymbol]}`,
+    //           params: { id: e.item[idSymbol] } 
+    //         })
+    //     }
+    //   }
+    // //#endregion
+
+
     return {
       refArray,
       // properties,

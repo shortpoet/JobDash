@@ -44,7 +44,7 @@ export default defineComponent({
 
   emits: ['update-contacts', 'update-tasks'],
 
-  async setup(props, ctx) {
+  setup(props, ctx) {
 
 
     //#region tabs

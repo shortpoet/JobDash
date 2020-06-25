@@ -6,7 +6,7 @@
 
 // old
 .table-container {
-  height: 35rem;
+  // height: 35rem;
   display: flex;
   flex-direction: column;
   > div > div > table > thead > tr > th {
@@ -16,7 +16,8 @@
   // to make up for hidden part
   // so bottom border is not hidden 
   // without messing with .table-minimize-container max-height: 
-  padding: 0rem 0rem 18rem 0rem;
+  // padding: 0rem 0rem 18rem 0rem;
+  padding: 0rem 0rem 0rem 0rem;
 }
 
 .contact-table-minimize-container {
