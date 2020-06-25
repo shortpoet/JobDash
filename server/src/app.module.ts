@@ -9,7 +9,7 @@ import { MessageModule } from './message/message.module';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb://localhost/job-db',
+      'mongodb://mongo/job-db',
       {
         useNewUrlParser: true
       }
