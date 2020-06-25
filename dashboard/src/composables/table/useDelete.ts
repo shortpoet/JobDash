@@ -19,8 +19,8 @@ export function useDelete(store, ctx) {
   
 
     const handleConfirmDelete = (item, modal, idSymbol, itemType) => {
-      colorLog('handle confirm delete from use delete', 'blue', 'green')
-      console.log(item)
+      // colorLog('handle confirm delete from use delete', 'blue', 'green')
+      // console.log(item)
       if (item.locked) {
         deleteCandidate.value = item
         modal.showModal()
@@ -32,9 +32,7 @@ export function useDelete(store, ctx) {
     }
     
     const deleteItem = async (modal, idSymbol, itemType) => {
-      colorLog('delete item from use delete', 'blue', 'green')
-      console.log(idSymbol)
-      console.log(deleteCandidate.value)
+      // colorLog('delete item from use delete', 'blue', 'green')
       modal.hideModal()
       const deletedId = await store.deleteRecord(deleteCandidate.value)
       // null check

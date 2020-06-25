@@ -72,6 +72,7 @@ import { Tab } from '../interfaces/common/tab.interface'
 import { useRouter } from 'vue-router'
 import { colorLog } from '../utils'
 import { useDelete } from '../composables/table/useDelete'
+import { useEdit } from '../composables/table/useEdit'
 
 export default defineComponent({
   name: 'TableLayout',
@@ -119,17 +120,7 @@ export default defineComponent({
       // otherwise if initiating event start with action verb 
     // #TODO
     'update-values',
-    'update-messages',
-    'handle-delete',
-    'handle-toggle-delete',
-    'handle-toggle-edit',
-    'handle-input-edit',
-    'handle-confirm-edit',
-    'confirm-delete',
-    'handle-edit-init',
-    'handle-column-change',
-    'handle-control-change',
-    'reset-delete'
+    'confirm-delete'
   ],
   setup(props, ctx) {
     colorLog('table layout', 'green', 'yellow')
@@ -154,8 +145,8 @@ export default defineComponent({
     //#region choice
       // columns
       const handleColumnChange = (e) => {
-        colorLog('handle column change', 'green', 'yellow')
-        console.log(e)
+        // colorLog('handle column change', 'green', 'yellow')
+        // console.log(e)
         chosenColumns.value = e.columns
       }
       watch(
@@ -171,8 +162,8 @@ export default defineComponent({
       )
       // controls
       const handleControlChange = (e) => {
-        colorLog('handle control change', 'green', 'yellow')
-        console.log(e)
+        // colorLog('handle control change', 'green', 'yellow')
+        // console.log(e)
         chosenControls.value = e.controls
       }
       watch(
@@ -198,38 +189,23 @@ export default defineComponent({
 
 
     //#region delete
-
       const taskIdSymbol = '_id'
       const itemDelete = useDelete(props.store, ctx)
 
       const handleToggleDelete = async (e) => {
-        colorLog('handle toggle delete at main layout', 'yellow', 'green')
-        console.log(e)
-        console.log(e.item.locked)
-        console.log(e.item)
+        // colorLog('handle toggle delete at main layout', 'yellow', 'green')
         if (e.item.locked == false) {
           await props.store.toggleDeletable(e.item, true)
-          // refactor with new store
           ctx.emit('update-values', props.itemType)
         } else {
           await props.store.toggleDeletable(e.item, false)
-          // refactor with new store
           ctx.emit('update-values', props.itemType)
-          // onUpdateTasks()
-        }
-        switch(e.itemType) {
-          case 'task':
         }
       }
       const tableHasDeleteCandidate = ref(false)
       const handleDelete = (e) => {
-        colorLog('handle delete from table layout', 'magenta', 'yellow')
-        console.log(e)
+        // colorLog('handle delete from table layout', 'magenta', 'yellow')
         tableHasDeleteCandidate.value = itemDelete.handleConfirmDelete(e.item, itemDeleteModal, taskIdSymbol, props.itemType)
-        switch(e.itemType) {
-          case 'task':
-            // refactor with new store
-        }
       }
       const _confirmDelete = (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType})
 
@@ -249,7 +225,64 @@ export default defineComponent({
         }
         )
     //#endregion
-    const itemUnderEdit = ref()
+    
+    //#region edit
+      const itemUnderEdit = ref()
+    //#region table edit
+
+      let itemTouched = ref()
+      const itemEdit = useEdit(props.store, ctx)
+
+      const handleToggleEdit = (e) => {
+        // colorLog('toggle edited item at table layout', 'purple', 'yellow')
+        // console.log(e)
+        if (!itemUnderEdit.value) {
+          // if it is false but being emitted it wants this component to set it to true
+          itemUnderEdit.value = e.item          
+        } else {
+          itemUnderEdit.value = null
+          handleConfirmEdit(e)
+        }
+      }
+
+      const handleInputEdit = (e) => {
+        // colorLog('handle input edit at table layout', 'magenta', 'yellow')
+        // console.log(e)
+        const toggleEditable = itemEdit.toggleEditable
+        itemTouched.value = e.valueChanged
+        toggleEditable(itemTouched, e.value, e.propertyName)
+      }
+      const handleConfirmEdit = (e) => {
+        // console.log(e)
+        // colorLog('confirm edit item at main layout', 'yellow', 'blue')
+        // TODO
+          // fix side-effect if you click another edit cell to close edit
+        // #TODO
+        const editItem = itemEdit.editItem
+        e.modal
+          ? itemTouched.value = true
+          : itemTouched.value = itemTouched.value
+        editItem(e.item, taskIdSymbol, itemTouched, e.itemType)
+      }
+
+      // const handleEditModal = (e) => {
+      //   switch(e.itemType) {
+      //     case 'task':
+      //       colorLog('handle edit modal at main layout', 'blue', 'green')
+      //       itemEditModal.showModal()
+      //       const idSymbol = '_id'
+      //       const itemType = 'task'
+      //       console.log(e.item[idSymbol])
+      //       router.push({
+      //         name: '#edit-item-modal',
+      //         path: `/${itemType}/${e.item[idSymbol]}`,
+      //         params: { id: e.item[idSymbol] } 
+      //       })
+      //   }
+      // }
+
+    //#endregion
+
     //#region future
       const handleMinimize = (e) => {
         // perhaps some kind of logic eventually emerges
@@ -286,9 +319,9 @@ export default defineComponent({
       cardIsOpen,
       handleColumnChange,
       handleControlChange,
-      handleToggleEdit: (e) => ctx.emit('handle-toggle-edit', e),
-      handleConfirmEdit: (e) => ctx.emit('handle-confirm-edit', e),
-      handleInputEdit: (e) => ctx.emit('handle-input-edit', e),
+      handleToggleEdit,
+      // handleConfirmEdit: (e) => ctx.emit('handle-confirm-edit', e),
+      handleInputEdit,
       handleToggleDelete,
       handleDelete,
       confirmDelete: (item) => ctx.emit('confirm-delete', item),

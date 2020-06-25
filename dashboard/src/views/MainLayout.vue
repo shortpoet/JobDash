@@ -242,10 +242,11 @@ export default defineComponent({
 
       const deleteConfirm = ref(false)
 
-      const confirmDelete = () => {
+      const confirmDelete = async () => {
         colorLog('confirm delete from main layout', 'magenta', 'yellow')
-        deleteConfirm.value = true; 
-        // deleteConfirm.value = false;
+        deleteConfirm.value = true;
+        await nextTick()
+        deleteConfirm.value = false;
       }
     
       //#region tables dynamic - experimental

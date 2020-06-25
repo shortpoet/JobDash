@@ -95,7 +95,7 @@ export default defineComponent({
   ],
   setup(props, ctx){
     colorLog('base table', 'green', 'yellow')
-    console.log(props.columns)
+    // console.log(props.columns)
     const deleteItemDestination: Destination = '#delete-item-modal'
     const itemDeleteModal = useModal(deleteItemDestination)
     const editItemDestination: Destination = '#edit-item-modal'
@@ -111,6 +111,7 @@ export default defineComponent({
         const keyComputed = (item) => {
           // colorLog('key computed', 'green', 'yellow')
           // console.log(props.itemUnderEdit)
+          // recompute key to only rerender that row
           return !!props.itemUnderEdit
             ? props.itemUnderEdit.itemId == item.itemId
               ? `${item[props.idSymbol]}-edit`
@@ -172,11 +173,12 @@ export default defineComponent({
         }
       ),
       handleToggleEdit: (e) => {
+        // colorLog('handle toggle edit at table row body', 'blue', 'white')
         // console.log(e)
         ctx.emit('handle-toggle-edit', {item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
       },
       modalConfirmEdit: (e) => {
-        console.log(e)        
+        // console.log(e)        
         ctx.emit('handle-confirm-edit', {modal: true, item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
       },
       handleToggleDelete: (item) => ctx.emit('handle-toggle-delete', {item: item, itemType: props.itemType}),
