@@ -113,6 +113,7 @@ export interface ITableColumn {
   export interface ITableConfigSettings {
     data: (string[])
     controls?: (ControlName[])
+    editable?: (string[])
   }
 
 //#endregion
@@ -129,8 +130,21 @@ export interface ITableColumn {
   export abstract class BaseTableConfig implements ITableConfig {
     constructor (config: ITableConfigSettings) {
       // console.log(config)
-      this.dataColumns = config.data.map((datum, i) => new TableColumnData(datum, true, i)),
       this.columnNames = config.data
+      if (config.editable) {
+        this.editableColumnNames = config.editable
+        this.readOnlyColumnNames = config.data.filter(x => !config.editable.includes(x))
+        this.dataColumns = config.editable
+          .map((datum, i) => new TableColumnData(datum, true, i))
+          .concat(this.readOnlyColumnNames
+            .map((datum, i) => new TableColumnData(datum, false, i))
+            )
+      } else {
+        this.editableColumnNames = []
+        this.dataColumns = config.data.map((datum, i) => new TableColumnData(datum, false, i))
+        this.readOnlyColumnNames = this.dataColumns
+          .map(col => col.propertyName)
+      }
       if (config.controls) {
         this.controlColumns = config.controls.map(datum => new TableColumnControl(datum))
         this.controlNames = config.controls
@@ -153,9 +167,12 @@ export interface ITableColumn {
         ]
       }
     }
+
     columns: (ITableColumn[])
     controlNames: (ControlName[])
     columnNames: (string[])
+    readOnlyColumnNames: (string[])
+    editableColumnNames: (string[])
     controlColumns: (ITableColumnControl[])
     dataColumns: (ITableColumnData[])
 

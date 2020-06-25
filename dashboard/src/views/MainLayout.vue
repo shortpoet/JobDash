@@ -25,6 +25,7 @@
           :item-type="table.itemType"
           :id-symbol="table.idSymbol"
           :store="table.store"
+          :editable-columns="table.editableColumns"
           :delete-confirm="deleteConfirm"
           @update-values="onUpdateValues"
         />
@@ -221,7 +222,11 @@ export default defineComponent({
             itemType: contactItemtype.value,
             idSymbol: CONTACT_ID_SYMBOL,
             store: contactStore,
-            // updateCallback: onUpdateContacts
+            editableColumns: [
+              'name',
+              'company',
+              'email',
+            ]
           },
           {
             columnNames: Object.keys(allTasks.value[0]),
@@ -229,7 +234,11 @@ export default defineComponent({
             itemType: taskItemtype.value,
             idSymbol: TASK_ID_SYMBOL,
             store: taskStore,
-            // updateCallback: onUpdateTasks
+            editableColumns: [
+              'name',
+              'category',
+              'description',
+            ]
           },
           {
             columnNames: Object.keys(allMessages.value[0]),
@@ -237,6 +246,11 @@ export default defineComponent({
             itemType: messageItemtype.value,
             idSymbol: MESSAGE_ID_SYMBOL,
             store: messageStore,
+            editableColumns: [
+              'subject',
+              'body',
+              'category',
+            ]
           },
         ]))
 

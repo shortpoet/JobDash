@@ -5,6 +5,7 @@
       :boxed="false"
       :orientation="'horizontal'"
       :type="'columns'"
+      :label="'Visible Data Columns'"
       :item-type="itemType"
       @chosen-properties="handleChosenColumnChange"
     ></BaseSwitchArray>
@@ -13,9 +14,23 @@
       :boxed="false"
       :orientation="'horizontal'"
       :type="'controls'"
+      :label="'Visible Control Columns'"
       :item-type="itemType"
       @chosen-properties="handleChosenControlChange"
     ></BaseSwitchArray>
+
+    <!-- 
+      unfortunately doesn't quite work as expected
+      <BaseSwitchArray
+      :options="columnNames"
+      :boxed="false"
+      :orientation="'horizontal'"
+      :type="'columns-editable'"
+      :label="'Editable Data Columns'"
+      :item-type="itemType"
+      @chosen-properties="handleChosenEditableColumnChange"
+    ></BaseSwitchArray> 
+    -->
   </BaseBox>
 </template>
 
@@ -45,6 +60,10 @@ export default defineComponent({
     controlNames: {
       type: Array,
       required: false
+    },
+    editableColumns: {
+      type: Array,
+      required: false
     }
   },
 
@@ -56,6 +75,7 @@ export default defineComponent({
   emits: [
     'column-change',
     'control-change',
+    'editable-change',
   ],
 
   setup(props, ctx){
@@ -74,6 +94,9 @@ export default defineComponent({
         const chosenControls = ref([
           ...props.controlNames
         ])
+        const chosenEditableColumns = ref([
+          ...props.editableColumns
+        ])
         
         const handleChosenColumnChange = (e) => {
           colorLog("on chosen COLUMN change", "pink", "blue")
@@ -84,6 +107,12 @@ export default defineComponent({
           colorLog("on chosen CONTROL change", "blue", "pink")
           chosenControls.value = e.chosenProperties
           ctx.emit('control-change', {controls: chosenControls.value, itemType: props.itemType})
+        }
+        const handleChosenEditableColumnChange = (e) => {
+          colorLog("on chosen EDITABLE change", "pink", "blue")
+          console.log(chosenEditableColumns.value)
+          chosenEditableColumns.value = e.chosenProperties
+          ctx.emit('editable-change', {editable: chosenEditableColumns.value, itemType: props.itemType})
         }
 
         
@@ -106,8 +135,10 @@ export default defineComponent({
     return {
       chosenColumns,
       chosenControls,
+      chosenEditableColumns,
       handleChosenColumnChange,
-      handleChosenControlChange
+      handleChosenControlChange,
+      handleChosenEditableColumnChange
       // controlSwitch,
       // columnSwitch
     }

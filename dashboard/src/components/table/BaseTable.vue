@@ -23,7 +23,7 @@
         @handle-toggle-delete="handleToggleDelete"
         @handle-click="handleClick"
         @handle-edit-init="handleEditInit"
-        :editable-columns="columnNames"
+        :editable-columns="editableColumns"
         :item-under-edit="itemUnderEditComputed(item)"
       />
     </tbody>
@@ -76,6 +76,9 @@ export default defineComponent({
     },
     controlNames: {
       type: Array
+    },
+    editableColumns: {
+      type: Array
     }
   },
   components: {
@@ -88,6 +91,7 @@ export default defineComponent({
     'handle-delete',
     'handle-confirm-edit',
     'handle-input-edit',
+    'handle-edit-modal',
     'handle-toggle-edit',
     'handle-toggle-delete',
     'confirm-delete',
@@ -139,19 +143,21 @@ export default defineComponent({
         const router = useRouter()
 
         const handleEditModal = (e) => {
-          switch(props.itemType) {
-            case 'task':
-              colorLog('handle edit modal at table row body', 'blue', 'green')
-              itemEditModal.showModal()
-              const idSymbol = '_id'
-              const itemType = props.itemType
-              console.log(e.item[idSymbol])
-              router.push({
-                name: '#edit-item-modal',
-                path: `/${itemType}/${e.item[idSymbol]}`,
-                params: { id: e.item[idSymbol], item: JSON.stringify(e.item) } 
-              })
-          }
+          console.log(e)
+          ctx.emit('handle-edit-modal', e)
+          // switch(props.itemType) {
+          //   case 'task':
+          //     colorLog('handle edit modal at table row body', 'blue', 'green')
+          //     itemEditModal.showModal()
+          //     const idSymbol = '_id'
+          //     const itemType = props.itemType
+          //     console.log(e.item[idSymbol])
+          //     router.push({
+          //       name: '#edit-item-modal',
+          //       path: `/${itemType}/${e.item[idSymbol]}`,
+          //       params: { id: e.item[idSymbol], item: JSON.stringify(e.item) } 
+          //     })
+          // }
         }
       //#endregion
 
@@ -175,11 +181,11 @@ export default defineComponent({
       handleToggleEdit: (e) => {
         // colorLog('handle toggle edit at table row body', 'blue', 'white')
         // console.log(e)
-        ctx.emit('handle-toggle-edit', {item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
+        ctx.emit('handle-toggle-edit', {item: e.item, itemType: props.itemType})
       },
       modalConfirmEdit: (e) => {
         // console.log(e)        
-        ctx.emit('handle-confirm-edit', {modal: true, item: e.item, itemType: props.itemType, editableColumns: e.editableColumns})
+        ctx.emit('handle-confirm-edit', {modal: true, item: e.item, itemType: props.itemType})
       },
       handleToggleDelete: (item) => ctx.emit('handle-toggle-delete', {item: item, itemType: props.itemType}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),

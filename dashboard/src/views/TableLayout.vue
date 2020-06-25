@@ -12,8 +12,10 @@
             :item-type="itemType"
             :column-names="columnNames"
             :control-names="controlNames"
+            :editable-columns="editableColumnNames"
             @column-change="handleColumnChange"
             @control-change="handleControlChange"
+            @editable-change="handleEditableChange"
           >
           </BaseTableControls>
           <BaseBox scrollable>
@@ -24,12 +26,14 @@
               :item-type="itemType"
               :column-names="columnNamesRef"
               :control-names="controlNamesRef"
+              :editable-columns="editableColumnNames"
               @handle-delete="handleDelete"
               @handle-toggle-delete="handleToggleDelete"
               @handle-toggle-edit="handleToggleEdit"
               @handle-confirm-edit="handleConfirmEdit"
               @handle-input-edit="handleInputEdit"
               @confirm-delete="confirmDelete"
+              @handle-edit-modal="handleEditModal"
               :item-under-edit="itemUnderEdit"
             />
           </BaseBox>
@@ -42,13 +46,13 @@
     <ModalWarning @delete-item="confirmDelete" :destination="`#delete-${itemType}-modal`" />
   </teleport> -->
 
-  <!-- <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible">
+  <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible && tableHasEditCandidate">
     <BaseItemEditCard
       @modal-confirm-edit="modalConfirmEdit"
-      :editable-columns="editableColumnsComputed"
+      :editable-columns="editableColumnNames"
       :destination="editItemDestination"
     />
-  </teleport> -->
+  </teleport>
 
 </template>
 
@@ -97,6 +101,9 @@ export default defineComponent({
       type: Array as () => ControlName[],
       default: () => [CONTROL_ID, CONTROL_DELETE, CONTROL_EDIT, CONTROL_LOCKED, CONTROL_MESSAGE]
     },
+    editableColumns: {
+      type: Array as () => string[]
+    },
     store: {
       type: Object,
       required: false
@@ -128,17 +135,19 @@ export default defineComponent({
     // init refs at top so config and choice regions have access
     const chosenColumns: Ref<string[]> = ref([...props.columnNames])
     const chosenControls: Ref<ControlName[]> = ref([...props.controlNames])
-
+    const chosenEditable: Ref<string[]> = ref([...props.editableColumns])
     //#region table config
       const tableSettings: ITableConfigSettings = {
         data: chosenColumns.value,
-        controls: chosenControls.value
+        controls: chosenControls.value,
+        editable: chosenEditable.value
       }
 
       const tableConfig = new TableConfig(tableSettings)
 
-      const { columns, controlNames: controlNamesRef , columnNames: columnNamesRef } = tableConfig
+      const { columns, controlNames: controlNamesRef , columnNames: columnNamesRef, editableColumnNames } = tableConfig
       const columnsRef = ref(columns)
+
       // console.log(columnsRef)    
     //#endregion
 
@@ -154,7 +163,7 @@ export default defineComponent({
         (value: number, previous:number) => {
             // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
             columnsRef.value = []
-            columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value}).columns
+            columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value, editable: chosenEditable.value}).columns
         },
         // not sure if i want this called immediately
         // makes update function run on load
@@ -171,7 +180,24 @@ export default defineComponent({
         (value: number, previous:number) => {
             // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
             columnsRef.value = []
-            columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value}).columns
+            columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value, editable: chosenEditable.value}).columns
+        },
+        // not sure if i want this called immediately
+        // makes update function run on load
+        {immediate: true}
+      )
+      // editable
+      const handleEditableChange = (e) => {
+        // colorLog('handle control change', 'green', 'yellow')
+        // console.log(e)
+        chosenEditable.value = e.editable
+      }
+      watch(
+        () => chosenEditable.value.length, 
+        (value: number, previous:number) => {
+            // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+            columnsRef.value = []
+            columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value, editable: chosenEditable.value}).columns
         },
         // not sure if i want this called immediately
         // makes update function run on load
@@ -207,7 +233,6 @@ export default defineComponent({
         // colorLog('handle delete from table layout', 'magenta', 'yellow')
         tableHasDeleteCandidate.value = itemDelete.handleConfirmDelete(e.item, itemDeleteModal, taskIdSymbol, props.itemType)
       }
-      const _confirmDelete = (item) => ctx.emit('confirm-delete', {item: item, itemType: props.itemType})
 
       const confirmDelete = () => {
         // colorLog('confirm delete from table layout', 'yellow', 'magenta')
@@ -228,42 +253,64 @@ export default defineComponent({
     
     //#region edit
       const itemUnderEdit = ref()
-    //#region table edit
+      //#region table edit
 
-      let itemTouched = ref()
-      const itemEdit = useEdit(props.store, ctx)
+        let itemTouched = ref()
+        const itemEdit = useEdit(props.store, ctx)
 
-      const handleToggleEdit = (e) => {
-        // colorLog('toggle edited item at table layout', 'purple', 'yellow')
-        // console.log(e)
-        if (!itemUnderEdit.value) {
-          // if it is false but being emitted it wants this component to set it to true
-          itemUnderEdit.value = e.item          
-        } else {
-          itemUnderEdit.value = null
-          handleConfirmEdit(e)
+        const handleToggleEdit = (e) => {
+          // colorLog('toggle edited item at table layout', 'purple', 'yellow')
+          // console.log(e)
+          if (!itemUnderEdit.value) {
+            // if it is false but being emitted it wants this component to set it to true
+            itemUnderEdit.value = e.item          
+          } else {
+            itemUnderEdit.value = null
+            handleConfirmEdit(e)
+          }
         }
-      }
 
-      const handleInputEdit = (e) => {
-        // colorLog('handle input edit at table layout', 'magenta', 'yellow')
-        // console.log(e)
-        const toggleEditable = itemEdit.toggleEditable
-        itemTouched.value = e.valueChanged
-        toggleEditable(itemTouched, e.value, e.propertyName)
-      }
-      const handleConfirmEdit = (e) => {
-        // console.log(e)
-        // colorLog('confirm edit item at main layout', 'yellow', 'blue')
-        // TODO
-          // fix side-effect if you click another edit cell to close edit
-        // #TODO
-        const editItem = itemEdit.editItem
-        e.modal
-          ? itemTouched.value = true
-          : itemTouched.value = itemTouched.value
-        editItem(e.item, taskIdSymbol, itemTouched, e.itemType)
-      }
+        const handleInputEdit = (e) => {
+          // colorLog('handle input edit at table layout', 'magenta', 'yellow')
+          // console.log(e)
+          const toggleEditable = itemEdit.toggleEditable
+          itemTouched.value = e.valueChanged
+          toggleEditable(itemTouched, e.value, e.propertyName)
+        }
+        const handleConfirmEdit = (e) => {
+          // console.log(e)
+          // colorLog('confirm edit item at main layout', 'yellow', 'blue')
+          // TODO
+            // fix side-effect if you click another edit cell to close edit
+          // #TODO
+          const editItem = itemEdit.editItem
+          e.modal
+            ? itemTouched.value = true
+            : itemTouched.value = itemTouched.value
+          editItem(e.item, taskIdSymbol, itemTouched, e.itemType)
+        }
+      //#endregion
+      //#region modal edit
+
+        const tableHasEditCandidate = ref(false)
+        const handleEditModal = (e) => {
+          colorLog('handle edit modal at table layout', 'blue', 'green')
+          console.log(props.itemType)
+          console.log(e.itemType)
+          if (props.itemType == e.itemType) {
+            tableHasEditCandidate.value = true
+            itemEditModal.showModal()
+            const idSymbol = '_id'
+            const itemType = props.itemType
+            console.log(e.item[idSymbol])
+            router.push({
+              name: '#edit-item-modal',
+              path: `/${itemType}/${e.item[idSymbol]}`,
+              params: { id: e.item[idSymbol], item: JSON.stringify(e.item) } 
+            })
+          }
+        }
+
 
       // const handleEditModal = (e) => {
       //   switch(e.itemType) {
@@ -307,19 +354,23 @@ export default defineComponent({
         })
       //#endregion
     //#endregion
-
+    console.log(editableColumnNames)
     return {
+      tableHasEditCandidate,
       itemDeleteModal,
       itemEditModal,
       itemUnderEdit,
       columnsRef,
       controlNamesRef,
       columnNamesRef,
+      editableColumnNames,
       handleMinimize,
       cardIsOpen,
       handleColumnChange,
       handleControlChange,
+      handleEditableChange,
       handleToggleEdit,
+      handleEditModal,
       // handleConfirmEdit: (e) => ctx.emit('handle-confirm-edit', e),
       handleInputEdit,
       handleToggleDelete,

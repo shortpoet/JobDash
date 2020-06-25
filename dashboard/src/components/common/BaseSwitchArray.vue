@@ -2,6 +2,7 @@
   <div :class="['base-switch-container', orientation]">
     <BaseBox v-if="boxed" class="base-switch-box">
       <div class="field is-small">          
+        <label class="is-small switch-array-label"><b>{{ label }}</b></label>
         <p :class="['control', 'is-small', orientation]">
           <label
             v-for="(prop, i) in options"
@@ -20,6 +21,7 @@
     </BaseBox>
     <div v-else class="base-switch-box">
       <div class="field is-small">          
+        <label class="is-small switch-array-label"><b>{{ label }}</b></label>
         <p :class="['control', 'is-small', orientation]">
           <label
             v-for="(prop, i) in options"
@@ -78,6 +80,10 @@ export default defineComponent({
     itemType: {
       type: String,
       required: true
+    },
+    label: {
+      type: String,
+      required: false
     },
 
   },

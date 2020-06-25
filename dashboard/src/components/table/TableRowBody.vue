@@ -140,14 +140,14 @@ export default defineComponent({
           controlIcon: getIconConfig(column).controlIcon,
           action: column.action,
           propertyData: props.item,
-          editableColumns: props.editableColumns
+          // editableColumns: props.editableColumns
         }
       }
       else if (column instanceof BaseTableColumnData) {
         return {
           propertyName: column.propertyName,
           propertyData: props.item,
-          editableColumns: props.editableColumns,
+          // editableColumns: props.editableColumns,
           itemUnderEdit: props.itemUnderEdit
         }
       }
@@ -168,11 +168,11 @@ export default defineComponent({
           ctx.emit('handle-delete', e.item)
           break
         case ACTION_EDIT:
-          ctx.emit('handle-toggle-edit', {item: e.item, editableColumns: props.editableColumns})
+          ctx.emit('handle-toggle-edit', {item: e.item})
           break
         case ACTION_ID:
           console.log(e)
-          ctx.emit('handle-edit-modal', {item: e.item, editableColumns: props.editableColumns})
+          ctx.emit('handle-edit-modal', {item: e.item, itemType: props.itemType})
           break
       }
     }
