@@ -38,7 +38,7 @@ export class MessageStore extends StoreAxios<IMessage> implements IStore<IMessag
   }
 
   async createRecord(message: IMessage, pushToDb: boolean = true) {
-    console.log(message)
+    // console.log(message)
     super.createRecord(message)
     if(pushToDb) {
       const response = await axios.post<MessageDTO>('http://localhost:3000/message/create', message)

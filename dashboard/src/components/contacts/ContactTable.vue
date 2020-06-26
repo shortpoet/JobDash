@@ -74,7 +74,7 @@
 
   <teleport to="#message-modal" v-if="messageModal.visible">
     <!-- <router-view/> -->
-    <MessageWriter @send-message="sendMessage" :destination="'#message-modal'" :message="message"/>
+    <MessageWriter @send-message="sendMessage" :message="message"/>
   </teleport>
 
 

@@ -28,7 +28,7 @@ import { useRouter } from 'vue-router'
       },
       destination: {
         type: String,
-        required: true
+        required: false
       }
     },
 
