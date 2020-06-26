@@ -6,11 +6,11 @@
   -->
   <div class="main-layout" >
     <BaseMinimize
-      :class-prop="'columns'"
+      :class-prop="'main-minimize-content'"
       :component-name="'Create and Tables'"
-      minimized
+      
     >
-      <div class="column tabs-column is-one-fifth">
+      <div class="tabs-column">
         <CreateLayout
           @update-contacts="onUpdateContacts"    
           @update-tasks="onUpdateTasks"
@@ -18,7 +18,7 @@
         />
         <!-- <TabsLayout @tab-change="tabChange"/> -->
       </div>
-      <div class="column is-four-fifths">
+      <div class="table-column">
         <TableLayout
           v-for="(table, i) in tables"
           :destination="editItemDestination"
