@@ -30,7 +30,7 @@ import useBoardMove from './../../composables/board/useBoardMove'
 import BoardItem from './BoardItem.vue'
 
 import { IBoardColumn } from '../../interfaces/board/board.column.interface'
-import { Task } from '../../interfaces/task/task.interface'
+import { ITask } from '../../interfaces/task/task.interface'
 import { BoardStore } from '../../store/board.store'
 import { useStore } from '../../store'
 

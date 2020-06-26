@@ -85,7 +85,7 @@ import ModalWarning from './../../components/common/ModalWarning.vue'
 import TaskCard from './TaskCard.vue'
 
 
-import { Task } from '../../interfaces/task/task.interface'
+import { ITask } from '../../interfaces/task/task.interface'
 import { Field } from '../../interfaces/common/field.interface'
 import { Destination } from '../../interfaces/common/modal.interface'
 
@@ -143,7 +143,7 @@ export default defineComponent({
 
     //#region openCard
       const router = useRouter()
-      const openCard = (task: Task) => {
+      const openCard = (task: ITask) => {
         // console.log('task table')
         // console.log(task._id)
         taskCardModal.showModal()
@@ -166,7 +166,7 @@ export default defineComponent({
 
     //#region delete
       const confirmDelete = ref(false)
-      const deleteCandidate = ref<Task>(null)
+      const deleteCandidate = ref<ITask>(null)
       const destination: Destination = '#delete-task-modal'
       const modal = useModal(destination)
 
@@ -178,7 +178,7 @@ export default defineComponent({
       // const modal = modalMap.modalMap[destination]
 
 
-      const handleConfirmDelete = (task: Task) => {
+      const handleConfirmDelete = (task: ITask) => {
         if (task.locked) {
           deleteCandidate.value = task
           modal.showModal()
@@ -209,7 +209,7 @@ export default defineComponent({
         }
       }
       
-      const toggleLocked = async (task: Task) => {
+      const toggleLocked = async (task: ITask) => {
         // console.log('task table')
         // console.log(task.locked)
         if (task.locked == false) {

@@ -25,7 +25,7 @@ import { TaskStore } from '../../store/task.store'
 
 import BaseInput from './../../components/common/BaseInput.vue'
 
-import { Task } from '../../interfaces/task/task.interface'
+import { ITask } from '../../interfaces/task/task.interface'
 
 import { useModal } from '../../composables/useModal'
 import { useUpdateValues } from '../../composables/useUpdateValues'
@@ -52,12 +52,12 @@ export default defineComponent({
 
     //#region initValues
       const id = ref('')
-      const task = ref<Task>()
+      const task = ref<ITask>()
       const nameEdit = ref()
       const descriptionEdit = ref()
       const categoryEdit = ref()
 
-      const taskEdit = ref<Task>()
+      const taskEdit = ref<ITask>()
       const taskTouched = ref(false)
 
       const loaded = ref(false)

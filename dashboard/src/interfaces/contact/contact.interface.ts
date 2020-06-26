@@ -1,7 +1,7 @@
 import { Moment } from "moment";
-import { TableItem } from "../table/table.item.interface";
+import { ITableItem } from "../table/table.item.interface";
 
-export interface Contact extends TableItem {
+export interface IContact extends ITableItem {
   _id: string
   itemId: string
   name: string

@@ -1,15 +1,15 @@
 
-import { Contact } from '../contact/contact.interface';
+import { IContact } from '../contact/contact.interface';
 import { Moment } from "moment";
-import { TableItem } from '../table/table.item.interface';
+import { ITableItem } from '../table/table.item.interface';
 
-export interface Task extends TableItem {
+export interface ITask extends ITableItem {
   _id: string;
   itemId: string;
   name: string;
   description: string;
   category: string;
-  contact: Contact;
+  contact: IContact;
   created: Moment;
   edited: Moment;
   editable: boolean;

@@ -24,9 +24,9 @@ import { useStore } from './../../store'
 import { ContactStore } from '../../store/contact.store'
 
 import BaseInput from './../../components/common/BaseInput.vue'
-import MessageWriter from './../../components/common/MessageWriter.vue'
+import MessageWriter from './../../components/message/MessageWriter.vue'
 
-import { Contact } from '../../interfaces/contact/contact.interface'
+import { IContact } from '../../interfaces/contact/contact.interface'
 
 import { useModal } from '../../composables/useModal'
 import { useUpdateValues } from '../../composables/useUpdateValues'
@@ -73,9 +73,9 @@ export default defineComponent({
       const contactStore: ContactStore = store.modules['contactStore']
 
       const id = ref()
-      const contact = ref<Contact>()
+      const contact = ref<IContact>()
 
-      const contactEdit = ref<Contact>()
+      const contactEdit = ref<IContact>()
       const loaded = ref(false)
 
       const nameEdit = ref() 

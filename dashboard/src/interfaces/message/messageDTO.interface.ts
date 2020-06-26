@@ -1,6 +1,6 @@
-import { Message } from "./message.interface";
+import { IMessage } from "./message.interface";
 
 export interface MessageDTO {
   dtoLog: string
-  message: Message
+  message: IMessage
 }

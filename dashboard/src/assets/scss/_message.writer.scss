@@ -1,0 +1,17 @@
+.message-writer-container.box{
+  // https://stackoverflow.com/questions/45973121/how-to-wrap-long-lines-in-contenteditable-div-with-flex
+  // https://stackoverflow.com/questions/28441892/how-can-i-wrap-long-lines-without-spaces-in-contenteditable/28442019
+  // flex-wrap: wrap;
+  // word-wrap: break-word;
+  // overflow-wrap: break-word;
+  // white-space: normal;
+  word-break: break-all;
+  .message-input{
+    // flex-wrap: wrap;
+    // word-wrap: break-word;
+    // overflow-wrap: break-word;
+    // white-space: normal;
+    word-break: break-all;
+    // word-wrap: normal;
+  }
+}

@@ -1,13 +1,13 @@
 import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
-import { Contact } from "../interfaces/contact/contact.interface"
+import { IContact } from "../interfaces/contact/contact.interface"
 import { ContactDTO } from "../interfaces/contact/contactDTO.interface"
 import { StateMap, Store, StoreState, IStore, StoreAxios } from "./store.interface"
 import { ITableItem } from "../interfaces/table/table.item.interface"
 
 interface ContactStateMap extends StateMap {
   ids: string[]
-  all: Record<string, Contact>
+  all: Record<string, IContact>
   loaded: boolean
 }
 
@@ -28,7 +28,7 @@ const initialContactStoreState = () : ContactStoreState => ({
 })
 
 
-export class ContactStore extends StoreAxios<Contact> implements IStore<Contact> {
+export class ContactStore extends StoreAxios<IContact> implements IStore<IContact> {
   protected state: ContactStoreState
   constructor(idSymbol: string, initialState: ContactStoreState) {
     super(idSymbol, initialState)
@@ -36,25 +36,25 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
     // this.state = reactive(initialState)
   }
 
-  public getLastId(): Contact['_id'] {
-    const last = this.getLast<Contact>()
+  public getLastId(): IContact['_id'] {
+    const last = this.getLast<IContact>()
     return last ? last._id : '-1'
   }
 
-  async createRecord(contact: Contact) {
+  async createRecord(contact: IContact) {
     super.createRecord(contact)
     const response = await axios.post<ContactDTO>('http://localhost:3000/contact/create', contact)
     this.fetchRecords()
   }
 
-  async deleteRecord(contact: Contact): Promise<string> {
+  async deleteRecord(contact: IContact): Promise<string> {
     super.deleteRecord(contact)
     const response = await axios.delete<ContactDTO>(`http://localhost:3000/contact/delete?contact_id=${contact._id}`)
     return response.data.contact._id
   }
 
   
-  async editRecord(oldContact: Contact, newContact: Contact) {
+  async editRecord(oldContact: IContact, newContact: IContact) {
     super.editRecord(oldContact, newContact)
     // console.log('writing to db')
 
@@ -82,7 +82,7 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
     return super.updateRecords(caller);
   }
 
-  toggleEditable(contact: Contact, editable: boolean) {
+  toggleEditable(contact: IContact, editable: boolean) {
     // console.log('toggle editable')
     // this only affects local state
     // doesn't actually have to be updated in db unless we want the edit state to persist through reload
@@ -99,11 +99,11 @@ export class ContactStore extends StoreAxios<Contact> implements IStore<Contact>
     // contact.editable = editable
   }
   
-  toggleLocked(oldContact: Contact, locked: boolean) {
+  toggleLocked(oldContact: IContact, locked: boolean) {
     // console.log('toggle locked')
     // without this line I was getting the bug where I had to click twice
     this.state.records.all[oldContact._id].locked = locked
-    const newContact: Contact = {
+    const newContact: IContact = {
       _id: oldContact._id,
       itemId: oldContact._id,
       name: oldContact.name,

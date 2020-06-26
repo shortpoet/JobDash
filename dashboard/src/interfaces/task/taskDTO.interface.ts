@@ -1,6 +1,6 @@
-import { Task } from "./task.interface";
+import { ITask } from "./task.interface";
 
 export interface TaskDTO {
   dtoLog: string
-  task: Task
+  task: ITask
 }

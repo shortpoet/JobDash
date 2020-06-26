@@ -37,7 +37,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'contact/:id/message/:id',
         name: '#message-modal',
-        component: () => import(/* webpackChunkName: "about" */ "../components/common/MessageWriter.vue"),
+        component: () => import(/* webpackChunkName: "about" */ "../components/message/MessageWriter.vue"),
         props: route => ({
           destination: route.name,
           ...route.params

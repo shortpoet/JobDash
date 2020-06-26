@@ -43,8 +43,8 @@ import { MessageStore } from '../../store/message.store'
 import { useStore, MESSAGE_STORE_SYMBOL } from '../../store'
 import { ContactStore } from '../../store/contact.store'
 
-import { Contact } from '../../interfaces/contact/contact.interface'
-import { Message } from './../../interfaces/message/message.interface' 
+import { IContact } from '../../interfaces/contact/contact.interface'
+import { IMessage } from './../../interfaces/message/message.interface' 
 import { Destination } from '../../interfaces/common/modal.interface'
 
 import { useUpdateValues } from '../../composables/useUpdateValues'
@@ -53,7 +53,7 @@ export default defineComponent({
   name: 'MessageWriter',
   props: {
     message: {
-      type: Object as () => Message,
+      type: Object as () => IMessage,
       // TODO
       //  might need to do some work to get message draft to persist
       // #TODO
@@ -66,7 +66,7 @@ export default defineComponent({
     const store = useStore()
     //#region messageUse
       const messageStore: MessageStore = store.modules[MESSAGE_STORE_SYMBOL]
-      const allMessages = ref<Message[]>([])
+      const allMessages = ref<IMessage[]>([])
       const messagesLoading = ref(true)
       allMessages.value = await messageStore.loadRecords('message')
       messagesLoading.value = false
@@ -79,7 +79,7 @@ export default defineComponent({
     const destination: Destination = '#message-modal'
     const modal = useModal(destination)
 
-    const messageEdit = ref<Message>(props.message)
+    const messageEdit = ref<IMessage>(props.message)
     const subjectEdit = ref('')
     const bodyEdit = ref('')
     const messageTouched = ref(false)

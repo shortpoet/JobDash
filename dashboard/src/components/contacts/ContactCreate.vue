@@ -19,7 +19,7 @@ import { ContactStore } from './../../store/contact.store'
 
 import BaseInput from './../../components/common/BaseInput.vue'
 
-import { Contact } from '../../interfaces/contact/contact.interface'
+import { IContact } from '../../interfaces/contact/contact.interface'
 
 import {useStore} from './../../store'
 
@@ -48,7 +48,7 @@ export default defineComponent({
     const submit = async function(e: any) {
       // console.log(store.getLastId())
       const nextId = (parseInt(contactStore.getLastId()) + 1).toString()
-      const contact: Contact = {
+      const contact: IContact = {
         _id: nextId,
         itemId: nextId,
         name: name.value,
