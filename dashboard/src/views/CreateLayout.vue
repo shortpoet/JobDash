@@ -13,7 +13,7 @@
         <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts"/> -->
         <ContactCreate v-if="activeTab.name == 'Contact'" @update-contacts="onUpdateContacts"/>
         <TaskCreate v-if="activeTab.name == 'Task'" @update-tasks="onUpdateTasks"/>
-        <MessageWriter v-if="activeTab.name == 'Message'" @update-tasks="onUpdateMessages"/>
+        <MessageWriter v-if="activeTab.name == 'Message'" @update-messages="onUpdateMessages"/>
       </BaseBox>
     </BaseMinimize>
 
@@ -105,7 +105,8 @@ export default defineComponent({
       selectedComponent,
       tabActivated,
       onUpdateContacts,
-      onUpdateTasks
+      onUpdateTasks,
+      onUpdateMessages
     }
   }
 

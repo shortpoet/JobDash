@@ -1,7 +1,7 @@
 <template>
 <div class="message-writer-container box">
 
-  <div class="columns">
+  <div class="columns" v-if="!isModal">
     <div class="column">
       <div class="field">
         <div class="label">Contact</div>
@@ -62,6 +62,7 @@ import { Destination } from '../../interfaces/common/modal.interface'
 
 import { useUpdateValues } from '../../composables/useUpdateValues'
 import { useModal } from '../../composables/useModal'
+import { useRouter } from 'vue-router'
 export default defineComponent({
   name: 'MessageWriter',
   components: {
@@ -75,13 +76,21 @@ export default defineComponent({
       // #TODO
       required: false
     },
+    isModal: {
+      type: Boolean,
+      default: false
+    }
     // contacts: {
     //   type: Array as () => IContact[]
     // }
   },
-  // emits: ['submit-message'],
+  emits: [
+    'update-messages'
+  ],
   async setup(props, ctx) {
 
+
+    const router = useRouter()
     const store = useStore()
     //#region messageUse
       const messageStore: MessageStore = store.modules[MESSAGE_STORE_SYMBOL]
@@ -105,10 +114,14 @@ export default defineComponent({
     const contactNames = computed(() => allContacts.value.map(c => c.name))
     const selectedContactName = ref('')
     const destination: Destination = '#message-modal'
-    const selectedContact = computed(() => allContacts.value.filter(c => c.name == selectedContactName.value)[0])
+    const selectedContact = computed(() => 
+      props.isModal
+        ? allContacts.value.filter(c => c._id == router.currentRoute.value.params.id)[0]
+        : allContacts.value.filter(c => c.name == selectedContactName.value)[0]
+    )
     
     const messageEdit = ref<IMessage>(new Message(selectedContact.value))
-    console.log(messageEdit.value);
+    // console.log(messageEdit.value);
     
     const subjectEdit = ref('')
     const bodyEdit = ref('')
@@ -129,7 +142,7 @@ export default defineComponent({
     const submit = async function(e: any) {
       // console.log('submit - message writer')
       const nextId = (parseInt(messageStore.getLastId()) + 1).toString()
-      console.log(nextId)
+      // console.log(nextId)
       if (messageTouched.value == true) {
         // console.log('message touched')
         // console.log(messageEdit.value)
@@ -143,6 +156,7 @@ export default defineComponent({
           messageEdit.value,
           true
         )
+        ctx.emit('update-messages')
         messageTouched.value = false
       }
       modal.hideModal()

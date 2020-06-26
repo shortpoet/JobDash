@@ -19,6 +19,7 @@
         @handle-delete="handleDelete"
         @handle-input-edit="handleInputEdit"
         @handle-toggle-edit="handleToggleEdit"
+        @handle-message-modal="handleMessageModal"
         @handle-edit-modal="handleEditModal"
         @handle-toggle-locked="handleToggleLocked"
         @handle-click="handleClick"
@@ -91,6 +92,7 @@ export default defineComponent({
     'handle-delete',
     'handle-confirm-edit',
     'handle-input-edit',
+    'handle-message-modal',
     'handle-edit-modal',
     'handle-toggle-edit',
     'handle-toggle-locked',
@@ -189,7 +191,8 @@ export default defineComponent({
       },
       handleToggleLocked: (item) => ctx.emit('handle-toggle-locked', {item: item, itemType: props.itemType}),
       handleDelete: (item) => ctx.emit('handle-delete', {item: item, itemType: props.itemType}),
-      updateValues: () => ctx.emit('update-values')
+      updateValues: () => ctx.emit('update-values'),
+      handleMessageModal: (e) => ctx.emit('handle-message-modal', e)
     }
 
   }

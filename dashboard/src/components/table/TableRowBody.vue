@@ -78,7 +78,8 @@ export default defineComponent({
     'handle-toggle-locked',
     'handle-toggle-edit',
     'handle-input-edit',
-    'handle-edit-modal'
+    'handle-edit-modal',
+    'handle-message-modal'
   ],
 
   setup(props, ctx){
@@ -173,6 +174,10 @@ export default defineComponent({
         case ACTION_ID:
           console.log(e)
           ctx.emit('handle-edit-modal', {item: e.item, itemType: props.itemType})
+          break
+        case ACTION_MESSAGE:
+          console.log(e)
+          ctx.emit('handle-message-modal', {item: e.item, itemType: props.itemType})
           break
       }
     }

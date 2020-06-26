@@ -67,7 +67,7 @@
 
   <teleport to="#message-modal" v-if="messageModal.visible">
     <!-- <router-view/> -->
-    <MessageWriter @send-message="sendMessage" :destination="'#message-modal'" :message="message"/>
+    <MessageWriter @send-message="sendMessage" :message="message"/>
   </teleport>
 
   <div />
@@ -78,7 +78,6 @@ import { defineComponent, computed, ref, watch, onMounted } from 'vue'
 import moment from 'moment'
 import { useStore } from '../../store'
 import { useRouter } from 'vue-router'
-import { StoreConstructor } from '../../store/store.interface'
 import { MessageStore } from '../../store/message.store'
 import { useUpdateValues } from '../../composables/useUpdateValues'
 

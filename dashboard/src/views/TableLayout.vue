@@ -33,6 +33,7 @@
               @handle-confirm-edit="handleConfirmEdit"
               @handle-input-edit="handleInputEdit"
               @confirm-delete="confirmDelete"
+              @handle-message-modal="handleMessageModal"
               @handle-edit-modal="handleEditModal"
               :item-under-edit="itemUnderEdit"
             />
@@ -46,13 +47,16 @@
     <ModalWarning @delete-item="confirmDelete" :destination="`#delete-item-modal`" />
   </teleport>
 
-  <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible && tableHasEditCandidate">
+  <teleport :to="`#edit-item-modal`" v-if="itemEditModal.visible && tableHasEditCandidate" >
     <BaseItemEditCard
       @modal-confirm-edit="handleConfirmEdit"
-      @modal-close="handleModalClose"
+      @modal-close="handleItemEditModalClose"
       :editable-columns="editableColumnNames"
       :destination="editItemDestination"
     />
+  </teleport>
+  <teleport to="#message-modal" v-if="messageModal.visible && tableHasMessageCandidate" :destination="''">
+    <MessageWriter @modal-close="handleMessageModalClose" :isModal="true" @update-messages="handleMessageModalClose"/>
   </teleport>
 
 </template>
@@ -66,6 +70,7 @@ import BaseTable from './../components/table/BaseTable.vue'
 import BaseTableControls from './../components/table/BaseTableControls.vue'
 import BaseItemEditCard from './../components/common/BaseItemEditCard.vue'
 import ModalWarning from './../components/common/ModalWarning.vue'
+import MessageWriter from './../components/message/MessageWriter.vue'
 
 import { useModal } from '../composables/useModal'
 
@@ -117,7 +122,8 @@ export default defineComponent({
     BaseTableControls,
     BaseTable,
     ModalWarning,
-    BaseItemEditCard
+    BaseItemEditCard,
+    MessageWriter
   },
   emits: [
     // TODO
@@ -209,6 +215,8 @@ export default defineComponent({
       const itemDeleteModal = useModal(deleteItemDestination)
       const editItemDestination: Destination = '#edit-item-modal'
       const itemEditModal = useModal(editItemDestination)
+      const messageDestination: Destination = '#message-modal'
+      const messageModal = useModal(messageDestination)
     //#endregion
 
     //#region delete
@@ -302,12 +310,47 @@ export default defineComponent({
           }
         }
 
-        const handleModalClose = () => {
+        const handleItemEditModalClose = () => {
           itemEditModal.hideModal()
           router.push('/')
           tableHasEditCandidate.value = false
         }        
     //#endregion
+
+      //#region message writer modal
+        const tableHasMessageCandidate = ref(false)
+        const handleMessageModal = async (e) => {
+          colorLog('handle message modal at table layout', 'blue', 'green')
+          console.log(props.itemType)
+          console.log(e.itemType)
+          if (props.itemType == e.itemType) {
+            console.log('has match');
+            
+            tableHasMessageCandidate.value = true
+            messageModal.showModal()
+            const idSymbol = '_id'
+            const itemType = props.itemType
+            // console.log(e.item[idSymbol])
+            router.push({
+              name: '#edit-item-modal',
+              path: `/${itemType}/${e.item[idSymbol]}`,
+              params: { id: e.item[idSymbol], item: JSON.stringify(e.item), itemType: itemType } 
+            })
+          }
+        }
+
+        const handleMessageModalClose = () => {
+          messageModal.hideModal()
+          router.push('/')
+          ctx.emit('update-values', 'message')
+          tableHasMessageCandidate.value = false
+        }
+
+
+        
+      
+    //#endregion
+
 
     //#region future
       const handleMinimize = (e) => {
@@ -337,10 +380,14 @@ export default defineComponent({
     return {
       tableHasEditCandidate,
       tableHasDeleteCandidate,
+      tableHasMessageCandidate,
       itemDeleteModal,
       itemEditModal,
+      messageModal,
       confirmDelete,
-      handleModalClose,
+      handleItemEditModalClose,
+      handleMessageModal,
+      handleMessageModalClose,
       handleConfirmEdit,
       editItemDestination,
       itemUnderEdit,
