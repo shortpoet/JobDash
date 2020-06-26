@@ -187,6 +187,9 @@ export default defineComponent({
           case 'contact':
             onUpdateContacts();
             break;
+          case 'message':
+            onUpdateMessages();
+            break;
         }
       }
     //#endregion

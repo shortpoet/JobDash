@@ -36,7 +36,7 @@
 
   <div class="columns">
     <div class="column">
-      <button @click="submit" class="button is-primary is-pulled-right">
+      <button @click.prevent="submit" class="button is-primary is-pulled-right">
         Submit
       </button>
     </div>
@@ -131,8 +131,9 @@ export default defineComponent({
       const nextId = (parseInt(messageStore.getLastId()) + 1).toString()
       console.log(nextId)
       if (messageTouched.value == true) {
-        console.log('message touched')
-        console.log(messageEdit.value)
+        // console.log('message touched')
+        // console.log(messageEdit.value)
+        // delete placeholder with '-1' _id
         messageEdit.value._id = nextId
         messageEdit.value.itemId = nextId
         messageEdit.value.subject = subjectEdit.value 
@@ -141,10 +142,6 @@ export default defineComponent({
         await messageStore.createRecord(
           messageEdit.value,
           true
-        )
-        // delete placeholder with '-1' _id
-        await messageStore.createRecord(
-          props.message, 
         )
         messageTouched.value = false
       }
