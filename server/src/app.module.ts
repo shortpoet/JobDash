@@ -6,10 +6,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TaskModule } from './task/task.module';
 import { MessageModule } from './message/message.module';
 
+const connString = process.env.DOCKER == '1'
+  ? 'mongodb://mongo/job-db'
+  : 'mongodb://localhost/job-db'
+
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb://mongo/job-db',
+      connString,
       {
         useNewUrlParser: true
       }

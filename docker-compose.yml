@@ -10,6 +10,8 @@ services:
     stdin_open: true
     working_dir: /app/server
     command: yarn run start:dev
+    environment:
+      - DOCKER=1
     depends_on:
       - mongo
     ports:
@@ -34,14 +36,24 @@ services:
     image: mongo
     restart: always
     volumes:
-      - ./tmp.nosync/mongo:/data/db
+      - tmp.mongodata:/data/db
+    container_name: mongo
     # NOTE: Use these variables to enable authentication for mongo and mongo-express (duplicate below)
     # environment:
     #   MONGO_INITDB_ROOT_USERNAME: root
     #   MONGO_INITDB_ROOT_PASSWORD: example
-
+      
   mongo-express:
     image: mongo-express
+    depends_on:
+      - mongo
     restart: always
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root
+    #   MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - 8081:8081
+
+volumes:
+  tmp.mongodata:
+  
