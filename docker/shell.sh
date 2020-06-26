@@ -1,1 +1,1 @@
-docker-compose run --rm svc.api.server bash "$@"
+docker-compose run --rm jobdash.server bash "$@"
