@@ -14,6 +14,7 @@
         <CreateLayout
           @update-contacts="onUpdateContacts"    
           @update-tasks="onUpdateTasks"
+          @update-messages="onUpdateMessages"
         />
         <!-- <TabsLayout @tab-change="tabChange"/> -->
       </div>

@@ -13,6 +13,7 @@
         <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts"/> -->
         <ContactCreate v-if="activeTab.name == 'Contact'" @update-contacts="onUpdateContacts"/>
         <TaskCreate v-if="activeTab.name == 'Task'" @update-tasks="onUpdateTasks"/>
+        <MessageWriter v-if="activeTab.name == 'Message'" @update-tasks="onUpdateMessages"/>
       </BaseBox>
     </BaseMinimize>
 
@@ -28,6 +29,7 @@ import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import ContactCreate from './../components/contacts/ContactCreate.vue'
 import TaskCreate from './../components/task/TaskCreate.vue'
+import MessageWriter from './../components/common/MessageWriter.vue'
 
 import { Tab } from './../interfaces/common/tab.interface'
 
@@ -40,9 +42,10 @@ export default defineComponent({
     BaseMinimize,
     ContactCreate,
     TaskCreate,
+    MessageWriter
   },
 
-  emits: ['update-contacts', 'update-tasks'],
+  emits: ['update-contacts', 'update-tasks', 'update-messages'],
 
   setup(props, ctx) {
 
@@ -53,7 +56,8 @@ export default defineComponent({
 
       tabs.value = [
         {id: 1, name: 'Contact', component: 'ContactCreate'},
-        {id: 2, name: 'Task', component: 'TaskCreate'}
+        {id: 2, name: 'Task', component: 'TaskCreate'},
+        {id: 2, name: 'Message', component: 'MessageWriter'}
       ]
 
       activeTab.value = tabs.value[0];
@@ -65,6 +69,8 @@ export default defineComponent({
             break
           case 'ContactCreate':
             return ContactCreate
+          case 'MessageWriter':
+            return MessageWriter
         }
       })
 
@@ -82,6 +88,9 @@ export default defineComponent({
       }
       const onUpdateTasks = () => {
         ctx.emit('update-tasks')
+      }
+      const onUpdateMessages = () => {
+        ctx.emit('update-messages')
       }
 
 
