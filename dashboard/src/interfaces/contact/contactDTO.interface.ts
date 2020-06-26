@@ -1,6 +1,6 @@
-import { Contact } from "./contact.interface";
+import { IContact } from "./contact.interface";
 
 export interface ContactDTO {
   dtoLog: string
-  contact: Contact
+  contact: IContact
 }

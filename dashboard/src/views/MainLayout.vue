@@ -67,11 +67,11 @@ import { useInitEdit } from '../composables/table/useInitEdit'
 
 
 import { Destination } from '../interfaces/common/modal.interface'
-import { Contact } from '../interfaces/contact/contact.interface'
-import { Task } from '../interfaces/task/task.interface'
+import { IContact } from '../interfaces/contact/contact.interface'
+import { ITask } from '../interfaces/task/task.interface'
 import { IBoardColumn } from '../interfaces/board/board.column.interface'
 import { TableConfig } from '../interfaces/table/table.interface'
-import { Message } from '../interfaces/message/message.interface'
+import { IMessage } from '../interfaces/message/message.interface'
 // import { taskProps, taskData, contactData, contactProps, messageProps, messageData } from './columns'
 // import { taskControls, contactControls, messageControls } from './controls'
 
@@ -117,35 +117,35 @@ export default defineComponent({
     //#region contact / default value for ref / test table store local
       const tableStore = store.modules[TABLE_STORE_LOCAL_SYMBOL]
       const contactStore: ContactStore = store.modules[CONTACT_STORE_SYMBOL]
-      const cont = {} as Contact
+      const cont = {} as IContact
       const contARr = []
       contARr.push(cont)
 
-      const allContacts = ref<Contact[]>(contARr)
+      const allContacts = ref<IContact[]>(contARr)
       const contactLoading = ref(true)
       allContacts.value = await contactStore.loadRecords('contact')
       contactLoading.value = false
 
     //#region task
-      const ta = {} as Task
+      const ta = {} as ITask
       const taARr = []
       taARr.push(ta)
 
       const taskStore: TaskStore = store.modules[TASK_STORE_SYMBOL]
-      const allTasks = ref<Task[]>(taARr)
+      const allTasks = ref<ITask[]>(taARr)
       const tasksLoading = ref(true)
       allTasks.value = await taskStore.loadRecords('task')
       tasksLoading.value = false
     //#endregion
 
     //#region message
-      const me = {} as Message
+      const me = {} as IMessage
       const meARr = []
       meARr.push(me)
       console.log(me)
 
       const messageStore: MessageStore = store.modules[MESSAGE_STORE_SYMBOL]
-      const allMessages = ref<Message[]>(meARr)
+      const allMessages = ref<IMessage[]>(meARr)
       const messagesLoading = ref(true)
       allMessages.value = await messageStore.loadRecords('message')
       messagesLoading.value = false

@@ -29,7 +29,7 @@ import BaseMinimize from '../components/common/BaseMinimize.vue'
 
 import ContactCreate from './../components/contacts/ContactCreate.vue'
 import TaskCreate from './../components/task/TaskCreate.vue'
-import MessageWriter from './../components/common/MessageWriter.vue'
+import MessageWriter from './../components/message/MessageWriter.vue'
 
 import { Tab } from './../interfaces/common/tab.interface'
 

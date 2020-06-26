@@ -1,13 +1,13 @@
 import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
-import { Task } from "../interfaces/task/task.interface"
+import { ITask } from "../interfaces/task/task.interface"
 import { TaskDTO } from "../interfaces/task/taskDTO.interface"
 import { StoreState, StateMap, IStore, StoreAxios } from "./store.interface"
 import { colorLog } from "../utils"
 
 interface TasksStateMap extends StateMap {
   ids: string[]
-  all: Record<string, Task>
+  all: Record<string, ITask>
   loaded: boolean
 }
 
@@ -27,30 +27,30 @@ const initialTaskStoreState = () : TaskStoreState => ({
   records: initialTasksStateMap()
 })
 
-export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
+export class TaskStore extends StoreAxios<ITask> implements IStore<ITask> {
   protected state: TaskStoreState
   constructor(idSymbol: string, initialState: TaskStoreState) {
     super(idSymbol, initialState)
   }
 
-  public getLastId(): Task['_id'] {
-    const last = this.getLast<Task>()
+  public getLastId(): ITask['_id'] {
+    const last = this.getLast<ITask>()
     return last ? last._id : '-1'
   }
 
-  async createRecord(task: Task) {
+  async createRecord(task: ITask) {
     super.createRecord(task)
     const response = await axios.post<TaskDTO>('http://localhost:3000/task/create', task)
     this.fetchRecords()
   }
   
-  async deleteRecord(task: Task): Promise<string> {
+  async deleteRecord(task: ITask): Promise<string> {
     super.deleteRecord(task)
     const response = await axios.delete<TaskDTO>(`http://localhost:3000/task/delete?task_id=${task._id}`)
     return response.data.task._id
   }
   
-  async editRecord(oldTask: Task, newTask: Task) {
+  async editRecord(oldTask: ITask, newTask: ITask) {
     super.editRecord(oldTask, newTask)
     console.log('writing to db')
     const response = await axios.put<TaskDTO>(
@@ -61,7 +61,7 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
 
   async fetchRecords() {
     const data = await this._fetchRecords('http://localhost:3000/task/tasks')
-    let tasks: Task[] = data.map((task: Task)=> {
+    let tasks: ITask[] = data.map((task: ITask)=> {
       task.contact = task.contact[0]
       return task
     })
@@ -78,7 +78,7 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
     return super.updateRecords(caller);
   }
 
-  toggleEditable(task: Task, editable: boolean) {
+  toggleEditable(task: ITask, editable: boolean) {
     console.log('toggle editable from task store')
     // this only affects local state
     // doesn't actually have to be updated in db unless we want the edit state to persist through reload
@@ -95,14 +95,14 @@ export class TaskStore extends StoreAxios<Task> implements IStore<Task> {
     // task.editable = editable
   }
   
-  toggleLocked(oldTask: Task, locked: boolean) {
+  toggleLocked(oldTask: ITask, locked: boolean) {
     // without this line I was getting the bug where I had to click twice
     // now not anymore
     // TBD
     // console.log(oldTask)
     // this.state.records.all[oldTask._id].locked = locked
 
-    const newTask: Task = {
+    const newTask: ITask = {
       _id: oldTask._id,
       itemId: oldTask._id,
       name: oldTask.name,

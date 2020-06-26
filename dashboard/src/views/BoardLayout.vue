@@ -32,7 +32,7 @@ import TaskBoard from './../components/board/TaskBoard.vue'
 import BoardControls from '../components/board/BoardControls.vue'
 
 import { IBoardColumn } from './../interfaces/board/board.column.interface'
-import { Task } from '../interfaces/task/task.interface'
+import { ITask } from '../interfaces/task/task.interface'
 import BoardColumn from './../components/board/BoardColumn.vue'
 import { useStorage } from './../composables/useStorage'
 import useBoard from './../composables/board/useBoard'

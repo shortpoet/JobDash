@@ -85,10 +85,10 @@ import { useUpdateValues } from '../../composables/useUpdateValues'
 import BaseInput from './../../components/common/BaseInput.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
 import ModalWarning from './../../components/common/ModalWarning.vue'
-import MessageWriter from './../common/MessageWriter.vue'
+import MessageWriter from './../message/MessageWriter.vue'
 
 
-import { Message } from '../../interfaces/message/message.interface'
+import { IMessage } from '../../interfaces/message/message.interface'
 import { Field } from '../../interfaces/common/field.interface'
 import { Destination } from '../../interfaces/common/modal.interface'
 
@@ -145,7 +145,7 @@ export default defineComponent({
 
     //#region openCard
       const router = useRouter()
-      const openCard = (message: Message) => {
+      const openCard = (message: IMessage) => {
         // console.log('message table')
         // console.log(message._id)
         messageModal.showModal()
@@ -168,7 +168,7 @@ export default defineComponent({
 
     //#region delete
       const confirmDelete = ref(false)
-      const deleteCandidate = ref<Message>(null)
+      const deleteCandidate = ref<IMessage>(null)
       const destination: Destination = '#message-modal'
       const modal = useModal(destination)
 
@@ -180,7 +180,7 @@ export default defineComponent({
       // const modal = modalMap.modalMap[destination]
 
 
-      const handleConfirmDelete = (message: Message) => {
+      const handleConfirmDelete = (message: IMessage) => {
         if (message.locked) {
           deleteCandidate.value = message
           modal.showModal()
@@ -211,7 +211,7 @@ export default defineComponent({
         }
       }
       
-      const toggleLocked = async (message: Message) => {
+      const toggleLocked = async (message: IMessage) => {
         // console.log('message table')
         // console.log(message.locked)
         if (message.locked == false) {

@@ -3,9 +3,9 @@ import { createTaskStore } from './task.store'
 import { createMessageStore } from './message.store'
 import { inject, provide } from 'vue'
 import { Store, StateMap, StoreState, StoreAxios } from './store.interface'
-import { Contact } from '../interfaces/contact/contact.interface'
-import { Task } from '../interfaces/task/task.interface'
-import { Message } from '../interfaces/message/message.interface'
+import { IContact } from '../interfaces/contact/contact.interface'
+import { ITask } from '../interfaces/task/task.interface'
+import { IMessage } from '../interfaces/message/message.interface'
 import { IBoard } from '../interfaces/board/board.interface'
 import { createBoardStore, BOARD_STORE_SYMBOL } from './board.store'
 import { IBoardColumn } from '../interfaces/board/board.column.interface'
@@ -64,8 +64,8 @@ export const provideStore = () => {
   provide(STORE, store)
 }
 
-export const useStore = (): StoreAxios<Contact|Task|Message|IBoard>|Store<TableItem> => {
-  const store = inject<StoreAxios<Contact|Task|Message|IBoard>|Store<TableItem>>(STORE)
+export const useStore = (): StoreAxios<IContact|ITask|IMessage|IBoard>|Store<TableItem> => {
+  const store = inject<StoreAxios<IContact|ITask|IMessage|IBoard>|Store<TableItem>>(STORE)
   return store
 }
 

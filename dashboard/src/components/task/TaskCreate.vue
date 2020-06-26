@@ -22,8 +22,8 @@ import { ContactStore } from './../../store/contact.store'
 
 import BaseInput from './../../components/common/BaseInput.vue'
 
-import { Task } from '../../interfaces/task/task.interface'
-import { Contact } from '../../interfaces/contact/contact.interface'
+import { ITask } from '../../interfaces/task/task.interface'
+import { IContact } from '../../interfaces/contact/contact.interface'
 
 
 export default defineComponent({
@@ -41,7 +41,7 @@ export default defineComponent({
     const description = ref('description')
     const category = ref('category')
     const contactId = ref('0')
-    // const contact = ref<Contact>()
+    // const contact = ref<IContact>()
 
     const store = useStore()
 
@@ -52,7 +52,7 @@ export default defineComponent({
       //   taskStore: taskStore
       // }
 
-      const allTasks = ref<Task[]>([])
+      const allTasks = ref<ITask[]>([])
       const loading = ref(true)
       allTasks.value = await taskStore.loadRecords('task')
       loading.value = false
@@ -67,9 +67,9 @@ export default defineComponent({
     //#endregion
 
     const submit = async function(e: any) {
-      const _contact: Contact = await contactStore.getRecordById(contactId.value)
+      const _contact: IContact = await contactStore.getRecordById(contactId.value)
       if (_contact) {
-        // const contact: Contact = {
+        // const contact: IContact = {
         //   _id: _contact._id,
         //   name: _contact.name,
         //   company: _contact.company,
@@ -81,7 +81,7 @@ export default defineComponent({
         // }
         const nextId = (parseInt(taskStore.getLastId()) + 1).toString()
         console.log(nextId)
-        const task: Task = {
+        const task: ITask = {
           _id: nextId,
           itemId: nextId,
           name: name.value,

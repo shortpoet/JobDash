@@ -1,12 +1,12 @@
 import { reactive, readonly, provide, inject } from "vue"
 import axios from "axios"
-import { Message } from "../interfaces/message/message.interface"
+import { IMessage } from "../interfaces/message/message.interface"
 import { MessageDTO } from "../interfaces/message/messageDTO.interface"
 import { StoreState, StateMap, IStore, StoreAxios } from "./store.interface"
 
 interface MessagesStateMap extends StateMap {
   ids: string[]
-  all: Record<string, Message>
+  all: Record<string, IMessage>
   loaded: boolean
 }
 
@@ -26,18 +26,18 @@ const initialMessageStoreState = () : MessageStoreState => ({
   records: initialMessagesStateMap()
 })
 
-export class MessageStore extends StoreAxios<Message> implements IStore<Message> {
+export class MessageStore extends StoreAxios<IMessage> implements IStore<IMessage> {
   protected state: MessageStoreState
   constructor(idSymbol: string, initialState: MessageStoreState) {
     super(idSymbol, initialState)
   }
 
-  public getLastId(): Message['_id'] {
-    const last = this.getLast<Message>()
+  public getLastId(): IMessage['_id'] {
+    const last = this.getLast<IMessage>()
     return last ? last._id : '-1'
   }
 
-  async createRecord(message: Message, pushToDb: boolean = true) {
+  async createRecord(message: IMessage, pushToDb: boolean = true) {
     super.createRecord(message)
     if(pushToDb) {
       const response = await axios.post<MessageDTO>('http://localhost:3000/message/create', message)
@@ -47,7 +47,7 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
 
   // // https://mariusschulz.com/blog/typing-destructured-object-parameters-in-typescript
   // async createRecord(
-  //   message: Message,
+  //   message: IMessage,
   //   { idSymbol = '_id'}: { idSymbol?: string} = {},
   //   { pushToDb = true}: { pushToDb?: boolean} = {}
   // ) {
@@ -59,13 +59,13 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
   // }
   
   
-  async deleteRecord(message: Message): Promise<string> {
+  async deleteRecord(message: IMessage): Promise<string> {
     super.deleteRecord(message)
     const response = await axios.delete<MessageDTO>(`http://localhost:3000/message/delete?message_id=${message._id}`)
     return response.data.message._id
   }
   
-  async editRecord(oldMessage: Message, newMessage: Message) {
+  async editRecord(oldMessage: IMessage, newMessage: IMessage) {
     super.editRecord(oldMessage, newMessage)
     // console.log('writing to db')
     const response = await axios.put<MessageDTO>(
@@ -76,8 +76,8 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
 
   async fetchRecords() {
     // get is generic so can specify type
-    const response = await axios.get<Message[]>('http://localhost:3000/message/messages')
-    let messages: Message[] = response.data.map((message: Message)=> {
+    const response = await axios.get<IMessage[]>('http://localhost:3000/message/messages')
+    let messages: IMessage[] = response.data.map((message: IMessage)=> {
       message.contact = message.contact[0]
       return message
     })
@@ -94,7 +94,7 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
     return super.updateRecords(caller);
   }
 
-  toggleEditable(message: Message, editable: boolean) {
+  toggleEditable(message: IMessage, editable: boolean) {
     // console.log('toggle editable')
     // this only affects local state
     // doesn't actually have to be updated in db unless we want the edit state to persist through reload
@@ -111,11 +111,11 @@ export class MessageStore extends StoreAxios<Message> implements IStore<Message>
     // message.editable = editable
   }
   
-  toggleLocked(oldMessage: Message, locked: boolean) {
+  toggleLocked(oldMessage: IMessage, locked: boolean) {
     // without this line I was getting the bug where I had to click twice
     this.state.records.all[oldMessage._id].locked = locked
 
-    const newMessage: Message = {
+    const newMessage: IMessage = {
       _id: oldMessage._id,
       itemId: oldMessage._id,
       subject: oldMessage.subject,

@@ -1,8 +1,10 @@
 .main-layout {
   // display: flex;
   // flex: 1 1 auto;
+  width: auto;
   
   .minimize-container{
+    width: auto;
     .ui-collapse {
       background-color: $royal-purple;
       display: flex;
@@ -19,8 +21,11 @@
       }
     }
     .main-minimize-content {
+      width: auto;
       display: flex;
-      flex: 1 1 auto;
+      flex-direction: row;
+      flex-shrink: 1;
+      // flex: 1 1 auto;
       // flex-shrink: initial;
       .tabs-column {
         max-width: 25rem;
@@ -29,8 +34,12 @@
         }
       }
       .table-column {
-        flex: 1 1 auto;
-        max-width: 80rem;
+        // setting min-width: 0; is crucial for keeping content in boundary
+        // https://stackoverflow.com/questions/36247140/why-dont-flex-items-shrink-past-content-size
+        min-width: 0;
+        flex-shrink: 1;
+        // flex: 1 1 auto;
+        // max-width: 75rem;
       }
     }
 

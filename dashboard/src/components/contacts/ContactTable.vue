@@ -93,13 +93,13 @@ import { MessageStore } from '../../store/message.store'
 import BaseInput from './../../components/common/BaseInput.vue'
 import BaseIcon from './../../components/common/BaseIcon.vue'
 import ModalWarning from './../../components/common/ModalWarning.vue'
-import MessageWriter from './../../components/common/MessageWriter.vue'
+import MessageWriter from './../../components/message/MessageWriter.vue'
 import ContactCard from './ContactCard.vue'
 
-import { Contact } from '../../interfaces/contact/contact.interface'
+import { IContact } from '../../interfaces/contact/contact.interface'
 import { Field } from '../../interfaces/common/field.interface'
 import { Destination } from '../../interfaces/common/modal.interface'
-import { Message } from './../../interfaces/message/message.interface' 
+import { IMessage } from './../../interfaces/message/message.interface' 
 
 import { useModal } from '../../composables/useModal'
 import { useUpdateValues } from '../../composables/useUpdateValues'
@@ -159,7 +159,7 @@ export default defineComponent({
     //#endregion
 
     //#region openContactCard
-      const openContactCard = (contact: Contact) => {
+      const openContactCard = (contact: IContact) => {
         contactCardModal.showModal()
         router.push({ name: '#contact-card-modal', params: { id: contact._id } })
       }
@@ -179,8 +179,8 @@ export default defineComponent({
     //#endregion
 
     //#region createMessage
-      const createMessage = (contact: Contact): Message => {
-        const message: Message = {
+      const createMessage = (contact: IContact): IMessage => {
+        const message: IMessage = {
           _id: '-1',
           itemId: '-1',
           subject: '',
@@ -196,9 +196,9 @@ export default defineComponent({
       }
     //#endregion
 
-    const message = ref<Message>()
+    const message = ref<IMessage>()
     //#region openMessageModal
-      const openMessageModal = (contact: Contact) => {
+      const openMessageModal = (contact: IContact) => {
         message.value = createMessage(contact)
         messageStore.createRecord(message.value, '', false)
         messageModal.showModal()
@@ -224,9 +224,9 @@ export default defineComponent({
 
     //#region delete
       const confirmDelete = ref(false)
-      const deleteCandidate = ref<Contact>(null)
+      const deleteCandidate = ref<IContact>(null)
 
-      const handleConfirmDelete = (contact: Contact) => {
+      const handleConfirmDelete = (contact: IContact) => {
         if (contact.locked) {
           deleteCandidate.value = contact
           deleteContactModal.showModal()
@@ -261,7 +261,7 @@ export default defineComponent({
         }
       }
       
-      const toggleLocked = async (contact: Contact) => {
+      const toggleLocked = async (contact: IContact) => {
         if (contact.locked == false) {
           await contactStore.toggleLocked(contact, true)
           ctx.emit('update-contacts')
