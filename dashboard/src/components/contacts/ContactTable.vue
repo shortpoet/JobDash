@@ -146,13 +146,13 @@ export default defineComponent({
     const store = useStore()
     //#region contactUse
       const contactStore: ContactStore = store.modules['contactStore']
-      const allContactsRef = ref<Contact[]>()
+      const allContactsRef = ref<IContact[]>()
       // const toggleEditable
     //#endregion
 
     //#region messageUse
       const messageStore: MessageStore = store.modules[MESSAGE_STORE_SYMBOL]
-      const allMessages = ref<Message[]>([])
+      const allMessages = ref<IMessage[]>([])
       const messagesLoading = ref(true)
       allMessages.value = await messageStore.loadRecords('message')
       messagesLoading.value = false
@@ -200,7 +200,7 @@ export default defineComponent({
     //#region openMessageModal
       const openMessageModal = (contact: IContact) => {
         message.value = createMessage(contact)
-        messageStore.createRecord(message.value, '', false)
+        messageStore.createRecord(message.value, false)
         messageModal.showModal()
         router.push({ name: '#message-modal', params: { id: contact._id } })
       }
@@ -284,7 +284,7 @@ export default defineComponent({
 
       const edits = { nameEdit, companyEdit, emailEdit, contactTouched } 
 
-      const editContact = async (oldContact: Contact, newContact: Contact) => {
+      const editContact = async (oldContact: IContact, newContact: IContact) => {
         contactStore.editRecord(
           oldContact, 
           newContact,
@@ -293,7 +293,7 @@ export default defineComponent({
       }
 
 
-      const toggleEditable = async (oldContact: Contact) => {
+      const toggleEditable = async (oldContact: IContact) => {
         if (oldContact.editable == false) {
           contactStore.toggleEditable(oldContact, true)
           nameEdit.value = oldContact.name
@@ -301,7 +301,7 @@ export default defineComponent({
           emailEdit.value = oldContact.email
         } else {
           if (contactTouched.value == true) {
-            const newContact: Contact = {
+            const newContact: IContact = {
               _id: oldContact._id,
               itemId: oldContact._id,
               name: nameEdit.value,
