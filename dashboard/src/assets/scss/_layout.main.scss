@@ -1,8 +1,12 @@
 .main-layout {
+  // display: flex;
+  // flex: 1 1 auto;
+  
   .minimize-container{
     .ui-collapse {
       background-color: $royal-purple;
       display: flex;
+      flex: 1 1 auto;
       justify-content: space-between;
       padding: .15rem 0rem .25rem 1rem;
       border-radius: $task-border-radius;
@@ -14,11 +18,19 @@
       .ui-collapse-icon {
       }
     }
-    .columns {
-      .column.tabs-column {
+    .main-minimize-content {
+      display: flex;
+      flex: 1 1 auto;
+      // flex-shrink: initial;
+      .tabs-column {
         max-width: 25rem;
         section.tabs-section {
+          min-width: 20rem;
         }
+      }
+      .table-column {
+        flex: 1 1 auto;
+        max-width: 80rem;
       }
     }
 
