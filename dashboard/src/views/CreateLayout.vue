@@ -45,6 +45,11 @@ export default defineComponent({
     MessageWriter
   },
 
+  props: {
+    // contacts: {
+    //   type: Array
+    // }
+  },
   emits: ['update-contacts', 'update-tasks', 'update-messages'],
 
   setup(props, ctx) {

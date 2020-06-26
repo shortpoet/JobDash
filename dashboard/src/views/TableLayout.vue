@@ -6,7 +6,7 @@
           :class-prop="`${itemType}-table-container`"
           :component-name="`${itemType} Table`"
           @minimize-change="handleMinimize"
-          :minimized="false"
+          :minimized="true"
         >
           <BaseTableControls
             :item-type="itemType"
