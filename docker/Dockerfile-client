@@ -1,0 +1,7 @@
+FROM node:12
+
+WORKDIR /app/dashboard
+
+COPY dashboard/package.json dashboard/yarn.lock /tmp/dashboard-install/
+
+RUN set -xe && cd /tmp/dashboard-install/ && yarn install
