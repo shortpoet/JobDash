@@ -4,4 +4,6 @@ WORKDIR /app/server
 
 COPY server/package.json server/yarn.lock /tmp/server-install/
 
+RUN npm i -g @nestjs/cli
+
 RUN set -xe && cd /tmp/server-install/ && npm install
