@@ -1,7 +1,13 @@
 FROM node:12
 
-WORKDIR /app/dashboard
+# Install node_modules in container into directory above app code, which node will find.
+# See: https://www.docker.com/blog/keep-nodejs-rockin-in-docker/
+WORKDIR /opt/node_app
 
-COPY dashboard/package.json dashboard/yarn.lock /tmp/dashboard-install/
+COPY dashboard/package.json dashboard/yarn.lock ./
 
-RUN set -xe && cd /tmp/dashboard-install/ && yarn install
+RUN yarn install
+
+ENV PATH /opt/node_app/node_modules/.bin:$PATH
+
+WORKDIR /opt/node_app/app
