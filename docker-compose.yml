@@ -8,7 +8,7 @@ services:
       dockerfile: docker/Dockerfile-server
     tty: true
     stdin_open: true
-    working_dir: /app/server
+    working_dir: /opt/node_app/app/server
     command: yarn run start:dev
     environment:
       - DOCKER=1
@@ -17,7 +17,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - .:/app
+      - .:/opt/node_app/app
 
   jobdash.client:
     image: shortpoet/jobdash-client
@@ -25,12 +25,12 @@ services:
       context: .
       dockerfile: docker/Dockerfile-client
     tty: true
-    working_dir: /app/dashboard
+    working_dir: /opt/node_app/app/dashboard
     command: yarn docker
     ports:
       - 8080:8080
     volumes:
-      - .:/app
+      - .:/opt/node_app/app
 
   mongo:
     image: mongo
