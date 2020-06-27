@@ -1,0 +1,9 @@
+FROM mongo
+
+COPY server/seed/contacts.seed.json /tmp/seed/contacts.seed.json
+COPY server/seed/tasks.seed.json /tmp/seed/tasks.seed.json
+COPY server/seed/messages.seed.json /tmp/seed/messages.seed.json
+CMD mongoimport --host mongo --db job-db --collection contacts --type json --file /tmp/seed/contacts.seed.json --jsonArray
+CMD mongoimport --host mongo --db job-db --collection tasks --type json --file /tmp/seed/tasks.seed.json --jsonArray
+CMD mongoimport --host mongo --db job-db --collection messages --type json --file /tmp/seed/messages.seed.json --jsonArray
+
