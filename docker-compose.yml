@@ -39,9 +39,6 @@ services:
       # swap for windows no WSL
       # - tmp.nosync/mongo:/data/db
       - ${PWD}/tmp.nosync/mongo:/data/db
-      # For access to the import-seeds data
-      - ./server/seed:/opt/seed
-    container_name: mongo
     # NOTE: Use these variables to enable authentication for mongo and mongo-express (duplicate below)
     # environment:
     #   MONGO_INITDB_ROOT_USERNAME: root
