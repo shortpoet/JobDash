@@ -6,7 +6,7 @@ WORKDIR /opt/node_app
 
 COPY server/package.json server/yarn.lock ./
 
-RUN npm install
+RUN yarn install
 
 ENV PATH /opt/node_app/node_modules/.bin:$PATH
 
