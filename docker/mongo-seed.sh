@@ -1,1 +1,1 @@
-docker-compose run --rm mongo /opt/seed/import-seeds.sh "$@"
+docker-compose run --rm -w /opt/seed mongo ./import-seeds.sh "$@"
