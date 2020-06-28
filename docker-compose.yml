@@ -57,8 +57,8 @@ services:
       - 8081:8081
 
 # https://stackoverflow.com/questions/31210973/how-do-i-seed-a-mongo-database-using-docker-compose
-  mongo-seed:
-  image: shortpoet/jobdash-mongo-seed
+  jobdash-mongo-seed:
+    image: shortpoet/jobdash-mongo-seed
     build:
       context: .
       dockerfile: docker/Dockerfile-server-seed
