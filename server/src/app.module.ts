@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TaskModule } from './task/task.module';
 import { MessageModule } from './message/message.module';
 import { SeederModule } from './seeder/seeder.module';
+import { SeederModule } from './seeder/seeder.module';
 
 const connString = process.env.DOCKER == '1'
   ? 'mongodb://mongo/job-db'
