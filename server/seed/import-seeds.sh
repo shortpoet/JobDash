@@ -1,4 +1,3 @@
-set -o errexit -o pipefail
 SCRIPT="$(cd "${0%/*}" && echo "$PWD"/${0##*/})"
 BASEDIR="`dirname "$SCRIPT"`"
 cd $BASEDIR

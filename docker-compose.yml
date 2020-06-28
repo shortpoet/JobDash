@@ -40,7 +40,7 @@ services:
       # - tmp.nosync/mongo:/data/db
       - ${PWD}/tmp.nosync/mongo:/data/db
       # For access to the import-seeds data
-      - ${PWD}/server/seed:/opt/seed
+      - ./server/seed:/opt/seed
     container_name: mongo
     # NOTE: Use these variables to enable authentication for mongo and mongo-express (duplicate below)
     # environment:
