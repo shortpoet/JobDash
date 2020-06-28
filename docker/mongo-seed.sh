@@ -1,2 +1,1 @@
-# Mounts the server/seeds files into /opt/seed in the container
-docker-compose run --rm mongo /opt/seed/import-seeds.sh
+docker-compose run --rm jobdash.server yarn seed "$@"
