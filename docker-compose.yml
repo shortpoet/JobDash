@@ -67,6 +67,8 @@ services:
 # If on windows with no subsystem for linux installed
 # named volumes
 # https://gist.github.com/ashblue/aa20cd90d2b4609c0b496b66d4153b99
+# if added WSL
+# http://beyondthecorneroffice.com/2018-04-18-MongoDB-on-Windows-Docker/
 # uncomment this line and swap above
 # volumes:
 #   tmp.nosync/mongo:

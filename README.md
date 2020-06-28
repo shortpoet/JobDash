@@ -26,7 +26,6 @@ docker-compose up
 ```
 
 - https://stackoverflow.com/questions/54911021/unable-to-start-docker-mongo-image-on-windows
-<<<<<<< HEAD
 - https://dev.to/_rema_lp/debugging-nestjs-typescript-in-a-docker-container-19a3
 - https://github.com/kostis-codefresh/nestjs-example
 - https://github.com/denpalrius/docker-nestjs-starter (has azure pipelines)
@@ -49,8 +48,7 @@ docker-compose up
 - https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md#upgradingdowngrading-yarn
 - https://nodesource.com/blog/containerizing-node-js-applications-with-docker
 - https://blog.scottlowe.org/2017/11/08/how-tag-docker-images-git-commit-information/
-=======
->>>>>>> ffae9ce0850ceb749eb789c9aa9d993b730040e8
+- http://beyondthecorneroffice.com/2018-04-18-MongoDB-on-Windows-Docker/
 
 ```bash
 docker volume create --name=mongodata
