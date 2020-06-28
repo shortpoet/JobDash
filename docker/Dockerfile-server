@@ -4,7 +4,7 @@ FROM node:12
 # See: https://www.docker.com/blog/keep-nodejs-rockin-in-docker/
 WORKDIR /opt/node_app
 
-COPY server/package.json server/yarn.lock ./
+COPY server/package.json server/*yarn* ./
 
 RUN yarn install
 

@@ -4,7 +4,7 @@ FROM node:12
 # See: https://www.docker.com/blog/keep-nodejs-rockin-in-docker/
 WORKDIR /opt/node_app
 
-COPY dashboard/package.json dashboard/yarn.lock ./
+COPY dashboard/package.json dashboard/*yarn* ./
 
 RUN yarn install
 
