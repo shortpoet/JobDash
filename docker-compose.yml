@@ -73,4 +73,3 @@ services:
 # uncomment this line and swap above
 # volumes:
 #   tmp.nosync/mongo:
-  
