@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "test": "yarn jest",
-    "dev": "yarn webpack-dev-server",
-    "docker": "yarn webpack-dev-server --host 0.0.0.0",
+    "test": "jest",
+    "dev": "webpack-dev-server",
+    "docker": "webpack-dev-server --host 0.0.0.0",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
