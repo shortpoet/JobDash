@@ -49,6 +49,9 @@ docker-compose up
 - https://nodesource.com/blog/containerizing-node-js-applications-with-docker
 - https://blog.scottlowe.org/2017/11/08/how-tag-docker-images-git-commit-information/
 - http://beyondthecorneroffice.com/2018-04-18-MongoDB-on-Windows-Docker/
+- https://willi.am/blog/2016/08/11/docker-for-windows-dealing-with-windows-line-endings/
+- https://stackoverflow.com/questions/2825428/why-should-i-use-core-autocrlf-true-in-git
+- https://help.github.com/en/github/using-git/configuring-git-to-handle-line-endings
 
 ```bash
 docker volume create --name=mongodata

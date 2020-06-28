@@ -208,9 +208,9 @@ export default defineComponent({
       // need to figure out rest of logic for empty array of items
       const testColumnNames = computed(() => testItems.value.length > 0 ? Object.keys(testItems.value[0]) : [])    
 
-      // console.log(allContacts.value)
-      // console.log(allTasks.value)
-      // console.log(allMessages.value)
+      console.log(allContacts.value.map(x => x))
+      console.log(allTasks.value)
+      console.log(allMessages.value)
       const tables = toRefs(reactive([
         // {
         //   columnNames: testColumnNames,

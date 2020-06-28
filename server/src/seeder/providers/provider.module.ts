@@ -6,7 +6,7 @@ import { MessageModule } from 'src/message/message.module';
 
 const connString = process.env.DOCKER == '1'
   ? 'mongodb://mongo/job-db'
-  : 'mongodb://localhost/test'
+  : 'mongodb://localhost/job-db'
 
 @Module({
   imports: [
