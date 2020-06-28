@@ -46,7 +46,6 @@ import { defineComponent, computed, ref, watch, nextTick, onUpdated, reactive, t
 import { onErrorCaptured } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore, ITEMS_ID_SYMBOL, TABLE_STORE_LOCAL_SYMBOL, CONTACT_STORE_SYMBOL, CONTACT_ID_SYMBOL, TASK_STORE_SYMBOL, MESSAGE_STORE_SYMBOL, TASK_ID_SYMBOL, MESSAGE_ID_SYMBOL } from '../store'
-
 import { BoardStore } from '../store/board.store'
 import { ContactStore } from '../store/contact.store'
 import { TaskStore } from '../store/task.store'
@@ -86,7 +85,6 @@ export default defineComponent({
   },
   emits: ['confirm-delete'],
   async setup(props, ctx) {
-
     //#region general
       onUpdated(() => {
         colorLog('on updated main layout', 'orange', 'yellow')
@@ -163,19 +161,23 @@ export default defineComponent({
         console.log('update contacts')
         await nextTick()
         // tables.filter(t => t.value.itemType == contactItemtype.value)[0].value.items = await contactStore.updateRecords('contact')
-        tables[0].value.items = await contactStore.updateRecords('contact')
+        allContacts.value = await contactStore.updateRecords('contact')
+        tables[0].value.items = allContacts.value
       }
       const onUpdateTasks = async () => {
         console.log('update tasks')
         await nextTick()
+
         // tables.filter(t => t.value.itemType == taskItemtype.value)[0].value.items = await taskStore.updateRecords('task')
-        tables[1].value.items = await taskStore.updateRecords('task')
+        allTasks.value = await taskStore.updateRecords('task')
+        tables[1].value.items = allTasks.value
       }
       const onUpdateMessages = async () => {
         console.log('update messages')
         await nextTick()
         // tables.filter(t => t.value.itemType == messageItemtype.value)[0].value.items = await messageStore.updateRecords('message')
-        tables[2].value.items = await messageStore.updateRecords('message')
+        allMessages.value = await messageStore.updateRecords('message')
+        tables[2].value.items = allMessages.value
       }
       const onUpdateValues = (e) => {
         colorLog('on update values - main layout', 'magenta', 'white')

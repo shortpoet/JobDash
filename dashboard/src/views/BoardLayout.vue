@@ -78,7 +78,7 @@ export default defineComponent({
         // colorLog("on chosen prop change", "orange", "purple")
         chosenProperties.value = e
       }
-      const itemProperties = computed(() => Object.keys(props.items[0]))
+      const itemProperties = computed(() => props.items[0] ? Object.keys(props.items[0]) : [])
       const displayProperties = computed(() => chosenProperties.value)
 
       const boardStore: BoardStore = store.modules['boardStore']
