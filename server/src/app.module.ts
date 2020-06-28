@@ -5,6 +5,7 @@ import { ContactModule } from './contact/contact.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TaskModule } from './task/task.module';
 import { MessageModule } from './message/message.module';
+import { SeederModule } from './seeder/seeder.module';
 
 const connString = process.env.DOCKER == '1'
   ? 'mongodb://mongo/job-db'
@@ -20,7 +21,8 @@ const connString = process.env.DOCKER == '1'
     ),
     ContactModule,
     TaskModule,
-    MessageModule
+    MessageModule,
+    SeederModule
   ],
   controllers: [AppController],
   providers: [AppService],
