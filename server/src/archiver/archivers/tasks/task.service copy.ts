@@ -1,9 +1,19 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, forwardRef, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task } from 'src/task/interfaces/task.interface';
 import { TASK_SOURCE, TASK_DESTINATION } from './task.module';
 import { TaskSourceService } from './task.source.service';
+
+// @Injectable()
+// export class TaskSourceService {
+//   constructor(
+//     @InjectModel(TASK_SOURCE)
+//       readonly taskSource: Model<Task>,
+//     @Inject(forwardRef(() => TaskArchiverService))
+//       private taskArchiverService: TaskArchiverService,
+//   ) {}
+// }
 
 @Injectable()
 export class TaskArchiverService {
@@ -18,11 +28,6 @@ export class TaskArchiverService {
     const tasks = await this.taskSourceService.taskSource.find().exec();
     return tasks;
   }
-
-  // async getAllTask(): Promise<Task[]> {
-  //   const tasks = await this.taskSource.find().exec();
-  //   return tasks;
-  // }
 
   // fetch all messages
   create(tasks): Array<Promise<Task>> {

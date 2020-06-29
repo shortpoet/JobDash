@@ -1,4 +1,5 @@
 import { Module, Logger } from "@nestjs/common";
+// import { SourceProviderModule, DestinationProviderModule } from "../providers/provider.module";
 import { SourceProviderModule } from "../providers/source.provider.module";
 import { DestinationProviderModule } from "../providers/destination.provider.module";
 import { ContactSourceModule, ContactDestinationModule } from "./contacts/contact.module";
@@ -15,12 +16,12 @@ import { MessageSourceModule, MessageDestinationModule } from "./messages/messag
   imports: [
     SourceProviderModule,
     DestinationProviderModule,
-    ContactSourceModule,
-    ContactDestinationModule,
+    // ContactSourceModule,
+    // ContactDestinationModule,
     TaskSourceModule,
     TaskDestinationModule,
-    MessageSourceModule,
-    MessageDestinationModule
+    // MessageSourceModule,
+    // MessageDestinationModule
   ],
   providers: [
     Logger,

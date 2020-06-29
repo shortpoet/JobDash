@@ -6,18 +6,20 @@ import { Archiver } from "./archivers/archiver";
 async function bootstrap() {
   NestFactory.createApplicationContext(ArchiverModule)
     .then(appContext => {
-      const logger = appContext.get(Logger);
-      const seeder = appContext.get(Archiver);
-      seeder
-        .archive()
-        .then(() => {
-          logger.debug('Archiving complete!');
-        })
-        .catch(error => {
-          logger.error('Archiving failed!');
-          throw error;
-        })
-        .finally(() => appContext.close());
+      // const logger = appContext.get(Logger);
+      // const archiver = appContext.get(Archiver);
+      // console.log(archiver)
+      appContext.close()
+      // archiver
+      //   .archive()
+      //   .then(() => {
+      //     logger.debug('Archiving complete!');
+      //   })
+      //   .catch(error => {
+      //     logger.error('Archiving failed!');
+      //     throw error;
+      //   })
+      //   .finally(() => appContext.close());
     })
     .catch(error => {
       throw error;
