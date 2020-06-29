@@ -1,20 +1,20 @@
 import { NestFactory } from "@nestjs/core";
-import { SeederModule } from "./seeders/seeder.module";
+import { ArchiverModule } from "./archivers/archiver.module";
 import { Logger } from "@nestjs/common";
-import { Seeder } from "./seeders/seeder";
-// https://medium.com/the-crowdlinker-chronicle/seeding-databases-using-nestjs-cd6634e8efc5
+import { Archiver } from "./archivers/archiver";
+
 async function bootstrap() {
-  NestFactory.createApplicationContext(SeederModule)
+  NestFactory.createApplicationContext(ArchiverModule)
     .then(appContext => {
       const logger = appContext.get(Logger);
-      const seeder = appContext.get(Seeder);
+      const seeder = appContext.get(Archiver);
       seeder
-        .seed()
+        .archive()
         .then(() => {
-          logger.debug('Seeding complete!');
+          logger.debug('Archiving complete!');
         })
         .catch(error => {
-          logger.error('Seeding failed!');
+          logger.error('Archiving failed!');
           throw error;
         })
         .finally(() => appContext.close());

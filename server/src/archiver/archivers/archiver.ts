@@ -1,20 +1,19 @@
 import { Logger, Injectable } from "@nestjs/common";
-import { ContactSeederService } from "./contacts/contact.service";
-import { TaskSeederService } from "./tasks/task.service";
-import { MessageSeederService } from "./messages/message.service";
+import { ContactArchiverService } from "./contacts/contact.service";
+import { TaskArchiverService } from "./tasks/task.service";
+import { MessageArchiverService } from "./messages/message.service";
 
 @Injectable()
-export class Seeder {
+export class Archiver {
   constructor(
     private readonly logger: Logger,
-    private readonly contactSeederService: ContactSeederService,
-    private readonly taskSeederService: TaskSeederService,
-    private readonly messageSeederService: MessageSeederService,
+    private readonly contactArchiverService: ContactArchiverService,
+    private readonly taskArchiverService: TaskArchiverService,
+    private readonly messageArchiverService: MessageArchiverService,
   ) { }
-  getSuccessMessage(collection) { return `Succesfully completed seeding ${collection}...`}
-  getErrorMessage(collection) { return `Failed seeding ${collection}...`}
-
-  async seed() {
+  getSuccessMessage(collection) { return `Successfully completed archiving ${collection}...`}
+  getErrorMessage(collection) { return `Failed archiving ${collection}...`}
+  async archive() {
     await this.contacts()
       .then(completed => {
         this.logger.debug(this.getSuccessMessage('contacts'));
@@ -50,8 +49,10 @@ export class Seeder {
       nullValueOrCreatedContact => nullValueOrCreatedContact,
     ).length
   }
+
   async contacts() {
-    return await Promise.all(this.contactSeederService.create())
+    const contacts = await this.contactArchiverService.getAllContact()
+    return await Promise.all(this.contactArchiverService.create(contacts))
       .then(createdContacts => {
         // Can also use this.logger.verbose('...');
         this.logger.debug(this.getCreatedLengthMessage(createdContacts, 'contacts'));
@@ -60,16 +61,18 @@ export class Seeder {
       .catch(error => Promise.reject(error));
   }
   async tasks() {
-    return await Promise.all(this.taskSeederService.create())
-      .then(createdTasks => {
-        // Can also use this.logger.verbose('...');
-        this.logger.debug(this.getCreatedLengthMessage(createdTasks, 'tasks'));
-        return Promise.resolve(true);
-      })
-      .catch(error => Promise.reject(error));
+    const tasks = await this.taskArchiverService.getAllTask()
+    return await Promise.all(this.taskArchiverService.create(tasks))
+    .then(createdTasks => {
+      // Can also use this.logger.verbose('...');
+      this.logger.debug(this.getCreatedLengthMessage(createdTasks, 'tasks'));
+      return Promise.resolve(true);
+    })
+    .catch(error => Promise.reject(error));
   }
   async messages() {
-    return await Promise.all(this.messageSeederService.create())
+    const messages = await this.messageArchiverService.getAllMessage()
+    return await Promise.all(this.messageArchiverService.create(messages))
       .then(createdMessages => {
         // Can also use this.logger.verbose('...');
         this.logger.debug(this.getCreatedLengthMessage(createdMessages, 'messages'));

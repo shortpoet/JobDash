@@ -52,6 +52,11 @@ docker-compose up
 - https://willi.am/blog/2016/08/11/docker-for-windows-dealing-with-windows-line-endings/
 - https://stackoverflow.com/questions/2825428/why-should-i-use-core-autocrlf-true-in-git
 - https://help.github.com/en/github/using-git/configuring-git-to-handle-line-endings
+- https://stackoverflow.com/questions/31210973/how-do-i-seed-a-mongo-database-using-docker-compose
+- https://stackoverflow.com/questions/48178870/import-data-on-mongodb-using-docker-compose
+- https://github.com/stefanwalther/docker-mongo-seed
+- https://medium.com/the-crowdlinker-chronicle/seeding-databases-using-nestjs-cd6634e8efc5
+
 
 ```bash
 docker volume create --name=mongodata

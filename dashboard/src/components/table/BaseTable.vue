@@ -115,6 +115,9 @@ export default defineComponent({
       //#region edit
         const itemUnderEdit = ref()
         const keyComputed = (item) => {
+          // TODO
+            // this fails when you delete an item not at end of table
+          // #TODO
           // colorLog('key computed', 'green', 'yellow')
           // console.log(props.itemUnderEdit)
           // recompute key to only rerender that row
@@ -198,4 +201,3 @@ export default defineComponent({
   }
 })
 </script>
-
