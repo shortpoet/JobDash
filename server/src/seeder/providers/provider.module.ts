@@ -14,10 +14,7 @@ const connString = process.env.DOCKER == '1'
       {
         useNewUrlParser: true
       }
-    ),
-    ContactModule,
-    TaskModule,
-    MessageModule,
+    )
   ],
 })
 export class SeederProviderModule {}

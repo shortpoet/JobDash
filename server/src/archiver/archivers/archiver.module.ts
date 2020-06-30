@@ -1,11 +1,12 @@
 import { Module, Logger } from "@nestjs/common";
-// import { SourceProviderModule, DestinationProviderModule } from "../providers/provider.module";
-import { SourceProviderModule } from "../providers/source.provider.module";
-import { DestinationProviderModule } from "../providers/destination.provider.module";
-import { ContactSourceModule, ContactDestinationModule } from "./contacts/contact.module";
+import { ArchiverProviderModule } from "../providers/provider.module";
 import { Archiver } from "./archiver";
-import { TaskSourceModule, TaskDestinationModule } from "./tasks/task.module";
-import { MessageSourceModule, MessageDestinationModule } from "./messages/message.module";
+import { ContactSourceModule } from "./contacts/contact.source.module";
+import { ContactDestinationModule } from "./contacts/contact.destination.module";
+import { TaskSourceModule } from "./tasks/task.source.module";
+import { TaskDestinationModule } from "./tasks/task.destination.module";
+import { MessageSourceModule } from "./messages/message.source.module";
+import { MessageDestinationModule } from "./messages/message.destination.module";
 
 /**
  * Import and provide archiver classes.
@@ -14,14 +15,13 @@ import { MessageSourceModule, MessageDestinationModule } from "./messages/messag
  */
 @Module({
   imports: [
-    SourceProviderModule,
-    DestinationProviderModule,
-    // ContactSourceModule,
-    // ContactDestinationModule,
+    ArchiverProviderModule,
+    ContactSourceModule,
+    ContactDestinationModule,
     TaskSourceModule,
     TaskDestinationModule,
-    // MessageSourceModule,
-    // MessageDestinationModule
+    MessageSourceModule,
+    MessageDestinationModule
   ],
   providers: [
     Logger,

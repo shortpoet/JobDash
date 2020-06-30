@@ -1,14 +1,18 @@
 import { Logger, Injectable } from "@nestjs/common";
-import { ContactArchiverService } from "./contacts/contact.service";
-import { TaskArchiverService } from "./tasks/task.service";
-import { MessageArchiverService } from "./messages/message.service";
+// import { ContactRetrieverService, ContactArchiverService } from "./contacts/contact.service";
+import { ContactRetrieverService, ContactArchiverService } from "./contacts/contact.service";
+import { TaskRetrieverService, TaskArchiverService } from "./tasks/task.service";
+import { MessageRetrieverService, MessageArchiverService } from "./messages/message.service";
 
 @Injectable()
 export class Archiver {
   constructor(
     private readonly logger: Logger,
+    private readonly contactRetrieverService: ContactRetrieverService,
     private readonly contactArchiverService: ContactArchiverService,
+    private readonly taskRetrieverService: TaskRetrieverService,
     private readonly taskArchiverService: TaskArchiverService,
+    private readonly messageRetrieverService: MessageRetrieverService,
     private readonly messageArchiverService: MessageArchiverService,
   ) { }
   getSuccessMessage(collection) { return `Successfully completed archiving ${collection}...`}
@@ -51,7 +55,7 @@ export class Archiver {
   }
 
   async contacts() {
-    const contacts = await this.contactArchiverService.getAllContact()
+    const contacts = await this.contactRetrieverService.getAllContact()
     return await Promise.all(this.contactArchiverService.create(contacts))
       .then(createdContacts => {
         // Can also use this.logger.verbose('...');
@@ -61,7 +65,7 @@ export class Archiver {
       .catch(error => Promise.reject(error));
   }
   async tasks() {
-    const tasks = await this.taskArchiverService.getAllTask()
+    const tasks = await this.taskRetrieverService.getAllTask()
     return await Promise.all(this.taskArchiverService.create(tasks))
     .then(createdTasks => {
       // Can also use this.logger.verbose('...');
@@ -71,7 +75,7 @@ export class Archiver {
     .catch(error => Promise.reject(error));
   }
   async messages() {
-    const messages = await this.messageArchiverService.getAllMessage()
+    const messages = await this.messageRetrieverService.getAllMessage()
     return await Promise.all(this.messageArchiverService.create(messages))
       .then(createdMessages => {
         // Can also use this.logger.verbose('...');

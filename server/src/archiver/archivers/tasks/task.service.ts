@@ -1,37 +1,28 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task } from 'src/task/interfaces/task.interface';
-import { TASK_SOURCE, TASK_DESTINATION } from './task.module';
-import { TaskSourceService } from './task.source.service';
+import { CreateTaskDTO } from './create-task.dto';
 
 @Injectable()
-export class TaskArchiverService {
-  constructor(
-    @InjectModel(TASK_DESTINATION)
-      private readonly taskDestination: Model<Task>,
-    @Inject(forwardRef(() => TaskSourceService))
-      private taskSourceService: TaskSourceService,
-  ) { }
-
+export class TaskRetrieverService {
+  constructor(@InjectModel('Task') private readonly taskSource: Model<Task>) { }
   async getAllTask(): Promise<Task[]> {
-    const tasks = await this.taskSourceService.taskSource.find().exec();
+    const response: Task[] = await this.taskSource.find().exec();
+    const tasks = response.map(task => new CreateTaskDTO(task));
     return tasks;
   }
-
-  // async getAllTask(): Promise<Task[]> {
-  //   const tasks = await this.taskSource.find().exec();
-  //   return tasks;
-  // }
-
-  // fetch all messages
+}
+@Injectable()
+export class TaskArchiverService {
+  constructor(@InjectModel('Task') private readonly taskDestination: Model<Task>) { }
   create(tasks): Array<Promise<Task>> {
     return tasks.map(async (task: Task) => {
       return await this.taskDestination
         .findOne({ _id: task._id })
         .exec()
         .then(async dbTask => {
-          // We check if a language already exists.
+          // We check if a task already exists.
           // If it does don't create a new one.
           if (dbTask) {
             return Promise.resolve(null);
