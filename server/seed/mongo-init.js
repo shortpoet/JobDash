@@ -10,7 +10,8 @@ db.createUser(
   {
     user: "root",
     pwd:  "root",
-    roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+    roles: [ { role: "root", db: "root" }, { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+    // roles: [ { role: "root", db: "root" } ]
   }
 );
 db.createUser(
@@ -18,6 +19,6 @@ db.createUser(
     user: "jobdb-test",
     pwd:  "jobdb-test",
     roles: [ { role: "readWrite", db: "test" },
-             { role: "read", db: "job-db" } ]
+             { role: "readWrite", db: "job-db" } ]
   }
 );

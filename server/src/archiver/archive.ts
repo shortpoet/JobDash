@@ -3,6 +3,10 @@ import { ArchiverModule } from "./archivers/archiver.module";
 import { Logger } from "@nestjs/common";
 import { Archiver } from "./archivers/archiver";
 
+process.argv.forEach((val, index) => {
+  console.log(`${index}: ${val}`)
+})
+
 async function bootstrap() {
   NestFactory.createApplicationContext(ArchiverModule)
     .then(appContext => {

@@ -128,6 +128,8 @@ db.createUser(
 ```
 
 - https://docs.mongodb.com/manual/reference/connection-string/
-
-mongodb://YourUsername:YourPasswordHere@127.0.0.1:27017/your-database-name
-mongodb://simpleUser:123456@mongodb:27017/simpleDb?authSource=admin
+- connection string samples that didn't work - prop for localhost
+  - mongodb://jobdb-test:jobdb-test@127.0.0.1:27017/job-db
+  - mongodb://jobdb-test:jobdb-test@mongodb:27017/job-db?authSource=admin
+- this one works for this mongo instance (hostname mongo)
+    - mongodb://jobdb-test:jobdb-test@mongo/job-db?authSource=admin 

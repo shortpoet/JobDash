@@ -5,7 +5,7 @@ import { TaskModule } from 'src/task/task.module';
 import { MessageModule } from 'src/message/message.module';
 
 const connString = process.env.DOCKER == '1'
-  ? 'mongodb://mongo/job-db'
+  ? 'mongodb://jobdb-test:jobdb-test@mongo/job-db?authSource=admin'
   : 'mongodb://localhost/test'
 @Module({
   imports: [
