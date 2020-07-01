@@ -3,13 +3,26 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task } from 'src/task/interfaces/task.interface';
 import { CreateTaskDTO } from './create-task.dto';
+const fs = require('fs')
+
+const storeData = (data, type) => {
+  const path = `${process.cwd()}\\seed\\${type}.seed.json`
+  try {
+    fs.writeFileSync(path, JSON.stringify(data))
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 @Injectable()
 export class TaskRetrieverService {
   constructor(@InjectModel('Task') private readonly taskSource: Model<Task>) { }
-  async getAllTask(): Promise<Task[]> {
+  async getAllTask(writeJson: boolean = false): Promise<Task[]> {
     const response: Task[] = await this.taskSource.find().exec();
     const tasks = response.map(task => new CreateTaskDTO(task));
+    if (writeJson) {
+      storeData(tasks, 'tasks')
+    }
     return tasks;
   }
 }

@@ -5,6 +5,16 @@ import { Contact } from 'src/contact/interfaces/contact.interface';
 import { SOURCE_CONNECTION } from 'src/archiver/providers/providers.interface';
 import { Connection } from 'mongoose';
 import { CreateContactDTO } from './create-contact.dto';
+const fs = require('fs')
+
+const storeData = (data, type) => {
+  const path = `${process.cwd()}\\seed\\${type}.seed.json`
+  try {
+    fs.writeFileSync(path, JSON.stringify(data))
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 @Injectable()
 export class ContactRetrieverService {
@@ -12,12 +22,15 @@ export class ContactRetrieverService {
     @InjectModel('Contact') private readonly contactSource: Model<Contact>,
     // @InjectConnection(SOURCE_CONNECTION) private readonly connection: Connection
   ) { }
-  async getAllContact(): Promise<Contact[]> {
+  async getAllContact(writeJson: boolean = false): Promise<Contact[]> {
     // console.log('get all contacts')
     // console.log(this.connection)
     try {
       const response: Contact[] = await this.contactSource.find().exec();
       const contacts = response.map(contact => new CreateContactDTO(contact));
+      if (writeJson) {
+        storeData(contacts, 'contacts')
+      }
       return contacts;
 
     } catch (e) {

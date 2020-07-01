@@ -4,6 +4,13 @@ import { ContactRetrieverService, ContactArchiverService } from "./contacts/cont
 import { TaskRetrieverService, TaskArchiverService } from "./tasks/task.service";
 import { MessageRetrieverService, MessageArchiverService } from "./messages/message.service";
 
+// TODO
+/** 
+ * add this either to config or args
+ */
+// #TODO
+const writeJson = true
+
 @Injectable()
 export class Archiver {
   constructor(
@@ -55,7 +62,7 @@ export class Archiver {
   }
 
   async contacts() {
-    const contacts = await this.contactRetrieverService.getAllContact()
+    const contacts = await this.contactRetrieverService.getAllContact(writeJson)
     return await Promise.all(this.contactArchiverService.create(contacts))
       .then(createdContacts => {
         // Can also use this.logger.verbose('...');
@@ -65,7 +72,7 @@ export class Archiver {
       .catch(error => Promise.reject(error));
   }
   async tasks() {
-    const tasks = await this.taskRetrieverService.getAllTask()
+    const tasks = await this.taskRetrieverService.getAllTask(writeJson)
     return await Promise.all(this.taskArchiverService.create(tasks))
     .then(createdTasks => {
       // Can also use this.logger.verbose('...');
@@ -75,7 +82,7 @@ export class Archiver {
     .catch(error => Promise.reject(error));
   }
   async messages() {
-    const messages = await this.messageRetrieverService.getAllMessage()
+    const messages = await this.messageRetrieverService.getAllMessage(writeJson)
     return await Promise.all(this.messageArchiverService.create(messages))
       .then(createdMessages => {
         // Can also use this.logger.verbose('...');

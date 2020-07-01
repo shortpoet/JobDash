@@ -2,7 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Contact } from 'src/contact/interfaces/contact.interface';
-import { contacts } from './data';
+
+const fs = require('fs')
+const loadData = (type) => {
+  const path = `${process.cwd()}\\seed\\${type}.seed.json`
+  try {
+    return JSON.parse(fs.readFileSync(path, 'utf8'))
+  } catch (err) {
+    console.error(err)
+    return false
+  }
+}
+const contacts = loadData('contacts')
 
 @Injectable()
 export class ContactSeederService {

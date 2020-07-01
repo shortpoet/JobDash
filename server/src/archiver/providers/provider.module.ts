@@ -17,13 +17,17 @@ const dockerStringAuth = (db) => `mongodb://jobdb-test:jobdb-test@mongo/${db}?au
 
 const isDocker = process.env.DOCKER == '1'
 
-const sourceString = isDocker
-  ? localhStringDock(JOB_DB)
-  : dockerStringAuth(TEST_DB)
+// localhost to docker
+// const sourceString = isDocker
+//   ? localhStringDock(JOB_DB)
+//   : dockerStringAuth(TEST_DB)
 
-const destinationString = isDocker
-  ? dockerStringAuth(TEST_DB)
-  : localhString(TEST_DB)
+// const destinationString = isDocker
+//   ? dockerStringAuth(TEST_DB)
+//   : localhString(TEST_DB)
+
+const sourceString = localhString(JOB_DB)
+const destinationString = localhString(TEST_DB)
 
 @Module({
   imports: [
