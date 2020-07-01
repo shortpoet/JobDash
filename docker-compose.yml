@@ -62,7 +62,8 @@ services:
     volumes:
       - ./server/seed/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     #   # swap for windows no WSL
-      - ./tmp.nosync/mongo:/data/db
+      # - ./tmp.nosync/mongo:/data/db
+      # - tmp.nosync/mongo:/data/db
       # - ${PWD}/tmp.nosync/mongo:/data/db
     # NOTE: Use these variables to enable authentication for mongo and mongo-express (duplicate below)
     # network_mode: host
