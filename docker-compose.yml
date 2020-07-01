@@ -1,57 +1,97 @@
 version: '3'
 
+# TODO
+#   add env file
+#   add ternary for debug env that prints yarn warnings
+# #TODO
+
 services:
-  jobdash.server:
-    image: shortpoet/jobdash-server
-    build:
-      context: .
-      dockerfile: docker/Dockerfile-server
-    tty: true
-    stdin_open: true
-    working_dir: /opt/node_app/app/server
-    command: yarn run start:dev
-    environment:
-      - DOCKER=1
-    depends_on:
-      - mongo
-    ports:
-      - 3000:3000
-    volumes:
-      - .:/opt/node_app/app
+  # jobdash.server:
+  #   image: shortpoet/jobdash-server
+  #   build:
+  #     context: .
+  #     dockerfile: docker/Dockerfile-server
+  #   tty: true
+  #   stdin_open: true
+  #   working_dir: /opt/node_app/app/server
+  #   command: yarn run start:dev
+  #   environment:
+  #     - DOCKER=1
+  #   depends_on:
+  #     - mongo
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - .:/opt/node_app/app
 
-  jobdash.client:
-    image: shortpoet/jobdash-client
-    build:
-      context: .
-      dockerfile: docker/Dockerfile-client
-    tty: true
-    working_dir: /opt/node_app/app/dashboard
-    command: yarn docker
-    ports:
-      - 8080:8080
-    volumes:
-      - .:/opt/node_app/app
+  # jobdash.client:
+  #   image: shortpoet/jobdash-client
+  #   build:
+  #     context: .
+  #     dockerfile: docker/Dockerfile-client
+  #   tty: true
+  #   working_dir: /opt/node_app/app/dashboard
+  #   command: yarn docker
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - .:/opt/node_app/app
 
+  # mongo:
+  #   image: mongo
+  #   restart: always
+  #   volumes:
+  #     # swap for windows no WSL
+  #     # - tmp.nosync/mongo:/data/db
+  #     - ${PWD}/tmp.nosync/mongo:/data/db
+  #   # NOTE: Use these variables to enable authentication for mongo and mongo-express (duplicate below)
+  #   # environment:
+  #   #   MONGO_INITDB_ROOT_USERNAME: root
+  #   #   MONGO_INITDB_ROOT_PASSWORD: example
+
+  # https://hub.docker.com/_/mongo/
+  # can't seem to be able to use mounted volume and init script at same time bec init script is skipped by docker-entrypoint script if it finds older instances aka the data folder
+  # https://github.com/docker-library/postgres/issues/203#issuecomment-255200501
+  # https://stackoverflow.com/questions/56476339/recreation-of-mongodb-container-doesnt-re-run-config-js-file-in-docker-entrypoin
   mongo:
     image: mongo
     restart: always
+    container_name: mongo
+    command: [--auth]
+    #   # need to comment volumes in order for them to be deleted from container on wipe --volumes
     volumes:
-      # swap for windows no WSL
-      # - tmp.nosync/mongo:/data/db
-      - ${PWD}/tmp.nosync/mongo:/data/db
+      - ./server/seed/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    #   # swap for windows no WSL
+      - ./tmp.nosync/mongo:/data/db
+      # - ${PWD}/tmp.nosync/mongo:/data/db
     # NOTE: Use these variables to enable authentication for mongo and mongo-express (duplicate below)
-    # environment:
-    #   MONGO_INITDB_ROOT_USERNAME: root
-    #   MONGO_INITDB_ROOT_PASSWORD: example
-      
+    # network_mode: host
+    environment:
+      MONGO_INITDB_DATABASE: admin # database name
+      # These can't be used if also initializing root user in script
+      # MONGO_INITDB_ROOT_USERNAME: root # container root username
+      # MONGO_INITDB_ROOT_PASSWORD: root # container root password
+      # ROOT_URL: http://localhost
+      # MONGO_URL: mongodb://localhost:27107/
+    # ports:wel
+    #   - 27017:27017
+
   mongo-express:
     image: mongo-express
     depends_on:
       - mongo
     restart: always
-    # environment:
-    #   MONGO_INITDB_ROOT_USERNAME: root
-    #   MONGO_INITDB_ROOT_PASSWORD: example
+    # network_mode: host
+    environment:
+      MONGO_INITDB_DATABASE: admin # database name
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      # ME_CONFIG_MONGODB_DATABASE: job-db
+      ME_CONFIG_MONGODB_SERVER: mongo
+      # ME_CONFIG_BASICAUTH_USERNAME: admin
+      # ME_CONFIG_BASICAUTH_PASSWORD: pass
+      # ROOT_URL: http://localhost
+      # MONGO_URL: mongodb://localhost:27107/
     ports:
       - 8081:8081
 
@@ -69,6 +109,7 @@ services:
 # https://gist.github.com/ashblue/aa20cd90d2b4609c0b496b66d4153b99
 # if added WSL
 # http://beyondthecorneroffice.com/2018-04-18-MongoDB-on-Windows-Docker/
+# https://www.docker.com/blog/keep-nodejs-rockin-in-docker/
 # uncomment this line and swap above
 # volumes:
 #   tmp.nosync/mongo:

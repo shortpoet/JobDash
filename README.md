@@ -24,7 +24,7 @@ yarn start
 ```bash
 docker-compose up
 ```
-
+- https://stackoverflow.com/questions/2462317/bash-syntax-error-redirection-unexpected
 - https://stackoverflow.com/questions/54911021/unable-to-start-docker-mongo-image-on-windows
 - https://dev.to/_rema_lp/debugging-nestjs-typescript-in-a-docker-container-19a3
 - https://github.com/kostis-codefresh/nestjs-example
@@ -56,7 +56,8 @@ docker-compose up
 - https://stackoverflow.com/questions/48178870/import-data-on-mongodb-using-docker-compose
 - https://github.com/stefanwalther/docker-mongo-seed
 - https://medium.com/the-crowdlinker-chronicle/seeding-databases-using-nestjs-cd6634e8efc5
-
+- https://stackoverflow.com/questions/42912755/how-to-create-a-db-for-mongodb-container-on-start-up
+- https://hub.docker.com/_/mongo/
 
 ```bash
 docker volume create --name=mongodata
@@ -72,3 +73,61 @@ services:
 volumes:
   mongodata:
 ```
+
+## Mongo
+
+```bash
+winpty docker exec -it mongo bash
+```
+
+```
+### Add User
+- https://docs.mongodb.com/manual/tutorial/enable-authentication/
+
+```bash
+mongod --port 27017 --dbpath /var/lib/mongodb
+mongo --port 27017
+```
+
+```
+mongo -u root -p root --authenticationDatabase admin
+```
+
+```javascript
+use admin
+db.createUser(
+  {
+    user: "myUserAdmin",
+    pwd: passwordPrompt(), // or cleartext password
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+  }
+)
+```
+
+```javascript
+use admin
+db.createUser(
+  {
+    user: "root",
+    pwd: "root",
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+  }
+)
+```
+
+```javascript
+use test
+db.createUser(
+  {
+    user: "jobdb-test",
+    pwd:  "jobdb-test",
+    roles: [ { role: "readWrite", db: "test" },
+             { role: "read", db: "job-db" } ]
+  }
+)
+```
+
+- https://docs.mongodb.com/manual/reference/connection-string/
+
+mongodb://YourUsername:YourPasswordHere@127.0.0.1:27017/your-database-name
+mongodb://simpleUser:123456@mongodb:27017/simpleDb?authSource=admin

@@ -6,7 +6,7 @@ WORKDIR /opt/node_app
 
 COPY server/package.json server/*yarn* ./
 
-RUN yarn install
+RUN [ "/bin/bash", "-c", "yarn install 2> >(grep -v warning 1>&2)"]
 
 ENV PATH /opt/node_app/node_modules/.bin:$PATH
 

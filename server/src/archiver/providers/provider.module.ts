@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SOURCE_CONNECTION, DESTINATION_CONNECTION } from './providers.interface';
 
-const sourceString = process.env.DOCKER == '1'
+const sourceString = process.env.DOCKER != '1'
   ? 'mongodb://mongo/job-db'
-  : 'mongodb://localhost/job-db'
+  : 'mongodb://localhost/test'
 
 const destinationString = process.env.DOCKER == '1'
   ? 'mongodb://mongo/job-db'
