@@ -18,6 +18,8 @@ interface TaskStoreState extends StoreState {
 const initialTasksStateMap = () : TasksStateMap => ({
   ids: [
   ],
+  itemIds: [
+  ],
   all: {
   },
   loaded: false

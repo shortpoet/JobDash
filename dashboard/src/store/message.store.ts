@@ -17,6 +17,8 @@ interface MessageStoreState extends StoreState {
 const initialMessagesStateMap = () : MessagesStateMap => ({
   ids: [
   ],
+  itemIds: [
+  ],
   all: {
   },
   loaded: false

@@ -2,7 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task } from 'src/task/interfaces/task.interface';
-import { tasks } from './data';
+const fs = require('fs')
+const loadData = (type) => {
+  const path = `${process.cwd()}\\seed\\${type}.seed.json`
+  try {
+    return JSON.parse(fs.readFileSync(path, 'utf8'))
+  } catch (err) {
+    console.error(err)
+    return false
+  }
+}
+const tasks = loadData('tasks')
 
 @Injectable()
 export class TaskSeederService {

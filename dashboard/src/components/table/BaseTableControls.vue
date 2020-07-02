@@ -8,6 +8,7 @@
       :label="'Visible Data Columns'"
       :item-type="itemType"
       @chosen-properties="handleChosenColumnChange"
+      class="column-switch"
     ></BaseSwitchArray>
     <BaseSwitchArray
       :options="controlNames"
@@ -17,6 +18,7 @@
       :label="'Visible Control Columns'"
       :item-type="itemType"
       @chosen-properties="handleChosenControlChange"
+      class="control-switch"
     ></BaseSwitchArray>
 
     <!-- 
@@ -146,4 +148,3 @@ export default defineComponent({
   }
 })
 </script>
-

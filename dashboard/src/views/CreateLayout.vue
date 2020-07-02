@@ -11,7 +11,8 @@
       <BaseBox>
         <BaseTabs :tabs="tabs" @tab-activated="tabActivated" :active-tab="activeTab.name"/>
         <!-- <component :is="selectedComponent" @update-contacts="onUpdateContacts"/> -->
-        <ContactCreate v-if="activeTab.name == 'Contact'" @update-contacts="onUpdateContacts"/>
+        <BaseItemCreate @create-item="handleCreateItem" v-if="activeTab.name == 'Contact'" :item-type="itemType" :editable-columns="editableColumns" :id-symbol="idSymbol"/>
+        <!-- <ContactCreate v-if="activeTab.name == 'Contact'" @update-contacts="onUpdateContacts"/> -->
         <TaskCreate v-if="activeTab.name == 'Task'" @update-tasks="onUpdateTasks"/>
         <MessageWriter v-if="activeTab.name == 'Message'" @update-messages="onUpdateMessages"/>
       </BaseBox>
@@ -21,17 +22,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue'
+import { defineComponent, computed, ref, onMounted, Ref } from 'vue'
 import BaseTabs from './../components/common/BaseTabs.vue'
 
 import BaseBox from './../components/common/BaseBox.vue'
 import BaseMinimize from '../components/common/BaseMinimize.vue'
+import BaseItemCreate from '../components/common/BaseItemCreate.vue'
 
-import ContactCreate from './../components/contacts/ContactCreate.vue'
 import TaskCreate from './../components/task/TaskCreate.vue'
 import MessageWriter from './../components/message/MessageWriter.vue'
 
 import { Tab } from './../interfaces/common/tab.interface'
+import { colorLog } from '../utils'
 
 export default defineComponent({
   name: 'CreateLayout',
@@ -40,15 +42,15 @@ export default defineComponent({
     BaseTabs,
     BaseBox,
     BaseMinimize,
-    ContactCreate,
+    BaseItemCreate,
     TaskCreate,
     MessageWriter
   },
 
   props: {
-    // contacts: {
-    //   type: Array
-    // }
+    tables: {
+      type: Array
+    }
   },
   emits: ['update-contacts', 'update-tasks', 'update-messages'],
 
@@ -56,6 +58,8 @@ export default defineComponent({
 
 
     //#region tabs
+      colorLog('create layout')
+      console.log(props.tables)
       const tabs = ref<Tab[]>()
       const activeTab = ref<Tab>()
 
@@ -67,13 +71,21 @@ export default defineComponent({
 
       activeTab.value = tabs.value[0];
 
+      const itemType = computed(() => activeTab.value.name.toLowerCase())
+      
+      const thisTable = computed(() => props.tables.filter(t => t['itemType'] == itemType.value)[0])
+      
+      const editableColumns = computed(() => thisTable.value['editableColumns'])
+
+      const idSymbol = computed(() => thisTable.value['idSymbol'])
+      
       const selectedComponent = computed(() => {
         switch(activeTab.value.component) {
           case 'TaskCreate':
             return TaskCreate
             break
           case 'ContactCreate':
-            return ContactCreate
+            return 
           case 'MessageWriter':
             return MessageWriter
         }
@@ -98,15 +110,27 @@ export default defineComponent({
         ctx.emit('update-messages')
       }
 
+      const handleCreateItem = (e) => {
+        if (e.itemType == itemType.value) {
+          console.log(e.item)
+          thisTable.value['store'].createRecord(e.item)
+          ctx.emit('update-contacts')
+        }
+
+      }
 
     return {
       tabs,
       activeTab,
       selectedComponent,
       tabActivated,
+      itemType,
+      editableColumns,
       onUpdateContacts,
       onUpdateTasks,
-      onUpdateMessages
+      onUpdateMessages,
+      handleCreateItem,
+      idSymbol
     }
   }
 

@@ -30,6 +30,8 @@ export const MESSAGE_STORE_SYMBOL = 'messageStore'
 const initialStateMap = () : StateMap => ({
   ids: [
   ],
+  itemIds: [
+  ],
   all: {
   },
   loaded: false

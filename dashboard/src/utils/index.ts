@@ -48,13 +48,16 @@ export const flattenSort = (objMap: Record<string, any>, sortKey: string): Recor
   return out
 }
 
-export const colorLog = (message, color, background) => {
+export const colorLog = (message, color = 'magenta', background = 'yellow') => {
   color = color || "black";
   if (background) {
     console.log(`%c` + `${message}`, `color:` + `${color};background:${background}`)
   } else {
     console.log(`%c` + `${message}`, `color:` + `${color}`)
   }
+}
+export function uuid () {
+  return Math.random().toString(16).slice(2)
 }
 
 // colorLog('message', 'blue', 'pink')

@@ -2,7 +2,8 @@ import { readonly, reactive } from "vue"
 import axios from 'axios'
 
 export interface StateMap {
-  ids: string[]
+  ids: string[],
+  itemIds: number[],
   all: Record<string, any>
   loaded: boolean
 }
@@ -24,6 +25,8 @@ export interface StoreState {
 
 const initialStateMap = () : StateMap => ({
   ids: [
+  ],
+  itemIds: [
   ],
   all: {
   },
@@ -109,16 +112,26 @@ export class Store<T> extends BaseStore<T> {
     // console.log('create record - interface')
     // console.log(record)
     // console.log(this.idSymbol)
+    // TODO
+    //    sequential itemId
+    //    const itemId = Math.max(...this.state.records.itemIds) + 1
+    //    record['itemId'] = itemId
+    // #TODO
     const id = record[this.idSymbol]
+    const itemId = id
+    record['itemId'] = itemId
     this.state.records.all[id] = record
     this.state.records.ids.push(id.toString())
+    // this.state.records.itemIds.push(itemId)
   }
 
   public deleteRecord(record: any): void {
     const id = record[this.idSymbol]
     delete this.state.records.all[id]
-    const index = this.state.records.ids.indexOf(this.idSymbol.toString())
-    this.state.records.ids.splice(index, 1)
+    const indexId = this.state.records.ids.indexOf(this.idSymbol.toString())
+    this.state.records.ids.splice(indexId, 1)
+    // const indexItemId = this.state.records.itemIds.indexOf(record['itemId'])
+    // this.state.records.ids.splice(indexItemId, 1)
   }
   public editRecord(oldRecord: any, newRecord: any): void {
     const id = oldRecord[this.idSymbol]
@@ -186,4 +199,3 @@ export abstract class StoreAxios<ITableItem> extends Store<ITableItem> implement
     return response.data
   }
 }
-

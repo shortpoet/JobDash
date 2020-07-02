@@ -8,6 +8,11 @@ export const ContactSchema = new mongoose.Schema({
   name: String,
   company: String,
   email: String,
+  website: String,
+  location: String,
+  position: String,
+  skills: String,
+  compensation: String,
   created: {
     type: Date,
     default: Date.now

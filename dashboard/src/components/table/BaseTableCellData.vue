@@ -37,6 +37,10 @@ export default defineComponent({
   },
 
   setup(props, ctx){
+    // console.log(props['propertyData'])
+    // const propName = props['propertyName']
+    // console.log(props['propertyData'][propName])
+    // console.log(props['propertyData'][props['propertyName']])
     const propertyEdit = ref()
     const handleInput = () => {
       ctx.emit('handle-input')
@@ -49,4 +53,3 @@ export default defineComponent({
   }
 })
 </script>
-

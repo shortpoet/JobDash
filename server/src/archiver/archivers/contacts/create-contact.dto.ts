@@ -10,6 +10,11 @@ export class CreateContactDTO {
     this.name = contact.name
     this.company = contact.company
     this.email = contact.email
+    this.website = contact.website
+    this.location = contact.location
+    this.position = contact.position
+    this.skills = contact.skills
+    this.compensation = contact.compensation
     this.created = contact.created
     this.edited = contact.edited
     this.editable = contact.editable
@@ -20,6 +25,11 @@ export class CreateContactDTO {
   readonly name: string;
   readonly company: string;
   readonly email: string;
+  readonly website: string;
+  readonly location: string;
+  readonly position: string;
+  readonly skills: string;
+  readonly compensation: string;
   readonly created: Date;
   readonly edited: Date;
   readonly editable: Boolean;

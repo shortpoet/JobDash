@@ -18,6 +18,8 @@ interface ContactStoreState extends StoreState{
 const initialContactsStateMap = () : ContactStateMap => ({
   ids: [
   ],
+  itemIds: [
+  ],
   all: {
   },
   loaded: false
@@ -105,10 +107,15 @@ export class ContactStore extends StoreAxios<IContact> implements IStore<IContac
     this.state.records.all[oldContact._id].locked = locked
     const newContact: IContact = {
       _id: oldContact._id,
-      itemId: oldContact._id,
+      itemId: oldContact.itemId,
       name: oldContact.name,
       company: oldContact.company,
       email: oldContact.email,
+      website: oldContact.website,
+      location: oldContact.location,
+      position: oldContact.position,
+      skills: oldContact.skills,
+      compensation: oldContact.compensation,
       created: oldContact.created,
       edited: oldContact.edited,
       editable: oldContact.editable,

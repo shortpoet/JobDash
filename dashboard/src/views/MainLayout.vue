@@ -15,12 +15,13 @@
           @update-contacts="onUpdateContacts"    
           @update-tasks="onUpdateTasks"
           @update-messages="onUpdateMessages"
+          :tables="tables"
         />
         <!-- <TabsLayout @tab-change="tabChange"/> -->
       </div>
       <div class="table-column">
         <TableLayout
-          v-for="(table, i) in tables"
+          v-for="(table, i) in tablesRef"
           :destination="editItemDestination"
           :column-names="table.columnNames"
           :items="table.items"
@@ -162,7 +163,7 @@ export default defineComponent({
         await nextTick()
         // tables.filter(t => t.value.itemType == contactItemtype.value)[0].value.items = await contactStore.updateRecords('contact')
         allContacts.value = await contactStore.updateRecords('contact')
-        tables[0].value.items = allContacts.value
+        tablesRef[0].value.items = allContacts.value
       }
       const onUpdateTasks = async () => {
         console.log('update tasks')
@@ -170,14 +171,14 @@ export default defineComponent({
 
         // tables.filter(t => t.value.itemType == taskItemtype.value)[0].value.items = await taskStore.updateRecords('task')
         allTasks.value = await taskStore.updateRecords('task')
-        tables[1].value.items = allTasks.value
+        tablesRef[1].value.items = allTasks.value
       }
       const onUpdateMessages = async () => {
         console.log('update messages')
         await nextTick()
         // tables.filter(t => t.value.itemType == messageItemtype.value)[0].value.items = await messageStore.updateRecords('message')
         allMessages.value = await messageStore.updateRecords('message')
-        tables[2].value.items = allMessages.value
+        tablesRef[2].value.items = allMessages.value
       }
       const onUpdateValues = (e) => {
         colorLog('on update values - main layout', 'magenta', 'white')
@@ -211,7 +212,8 @@ export default defineComponent({
       console.log(allContacts.value.map(x => x))
       console.log(allTasks.value)
       console.log(allMessages.value)
-      const tables = toRefs(reactive([
+
+      const tables = [
         // {
         //   columnNames: testColumnNames,
         //   items: testItems.value,
@@ -219,19 +221,48 @@ export default defineComponent({
         //   idSymbol: ITEMS_ID_SYMBOL
         // },
           {
-            columnNames: allContacts.value[0] ? Object.keys(allContacts.value[0]) : [],
+            columnNames: allContacts.value[0] ? Object.keys(allContacts.value[0]) : [
+              'name',
+              'company',
+              'email',
+              'itemId',
+              'name',
+              'company',
+              'email',
+              'website',
+              'location',
+              'position',
+              'skills',
+              'compensation',
+              'created',
+              'edited',
+              'editable',
+              'locked',
+            ],
             items: allContacts.value,
             itemType: contactItemtype.value,
             idSymbol: CONTACT_ID_SYMBOL,
             store: contactStore,
+            // i thought these were editable columns
+            // turns out they affect which are display-toggleable
+            // if on this list, can't untoggle
             editableColumns: [
               'name',
               'company',
               'email',
+              'website',
+              'location',
+              'position',
+              'skills',
+              'compensation',
             ]
           },
           {
-            columnNames: allTasks.value[0] ? Object.keys(allTasks.value[0]) : [],
+            columnNames: allTasks.value[0] ? Object.keys(allTasks.value[0]) : [
+              'name',
+              'category',
+              'description',
+            ],
             items: allTasks.value,
             itemType: taskItemtype.value,
             idSymbol: TASK_ID_SYMBOL,
@@ -243,7 +274,11 @@ export default defineComponent({
             ]
           },
           {
-            columnNames: allMessages.value[0] ? Object.keys(allMessages.value[0]) : [],
+            columnNames: allMessages.value[0] ? Object.keys(allMessages.value[0]) : [
+              'subject',
+              'body',
+              'category',
+            ],
             items: allMessages.value,
             itemType: messageItemtype.value,
             idSymbol: MESSAGE_ID_SYMBOL,
@@ -254,7 +289,9 @@ export default defineComponent({
               'category',
             ]
           },
-        ]))
+        ]
+
+      const tablesRef = toRefs(reactive(tables))
 
     
       //#region tables dynamic - experimental
@@ -295,6 +332,7 @@ export default defineComponent({
       showClear,
       // table
       tables,
+      tablesRef,
       testItems,
       testItemType,
       testColumnNames,

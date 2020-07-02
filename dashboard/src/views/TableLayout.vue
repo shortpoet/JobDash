@@ -6,7 +6,7 @@
           :class-prop="`${itemType}-table-container`"
           :component-name="`${itemType} Table`"
           @minimize-change="handleMinimize"
-          :minimized="true"
+          :minimized="false"
         >
           <BaseTableControls
             :item-type="itemType"
@@ -147,28 +147,32 @@ export default defineComponent({
         controls: chosenControls.value,
         editable: chosenEditable.value
       }
+    console.log(chosenColumns.value)
 
       const tableConfig = new TableConfig(tableSettings)
 
-      const { columns, controlNames: controlNamesRef , columnNames: columnNamesRef, editableColumnNames } = tableConfig
+      const { columns, controlNames: controlNamesRef , columnNames, editableColumnNames } = tableConfig
       const columnsRef = ref(columns)
-
+      const columnNamesRef = ref(columnNames)
+      console.log(tableConfig)
       // console.log(columnsRef)    
     //#endregion
 
     //#region choice
       // columns
       const handleColumnChange = (e) => {
-        // colorLog('handle column change', 'green', 'yellow')
-        // console.log(e)
+        colorLog('handle column change', 'green', 'yellow')
+        console.log(e)
         chosenColumns.value = e.columns
       }
       watch(
         () => chosenColumns.value.length, 
         (value: number, previous:number) => {
-            // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
+            console.log(`Watch columns.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
             columnsRef.value = []
+            console.log(chosenColumns.value)
             columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value, editable: chosenEditable.value}).columns
+            // columnNamesRef.value = 
         },
         // not sure if i want this called immediately
         // makes update function run on load
@@ -185,6 +189,7 @@ export default defineComponent({
         (value: number, previous:number) => {
             // console.log(`Watch controls.value.length function called with args:", \nvalue: ${value}, \nprevious: ${previous}`)
             columnsRef.value = []
+            columnNamesRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value, editable: chosenEditable.value}).columnNames
             columnsRef.value = new TableConfig({data: chosenColumns.value, controls: chosenControls.value, editable: chosenEditable.value}).columns
         },
         // not sure if i want this called immediately

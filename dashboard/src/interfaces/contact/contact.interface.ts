@@ -7,6 +7,12 @@ export interface IContact extends ITableItem {
   name: string
   company: string
   email: string
+  website: string
+  location: string
+  position: string
+  skills: string
+  compensation: string
+
   created: Moment
   edited: Moment
   editable: boolean

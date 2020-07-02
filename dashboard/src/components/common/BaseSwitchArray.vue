@@ -4,18 +4,25 @@
       <div class="field is-small">          
         <label class="is-small switch-array-label"><b>{{ label }}</b></label>
         <p :class="['control', 'is-small', orientation]">
-          <label
-            v-for="(prop, i) in options"
-            :key="i"
-            :for="`base-switch-${itemType}-${type}-${i}`"
-            class="base-switch label checkbox is-small"
-            
-          >      
-            <input :id="`base-switch-${itemType}-${type}-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperty(prop)" v-model="chosenProperties[prop]">
-            {{prop}}
-          </label>
-          <button type="reset" class="button is-warning is-small" @click="setDefaults">Set Defaults</button>
-          <button type="reset" class="button is-warning is-small" @click="handleReset">Reset</button>
+          <div class="switch-container">
+            <div
+              class="switch-wrap"
+              v-for="(prop, i) in options"
+              :key="i"
+            >
+              <label
+                :for="`base-switch-${itemType}-${type}-${i}`"
+                class="base-switch label checkbox is-small"
+              >
+                <input :id="`base-switch-${itemType}-${type}-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperty(prop)" v-model="chosenProperties[prop]">
+                {{prop}}
+              </label>
+            </div>
+          </div>
+          <div class="button-container">
+            <button type="reset" class="button is-warning is-small" @click="setDefaults">Set Defaults</button>
+            <button type="reset" class="button is-warning is-small" @click="handleReset">Reset</button>
+          </div>
         </p>
       </div>
     </BaseBox>
@@ -23,18 +30,25 @@
       <div class="field is-small">          
         <label class="is-small switch-array-label"><b>{{ label }}</b></label>
         <p :class="['control', 'is-small', orientation]">
-          <label
-            v-for="(prop, i) in options"
-            :key="i"
-            :for="`base-switch-${itemType}-${type}-${i}`"
-            class="base-switch checkbox label is-small"
-            
-          >      
-            <input :id="`base-switch-${itemType}-${type}-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperty(prop)" v-model="chosenProperties[prop]">
-            {{prop}}
-          </label>
-          <button type="reset" class="button is-warning is-small" @click="setDefaults">Set Defaults</button>
-          <button type="reset" class="button is-warning is-small" @click="handleReset">Reset</button>
+          <div class="switch-container">
+            <div
+              class="switch-wrap"
+              v-for="(prop, i) in options"
+              :key="i"
+            >
+              <label
+                :for="`base-switch-${itemType}-${type}-${i}`"
+                class="base-switch label checkbox is-small"
+              >
+                <input :id="`base-switch-${itemType}-${type}-${i}`" type="checkbox" class="is-small"  @input="handleInputChosenProperty(prop)" v-model="chosenProperties[prop]">
+                {{prop}}
+              </label>
+            </div>
+          </div>
+          <div class="button-container">
+            <button type="reset" class="button is-warning is-small" @click="setDefaults">Set Defaults</button>
+            <button type="reset" class="button is-warning is-small" @click="handleReset">Reset</button>
+          </div>
         </p>
       </div>
     </div>
@@ -153,4 +167,3 @@ export default defineComponent({
   }
 })
 </script>
-

@@ -24,6 +24,8 @@ interface BoardStoreState extends StoreState{
 const initialBoardsStateMap = () : BoardStateMap => ({
   ids: [
   ],
+  itemIds: [
+  ],
   all: {
   },
   loaded: false

@@ -145,6 +145,7 @@ export default defineComponent({
         }
       }
       else if (column instanceof BaseTableColumnData) {
+        // console.log(props.item)
         return {
           propertyName: column.propertyName,
           propertyData: props.item,

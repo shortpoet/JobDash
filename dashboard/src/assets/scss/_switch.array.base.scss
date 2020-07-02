@@ -32,14 +32,13 @@
       display: flex;
       flex-direction: column;
       .button {
-        margin: .25rem 0rem;
+        margin: .25rem .25rem;
       }
     }
   }
 }
 .base-switch-container.horizontal {
   padding: 0rem .5rem;
-  width: auto;
   display: flex;
   .box.my-box.base-switch-box {
     padding: 1rem .25rem;
@@ -50,9 +49,14 @@
     .field > .control.horizontal {
       display: flex;
       flex-direction: row;
-      .label {
-        margin: .25rem .25rem;
-        padding: 0rem 0rem
+      flex-wrap: wrap;
+      .switch-wrap {
+        display: flex;
+        flex: 0 0 25%;
+        .label {
+          margin: .25rem .25rem;
+          padding: 0rem 0rem;
+        }
       }
     }
   }
@@ -73,28 +77,81 @@
       display: flex;
       flex-direction: column;
       .button {
-        margin: .25rem 0rem;
+        margin: .25rem .25rem;
       }
     }
   }
 }
-.base-switch-container.horizontal {
+
+.base-switch-container.horizontal.column-switch {
   padding: 0rem .5rem;
   margin: -.75rem 0rem;
-  width: auto;
   display: flex;
   .base-switch-box {
     padding: 1rem .25rem;
-    box-sizing: inherit;
+    box-sizing: unset;
     display: flex;
     flex-direction: column;
     // for buttons to be aligned
     .field > .control.horizontal {
       display: flex;
       flex-direction: row;
-      .label {
-        margin: .25rem .25rem;
-        padding: 0rem 0rem
+      // flex-wrap: wrap;
+      // https://stackoverflow.com/questions/44902771/flex-row-space-between-wrapped-items
+      .switch-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        .switch-wrap {
+          display: flex;
+          flex: 0 0 20%;
+          .label {
+            margin: .25rem .25rem;
+            padding: 0rem 0rem;
+          }
+        }        
+      }
+      .button-container {
+        .button {
+          margin: .25rem .25rem;
+        }
+      }
+    }
+  }
+}
+.base-switch-container.horizontal.control-switch {
+  padding: 0rem .5rem;
+  margin: -.75rem 0rem;
+  display: flex;
+  .base-switch-box {
+    padding: 1rem .25rem;
+    box-sizing: unset;
+    display: flex;
+    flex-direction: row;
+    // width is set differently because fewer items but...
+    width: 100%;
+    // for buttons to be aligned
+    .field > .control.horizontal {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      // https://stackoverflow.com/questions/44902771/flex-row-space-between-wrapped-items
+      .switch-container {
+        display: flex;
+        flex-direction: row;
+        .switch-wrap {
+          display: flex;
+          flex: 0 0 15%;
+          .label {
+            margin: .25rem .25rem;
+            padding: 0rem 0rem;
+          }
+        }        
+      }
+      .button-container {
+        .button {
+          margin: .25rem .25rem;
+        }
       }
     }
   }

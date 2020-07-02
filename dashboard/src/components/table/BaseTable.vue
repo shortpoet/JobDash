@@ -117,9 +117,12 @@ export default defineComponent({
         const keyComputed = (item) => {
           // TODO
             // this fails when you delete an item not at end of table
+            // console.log(props.itemUnderEdit)
+            // console.log(props.idSymbol)
+            // console.log(item)
+            // console.log(item[props.idSymbol])
           // #TODO
           // colorLog('key computed', 'green', 'yellow')
-          // console.log(props.itemUnderEdit)
           // recompute key to only rerender that row
           return !!props.itemUnderEdit
             ? props.itemUnderEdit.itemId == item.itemId
