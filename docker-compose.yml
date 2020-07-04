@@ -6,7 +6,7 @@ version: '3'
 # #TODO
 
 services:
-  jobdash.server:
+  server:
     image: shortpoet/jobdash-server
     depends_on:
       - mongo
@@ -28,14 +28,14 @@ services:
     env_file:
       - '.env'
 
-  jobdash.client:
+  client:
     image: shortpoet/jobdash-client
     # after specifying network
     # without depends_on here 
     # error network not found bec this was being created first
     depends_on:
       - mongo
-      - jobdash.server
+      - server
     build:
       context: .
       dockerfile: docker/Dockerfile-client
