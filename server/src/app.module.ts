@@ -6,10 +6,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TaskModule } from './task/task.module';
 import { MessageModule } from './message/message.module';
 
-const connString = process.env.DOCKER == '1'
-  ? 'mongodb://mongo/job-db'
-  : 'mongodb://localhost/job-db'
+const JOB_DB = 'job-db'
+const dockerStringAuth = (db) => `mongodb://jobdb-test:jobdb-test@mongo/${db}?authSource=admin`
 
+const connString = process.env.DOCKER == '1'
+  ? dockerStringAuth(JOB_DB)
+  : 'mongodb://localhost/job-db'
+console.log(connString)
 @Module({
   imports: [
     MongooseModule.forRoot(

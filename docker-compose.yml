@@ -8,55 +8,76 @@ version: '3'
 services:
   jobdash.server:
     image: shortpoet/jobdash-server
+    depends_on:
+      - mongo
     build:
       context: .
       dockerfile: docker/Dockerfile-server
     tty: true
     stdin_open: true
     working_dir: /opt/node_app/app/server
+    env_file:
+      - '.env'
     command: yarn run start:dev
-    environment:
-      - DOCKER=1
-    depends_on:
-      - mongo
     ports:
       - 3000:3000
     volumes:
       - .:/opt/node_app/app
+    networks:
+      - jobnet      
+    env_file:
+      - '.env'
 
   jobdash.client:
     image: shortpoet/jobdash-client
+    # after specifying network
+    # without depends_on here 
+    # error network not found bec this was being created first
+    depends_on:
+      - mongo
+      - jobdash.server
     build:
       context: .
       dockerfile: docker/Dockerfile-client
     tty: true
     working_dir: /opt/node_app/app/dashboard
+    env_file:
+      - '.env'
     command: yarn docker
     ports:
       - 8080:8080
     volumes:
       - .:/opt/node_app/app
+    networks:
+      - jobnet
 
   mongo:
     image: mongo
     restart: always
     container_name: mongo
+    env_file:
+      - '.env'
     command: [--auth]
     volumes:
       - ./server/seed/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    environment:
-      MONGO_INITDB_DATABASE: admin # database name
+      - mongodata:/data/db
+    networks:
+      - jobnet
 
   mongo-express:
     image: mongo-express
     depends_on:
       - mongo
     restart: always
-    environment:
-      MONGO_INITDB_DATABASE: admin # database name
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: root
-      # ME_CONFIG_MONGODB_DATABASE: job-db
-      ME_CONFIG_MONGODB_SERVER: mongo
+    env_file:
+      - '.env'
     ports:
       - 8081:8081
+    networks:
+      - jobnet
+
+networks:
+  jobnet:
+
+volumes:
+  mongodata:

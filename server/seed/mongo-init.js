@@ -10,10 +10,13 @@ db.createUser(
   {
     user: "root",
     pwd:  "root",
-    roles: [ { role: "root", db: "root" }, { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
-    // roles: [ { role: "root", db: "root" } ]
+    roles: [ { role: "root", db: "admin" }]
+    // roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
   }
 );
+// misleading docs explained
+// https://stackoverflow.com/questions/23943651/mongodb-admin-user-not-authorized
+db.grantRolesToUser("root", ["readWrite"])
 db.createUser(
   {
     user: "jobdb-test",
